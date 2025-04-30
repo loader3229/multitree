@@ -120,6 +120,9 @@ addLayer("incrementy_i", {
                     let base=1e10;
                     let ret = Decimal.pow(base,Decimal.log10(player.modpoints[5].add(1)).pow(0.9));
 					if(player.incrementy_sp.best.gte(13))ret = Decimal.pow(base,Decimal.log10(player.modpoints[5].add(1)).pow(0.93));
+					if(hasUpgrade("milestone_p",33))ret = player.modpoints[5].add(1).pow(1.6);
+					if(hasUpgrade("milestone_p",34))ret = player.modpoints[5].add(1).pow(1.8);
+					if(hasUpgrade("milestone_p",35))ret = player.modpoints[5].add(1).pow(2);
                     return ret;
 				},
                 effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
@@ -343,7 +346,7 @@ addLayer("incrementy_i", {
                 },
                 display() { // Everything else displayed in the buyable button after the title
                     let data = tmp[this.layer].buyables[this.id]
-                    return "Amount: "+formatWhole(player.incrementy_i.buyables[11])+"+"+formatWhole(data.free)+"<br>"+
+                    return "Amount: "+formatWhole(player.incrementy_i.buyables[11])+(data.free.gt(0)?("+"+formatWhole(data.free)):"")+"<br>"+
 					"Cost: "+format(data.cost)+" Incrementy<br>"+
 					"Effect: "+(hasUpgrade("incrementy_a",24)?"Base ":"")+"Incrementy gain x"+format(data.effect);
                 },
@@ -418,9 +421,9 @@ addLayer("incrementy_i", {
                 },
                 display() { // Everything else displayed in the buyable button after the title
                     let data = tmp[this.layer].buyables[this.id]
-                    return "Amount: "+formatWhole(player.incrementy_i.buyables[13])+"<br>"+
+                    return "Amount: "+formatWhole(player.incrementy_i.buyables[13])+(data.free.gt(0)?("+"+formatWhole(data.free)):"")+"<br>"+
 					"Cost: "+format(data.cost)+" Incrementy<br>"+
-					"Effect: Base incrementy gain ^"+format(data.effect)+(player.incrementy_i.buyables[13].gte(data.softcap)?" (softcapped)<br>Softcap starts at "+formatWhole(data.softcap):"");
+					"Effect: Base incrementy gain ^"+format(data.effect)+(player.incrementy_i.buyables[13].add(data.free).gte(data.softcap)?" (softcapped)<br>Softcap starts at "+formatWhole(data.softcap):"");
                 },
                 unlocked() { return player[this.layer].unlocked }, 
                 canAfford() {
@@ -432,9 +435,9 @@ addLayer("incrementy_i", {
                     player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
                 },
 				effect(){
-                    if (inChallenge("incrementy_b", 11)) return player[this.layer].buyables[this.id].div(hasMilestone("incrementy_o",5)?10:20).plus(1)
+                    if (inChallenge("incrementy_b", 11)) return player[this.layer].buyables[this.id].add(layers[this.layer].buyables[this.id].free()).div(hasMilestone("incrementy_o",5)?10:20).plus(1)
 					let base=new Decimal(1.04);
-					let power=player[this.layer].buyables[this.id];
+					let power=player[this.layer].buyables[this.id].add(layers[this.layer].buyables[this.id].free());
 					let softcap=layers[this.layer].buyables[this.id].softcap();
 					if(power.gte(softcap))power=power.div(softcap).sqrt().mul(softcap);
 					return Decimal.pow(base,power);
@@ -457,6 +460,11 @@ addLayer("incrementy_i", {
 					return ret;
 				},
 				unlocked(){ return hasUpgrade("incrementy_i",22)},
+				free(){
+					let ret=new Decimal(0);
+					if(hasUpgrade("incrementy_o",13))ret=ret.add(1);
+					return ret;
+				},
         },
 	 },
 	 tabFormat: ["upgrades","buyables"],
@@ -3615,6 +3623,7 @@ addLayer("incrementy_pi", {
                 if(player.tm.buyables[5].gte(39))amt = amt.add(2);
                 if(player.tm.buyables[5].gte(42))amt = amt.add(2);
                 if(hasUpgrade("incrementy_pi",33))amt = amt.add(2);
+                if(hasUpgrade("incrementy_o",14))amt = amt.add(2);
                 if(hasMilestone("incrementy_o",6))amt = amt.add(2);
                 return amt
         },
@@ -3640,10 +3649,12 @@ addLayer("incrementy_pi", {
 		let ret=player.incrementy_sp.points;
 		if(ret.lt("1e30"))return new Decimal(0);
 		if(hasUpgrade("incrementy_pi",21)){
-			ret=ret.add(10).log10().div(2).pow(1.5).mul(tmp.incrementy_pi.gainMult).floor();
-			return ret;
+			ret=ret.add(10).log10().div(2).pow(1.5);
+		}else{
+			ret=ret.log10().div(10).pow(0.5);
 		}
-		ret=ret.log10().div(10).pow(0.5).mul(tmp.incrementy_pi.gainMult).floor();
+		if(hasUpgrade("incrementy_o",15))ret=ret.pow(buyableEffect("incrementy_o",12));
+		ret=ret.mul(tmp.incrementy_pi.gainMult).floor();
 		return ret;
 	},
 	getNextAt() {
@@ -3862,6 +3873,8 @@ addLayer("incrementy_o", {
         },
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+		if(hasUpgrade("incrementy_o",11))mult=mult.mul(Decimal.pow(2,player.incrementy_o.upgrades.length));
+		if(player.milestone_m.points.gte(69))mult=mult.mul(1.5)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -3943,63 +3956,61 @@ addLayer("incrementy_o", {
                                 return
                         },
                         unlocked(){ return true },
-                },/*
+                },
                 12: {
                         title: "Pion Boost",
                         display(){
                                 let additional = ""
-                                let ex = layers.o.buyables[12].extra()
+                                let ex = layers.incrementy_o.buyables[12].extra()
                                 if (ex.gt(0)) additional = "+" + formatWhole(ex)
 
-                                let start = "<b><h2>Amount</h2>: " + formatWhole(player.o.buyables[12]) + additional + "</b><br>"
-                                let eff = "<b><h2>Effect</h2>: ^" + format(layers.o.buyables[12].effect(), 4) + " to Pions</b><br>"
-                                let cost = "<b><h2>Cost</h2>: " + format(layers.o.buyables[12].cost()) + " Origins</b><br>"
-                                let eformula = "<b><h2>Effect formula</h2>:<br>" + format(layers.o.buyables[12].effectBase(), 3) + "^x</b><br>"
-                                let end = shiftDown ? eformula : "Shift to see details"
-                                return "<br>" + start + eff + cost + end
+                                let start = "<b><h2>Amount</h2>: " + formatWhole(player.incrementy_o.buyables[12]) + additional + "</b><br>"
+                                let eff = "<b><h2>Effect</h2>: ^" + format(layers.incrementy_o.buyables[12].effect(), 4) + " to Base Pion gain</b><br>"
+                                let cost = "<b><h2>Cost</h2>: " + format(layers.incrementy_o.buyables[12].cost()) + " Origins</b><br>"
+                                return "<br>" + start + eff + cost
                         },
                         cost(a){
-                                let x = getBuyableAmount("o", 12).plus(a)
+                                let x = getBuyableAmount("incrementy_o", 12).plus(a)
                                 let base1 = 3
                                 let exp2 = x.times(x)
                                 return Decimal.pow(base1, exp2)
                         },
                         effectBase(){
                                 let base = new Decimal(1.02)
-                                if (hasUpgrade("o", 32)) base = base.plus(layers.o.buyables[12].total().times(.002))
-                                if (hasUpgrade("f", 13)) base = base.plus(layers.o.buyables[33].total().times(player.f.upgrades.length).div(100))
-                                base = base.plus(layers.f.nadphEffect())
+                                //if (hasUpgrade("o", 32)) base = base.plus(layers.o.buyables[12].total().times(.002))
+                                //if (hasUpgrade("f", 13)) base = base.plus(layers.o.buyables[33].total().times(player.f.upgrades.length).div(100))
+                                //base = base.plus(layers.f.nadphEffect())
                                 return base
                         },
                         effect(){
-                                let x = layers.o.buyables[12].total()
-                                let base = layers.o.buyables[12].effectBase()
+                                let x = layers.incrementy_o.buyables[12].total()
+                                let base = layers.incrementy_o.buyables[12].effectBase()
                                 return Decimal.pow(base, x)
                         },
                         canAfford(){
-                                return player.o.points.gte(layers.o.buyables[12].cost())
+                                return player.incrementy_o.points.gte(layers.incrementy_o.buyables[12].cost())
                         },
                         total(){
-                                return getBuyableAmount("o", 12).plus(layers.o.buyables[12].extra())
+                                return getBuyableAmount("incrementy_o", 12).plus(layers.incrementy_o.buyables[12].extra())
                         },
                         extra(){
                                 let ret = new Decimal(0)
-                                if (hasUpgrade("o", 25)) ret = ret.plus(layers.o.buyables[13].total())
-                                ret = ret.plus(layers.o.buyables[22].total())
-                                ret = ret.plus(layers.o.buyables[32].total())
+                                //if (hasUpgrade("o", 25)) ret = ret.plus(layers.o.buyables[13].total())
+                                //ret = ret.plus(layers.o.buyables[22].total())
+                                //ret = ret.plus(layers.o.buyables[32].total())
                                 return ret
                         },
                         buy(){
-                                let cost = layers.o.buyables[12].cost()
-                                if (!layers.o.buyables[12].canAfford()) return
-                                player.o.buyables[12] = player.o.buyables[12].plus(1)
-                                player.o.points = player.o.points.minus(cost)
+                                let cost = layers.incrementy_o.buyables[12].cost()
+                                if (!layers.incrementy_o.buyables[12].canAfford()) return
+                                player.incrementy_o.buyables[12] = player.incrementy_o.buyables[12].plus(1)
+                                player.incrementy_o.points = player.incrementy_o.points.minus(cost)
                         },
                         buyMax(maximum){       
                                 return
                         },
-                        unlocked(){ return hasUpgrade("o", 22) },
-                },
+                        unlocked(){ return hasUpgrade("incrementy_o", 15) },
+                },/*
                 13: {
                         title: "Stamina Boost",
                         display(){
@@ -4393,23 +4404,37 @@ addLayer("incrementy_o", {
         },
         upgrades:{
                 rows: 5,
-                cols: 5,/*
+                cols: 5,
                 11: {
-                        title: "Ahlfors",
-                        description: "Gain a free Incrementy Stamina level",
-                        cost: new Decimal(1),
-                        unlocked(){
-                                return true
-                        }
+                        title: "Origin Upgrade 11",
+                        description: "Each Origin Upgrade double Origin gain",
+                        cost: new Decimal(10),
+                        unlocked(){return player.tm.buyables[5].gte(44)}
                 },
                 12: {
-                        title: "Douglas",
-                        description: "Multiply all higher row prestige resource gain exponents by 1.001",
-                        cost: new Decimal(1),
-                        unlocked(){
-                                return hasUpgrade("o", 11) || player.c.best.gt(0)
-                        }
+                        title: "Origin Upgrade 12",
+                        description: "For each Origin upgrade, Gain 100% of Origin gain per second",
+                        cost: new Decimal(100),
+                        unlocked(){return player.tm.buyables[5].gte(44)}
                 },
+                13: {
+                        title: "Origin Upgrade 13",
+                        description: "Gain a free Incrementy Stamina level",
+                        cost: new Decimal(1000),
+                        unlocked(){return player.tm.buyables[5].gte(44)}
+                },
+                14: {
+                        title: "Origin Upgrade 14",
+                        description: "Max Pion Effect +2",
+                        cost: new Decimal(10000),
+                        unlocked(){return player.tm.buyables[5].gte(44)}
+                },
+                15: {
+                        title: "Origin Upgrade 15",
+                        description: "Unlock 2nd Origin Buyable",
+                        cost: new Decimal(100000),
+                        unlocked(){return player.tm.buyables[5].gte(44)}
+                },/*
                 13: {
                         title: "Grothendieck",
                         description: "Multiply Super Prestige gain and effect by 2 and gain 5x more SP resets",
@@ -4677,6 +4702,10 @@ addLayer("incrementy_o", {
                         },
                 },
         },
+	passiveGeneration(){
+		if(hasUpgrade("incrementy_o",12))return player.incrementy_o.upgrades.length;
+		return 0;
+	},
 })
 
 

@@ -132,6 +132,7 @@ addLayer("forest_p", {
 				effect() {
 					let base=1e4;
                     let ret = Decimal.pow(base,Decimal.log10(player.modpoints[3].mul(10).add(1)).pow(0.9));
+					if(ret.gte("e176e5"))ret=ret.root(11).mul("e16e6");
 					if(hasUpgrade("forest_p",24))ret=ret.pow(2);
 					ret=ret.pow(player.forest_A.best.pow(0.7).add(1));
 					ret=ret.pow(new Decimal(player.forest_A.upgrades.length).mul(0.25).add(1));

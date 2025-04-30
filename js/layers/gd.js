@@ -1469,8 +1469,10 @@ addLayer("gd_s", {
     baseAmount() {return player.gd_e.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
 	base(){
-		if(hasMilestone("gd_d",4))return 9;
-		return 10;
+		let ret=10;
+		if(hasMilestone("gd_d",4))ret--;
+		if(player.milestone_m.points.gte(66))ret--;
+		return ret;
 	},
     exponent(){
 		ret = new Decimal(1.25)
@@ -1984,11 +1986,12 @@ addLayer("gd_a", {
 		if(hasUpgrade("gd_a",12) && hasUpgrade("gd_r",24))l++;
 		if(hasUpgrade("gd_e",22))l++;
 		if(hasUpgrade("gd_a",13) && hasUpgrade("gd_r",31))l++;
-		return new Decimal([1.5,1.2,1.15,1.1][l]);
+		return new Decimal([1.5,1.2,1.15,1.1,1.08][l]);
 	},
     exponent(){
-		ret = new Decimal(1.1)
-		return ret
+		var l = 0;
+		if(player.milestone_m.points.gte(67))l++;
+		return new Decimal([1.1,1.05][l]);
 	}, // Prestige currency exponent
 	roundUpCost: true,
     resetDescription: "Design ",

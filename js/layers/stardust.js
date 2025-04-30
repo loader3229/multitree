@@ -874,6 +874,9 @@ addLayer("stardust_c", {
 					let ret=player.stardust_c.points.pow(0.5).div(5).add(1);
 					if(player.stardust_c.points.gte(28))ret=player.stardust_c.points.pow(0.5).div(2);
 					if(hasUpgrade("stardust_s",15))ret=ret.pow(2);
+					if(player.stardust_c.points.gte(760))ret=new Decimal(190);
+					if(player.stardust_c.points.gte(950))ret=player.stardust_c.points.div(5);
+					if(player.stardust_c.points.gte(1000))ret=new Decimal(200);
 					return ret;
                 },
                 effectDisplay() { return "^"+format(this.effect()) }, // Add formatting to the effect
@@ -896,7 +899,9 @@ addLayer("stardust_c", {
 					if(player.stardust_c.points.gte(140))ret=player.stardust_c.points.div(20);
 					if(player.stardust_c.points.gte(200))ret=new Decimal(10);
 					if(player.stardust_c.points.gte(500))ret=player.stardust_c.points.div(50);
-					if(player.stardust_c.points.gte(1000))ret=new Decimal(20);
+					if(player.stardust_c.points.gte(760))ret=new Decimal(15.2);
+					if(player.stardust_c.points.gte(836))ret=player.stardust_c.points.div(55);
+					if(player.stardust_c.points.gte(990))ret=new Decimal(18);
 					return ret;
                 },
                 effectDisplay() { return "^"+format(this.effect()) }, // Add formatting to the effect
@@ -944,6 +949,8 @@ addLayer("stardust_c", {
 					if(player.stardust_c.points.gte(129))ret=player.stardust_c.points.div(2.5);
 					if(player.stardust_c.points.gte(200))ret=player.stardust_c.points.pow(2).div(500);
 					if(player.stardust_c.points.gte(250))ret=player.stardust_c.points.div(2);
+					if(player.stardust_c.points.gte(760))ret=new Decimal(380);
+					if(player.stardust_c.points.gte(950))ret=player.stardust_c.points.div(2.5);
 					return ret;
                 },
                 effectDisplay() { return "^"+format(this.effect()) }, // Add formatting to the effect

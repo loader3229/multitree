@@ -451,6 +451,18 @@ addLayer("tptc_b", {
                 cost: new Decimal(552e6),
                 unlocked() { return hasUpgrade("tm",22); }, // The upgrade is only visible when this is true
             },
+			23: {
+				title: "Booster Upgrade 23",
+                description: "The second effect of Boosters in TPTR is better.",
+                cost: new Decimal(17e8),
+                unlocked() { return hasUpgrade("tm",22); }, // The upgrade is only visible when this is true
+            },
+			24: {
+				title: "Booster Upgrade 24",
+                description: "The second effect of Boosters in TPTR is better.",
+                cost: new Decimal(22e8),
+                unlocked() { return hasUpgrade("tm",22); }, // The upgrade is only visible when this is true
+            },
 	 }
 });
 
@@ -619,6 +631,18 @@ addLayer("tptc_g", {
                 cost: new Decimal(555555555),
                 unlocked() { return hasUpgrade("tm",22); }, // The upgrade is only visible when this is true
             },
+			23: {
+				title: "Generator Upgrade 23",
+                description: "The second effect of Generators in TPTR is better.",
+                cost: new Decimal(17e8),
+                unlocked() { return hasUpgrade("tm",22); }, // The upgrade is only visible when this is true
+            },
+			24: {
+				title: "Generator Upgrade 24",
+                description: "The second effect of Generators in TPTR is better.",
+                cost: new Decimal(22e8),
+                unlocked() { return hasUpgrade("tm",22); }, // The upgrade is only visible when this is true
+            },
 	 }
 });
 
@@ -654,9 +678,14 @@ addLayer("tptc_t", {
 		ret=ret.mul(inChallenge("tptr_h",32)?0:1);
 		return ret;
 	},
-	effect1() {
+	effect1(d=0) {
 		let ret = player.tptc_t.points.add(player.tptc_t.buyables[11].mul(inChallenge("tptr_h",31)?0:1));
-		ret=ret.mul(hasUpgrade("tptc_t",15)?1.5:1);
+		if(hasUpgrade("tptc_t",15)){
+			let power=1;
+			if(hasUpgrade("tm",61))power+=(Math.pow(Math.min(player.timePlayed,604800)+d,0.55)/1000);
+			let mult=0.5;
+			ret = ret.add(player.tptc_t.points.pow(1/power).add(player.tptc_t.buyables[11].pow(1/power)).pow(power).mul(mult));
+		}
 		return ret;
 	},
 	effectDescription() { // Optional text to describe the effects
@@ -719,7 +748,7 @@ addLayer("tptc_t", {
                 display() { // Everything else displayed in the buyable button after the title
                     let data = tmp[this.layer].buyables[this.id]
 					let extra2 = tmp[this.layer].effect1.sub(player[this.layer].buyables[this.id]).sub(player[this.layer].points);
-                    return "You have "+formatWhole(player[this.layer].buyables[this.id])+(extra2.gte(1)?("+"+formatWhole(extra2)):"")+" Extra Time Capsules.\n\
+                    return "You have "+formatWhole(player[this.layer].buyables[this.id])+(extra2.gte(1)?("+"+formatWhole(extra2)+(hasUpgrade("tptc_t",15)?(" (+"+format(layers[this.layer].effect1(1).sub(tmp[this.layer].effect1))+"/s)"):"")):"")+" Extra Time Capsules.\n\
 					Cost for Next Extra Time Capsule: " + format(data.cost) + " Boosters";
                 },
                 unlocked() { return player.tptc_h.challenges[11] }, 
@@ -1046,7 +1075,11 @@ addLayer("tptc_s", {
                 effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
 					if(inChallenge("tptr_h", 21))return new Decimal(1);
 					x=x.add(layers.tptc_s.buyables[18].effect());
-					let eff = x.add(1).mul(layers.tptc_s.getEffectiveSE().add(1).pow(hasUpgrade("tptc_s",12)?1:0.7));
+					let se=layers.tptc_s.getEffectiveSE().add(1);
+					let eff = x.add(1).mul(se.pow(hasUpgrade("tptc_s",12)?1:0.7));
+					if(se.gte(1e7)){
+						eff = x.add(1).pow(se.log10()).pow(hasUpgrade("tptc_s",12)?1:0.7);
+					}
 					eff=eff.pow(tmp.tptc_ss.ssEff);
 					eff=eff.pow(tmp.tptc_hs.buyables[13].effect);
 					eff=eff.pow(tmp.tptc_i.buyables[11].effect[this.id]);
@@ -3468,6 +3501,12 @@ addLayer("tptc_hs", {
 				title: "Hyperspace Upgrade 24",
                 description: "Subspace boost Space Building 9.",
                 cost: new Decimal("1e478"),
+                unlocked() { return hasUpgrade("tptr_hn",31); }, // The upgrade is only visible when this is true
+            },
+			25: {
+				title: "Hyperspace Upgrade 25",
+                description: "Subspace boost Space Building 10.",
+                cost: new Decimal("1e497"),
                 unlocked() { return hasUpgrade("tptr_hn",31); }, // The upgrade is only visible when this is true
             },
 		},

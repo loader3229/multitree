@@ -60,7 +60,12 @@
 		,["row",[["upgrade",46],["upgrade",47]]]
 		,["row",[["upgrade",38],["upgrade",39]]]
 		,["row",[["upgrade",56],["upgrade",57],["upgrade",58]]]
-		,["row",[["upgrade",19]]]
+		,["row",[["upgrade",19],["upgrade",29]]]
+		,["row",[["upgrade",48],["upgrade",49]]]
+		,["row",[["upgrade",66],["upgrade",59],["upgrade",67]]]
+		,["row",[["upgrade",68],["upgrade",69]]]
+		,["row",[["upgrade",76],["upgrade",77]]]
+		,["row",[["upgrade",78],["upgrade",79]]]
 		],unlocked(){return player.tm.buyables[0].gte(6) && player.tm.buyables[1].gte(20)}},
 		"Multiplier Upgrades":{
 			content(){
@@ -211,7 +216,7 @@
 					if(x.lt(0.5))return new Decimal(0);
 					if(x.lt(10.5))return Decimal.pow(10,x.pow(2).mul(1e4).add(1e5));
 					if(x.lt(30.5))return Decimal.pow(10,x.pow(6));
-					if(x.lt(42.5))return Decimal.pow(10,x.pow(x.div(5)));
+					if(x.lt(44.5))return Decimal.pow(10,x.pow(x.div(5)));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -261,7 +266,7 @@
 					if(x.lt(0.5))return new Decimal(0);
 					if(x.lt(13.5))return Decimal.pow(10,x.pow(2).mul(1e6).add(x.mul(5e5)).add(2e7));
 					if(x.lt(20.5))return Decimal.pow(10,x.pow(3).mul(1e5));
-					if(x.lt(30.5))return Decimal.pow(10,x.pow(x.div(4)).mul(300));
+					if(x.lt(32.5))return Decimal.pow(10,x.pow(x.div(4)).mul(300));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -286,7 +291,7 @@
 					x=new Decimal(x);
 					if(x.lt(0.5))return new Decimal(0);
 					if(x.lt(15.5))return Decimal.pow(10,x.pow(4).mul(5e8).add(x.mul(5e8)));
-					if(x.lt(16.5))return Decimal.pow(10,x.mul(1.25).pow(5).mul(14687500));
+					if(x.lt(20.5))return Decimal.pow(10,x.mul(1.25).pow(5).mul(14687500));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -312,7 +317,7 @@
 					if(x.lt(0.5))return new Decimal(0);
 					if(x.lt(7.5))return Decimal.pow(10,x.add(1).pow(2).mul(1e11).add(2e12));
 					if(x.lt(9.5))return Decimal.pow(10,x.add(1).pow(2).mul(2e11));
-					if(x.lt(11.5))return Decimal.pow(10,x.pow(x.div(5)).mul(3e11));
+					if(x.lt(13.5))return Decimal.pow(10,x.pow(x.div(5)).mul(3e11));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -337,6 +342,9 @@
                 title: "Upgrade P", // Optional, displayed at the top in a larger font
                 cost(x=player[this.layer].p_upg) { // cost for buying xth buyable, can be an object if there are multiple currencies
 					x=new Decimal(x);
+					if(x.gte(100))return Decimal.pow(10,x.pow(8));
+					if(x.gte(80))return Decimal.pow(10,x.add(1).pow(5).mul(1e5).mul(Decimal.pow(9,x.sub(59).div(40))));
+					if(x.gte(60))return Decimal.pow(10,x.add(1).pow(4).mul(8e6).mul(Decimal.pow(9,x.sub(59).div(40))));
 					if(x.gte(45))return Decimal.pow(10,x.pow(3).mul(5e8));
 					if(x.gte(34))return Decimal.pow(10,x.pow(2).mul(2.25e10));
 					if(x.gte(20))return Decimal.pow(10,x.mul(7.5e11));
@@ -483,7 +491,7 @@
 		}
 	},
 	upgrades:{
-		rows: 5,
+		rows: 6,
 		cols: 5,
 		11: {
 				title: "Multitree Upgrade 11",
@@ -685,8 +693,19 @@
 				effect(){
 					let ret=player.modpoints[7].add(1).pow(2);
 					if(player.milestone_m.best.gte(60))ret = ret.pow(50);
+					if(hasUpgrade("milestone_p",32))ret = ret.pow(2);
+					if(player.milestone_m.best.gte(65))ret = ret.pow(2);
+					if(player.milestone_m.best.gte(70))ret = ret.pow(2.5);
 					return ret;
 				},
+				currencyDisplayName: "points",
+				currencyInternalName: "points",
+            },
+		61: {
+				title: "Multitree Upgrade 61",
+                description: "Time Upgrade 15 is boosted based on time played.",
+                cost: new Decimal("e684e11"),
+                unlocked() { return player[this.layer].points.gte(9); }, // The upgrade is only visible when this is true
 				currencyDisplayName: "points",
 				currencyInternalName: "points",
             },
@@ -1024,6 +1043,27 @@
 				style(){
 					let ret={"width":"200px","height":"200px"};
 					if(hasUpgrade("tm",this.id))ret.backgroundColor="#ffbf00";
+					return ret;
+				}
+            },
+		29: {
+				title: "Rewrite Hyperspace",
+				fullDisplay(){
+					return "<h2>Rewrite Hyperspace</h2><br>Unlock Hyperspace in The Prestige Tree Rewritten.<br>\
+					Costs: "+format(new Decimal("e14e13"))+" points<br>\
+					"+format(new Decimal("e5e2"))+" Hyperspace Energy in The Prestige Tree Classic<br>\
+					"+format(Decimal.pow(10,1e6))+" hours of work in The Game Dev Tree"
+				},canAfford(){
+					return player.points.gte(new Decimal("e14e13")) && 
+					player.tptc_hs.points.gte("e5e2") && 
+					player.modpoints[6].gte(Decimal.pow(10,1e6));
+				},pay(){},
+                unlocked() { return player.tm.buyables[7].gte(30); }, // The upgrade is only visible when this is true
+				currencyDisplayName: "points",
+				currencyInternalName: "points",
+				style(){
+					let ret={"width":"200px","height":"200px"};
+					if(hasUpgrade("tm",this.id))ret.backgroundColor="#ffffff";
 					return ret;
 				}
             },

@@ -359,6 +359,8 @@ addLayer("tptr_b", {
 		let eff2 = player.tptr_b.points.add(1)
 		if(hasChallenge("tptr_h",41))eff2 = Decimal.pow(1.03,player.tptr_b.points);
 		if (hasUpgrade("tptc_b", 22))eff2 = Decimal.pow(1.1,player.tptr_b.points.div(2));
+		if (hasUpgrade("tptc_b", 23))eff2 = Decimal.pow(1.2,player.tptr_b.points.div(2));
+		if (hasUpgrade("tptc_b", 24))eff2 = Decimal.pow(1.3,player.tptr_b.points.div(2));
 		if (hasUpgrade("tptc_b", 13))eff2 = eff2.pow(2)
 		let ret = [Decimal.pow(tmp.tptr_b.effectBase, player.tptr_b.points).max(0).times(hasUpgrade("tptr_p", 43)?tmp.tptr_q.enEff:1), eff2];
 		return ret;
@@ -558,6 +560,8 @@ addLayer("tptr_g", {
 			let eff2 = player.tptr_g.points.add(1)
 		if(hasChallenge("tptr_h",41))eff2 = Decimal.pow(1.03,player.tptr_g.points);
 		if (hasUpgrade("tptc_g", 22))eff2 = Decimal.pow(1.1,player.tptr_g.points.div(2));
+		if (hasUpgrade("tptc_g", 23))eff2 = Decimal.pow(1.2,player.tptr_g.points.div(2));
+		if (hasUpgrade("tptc_g", 24))eff2 = Decimal.pow(1.3,player.tptr_g.points.div(2));
 			if (hasUpgrade("tptc_g", 13))eff2 = eff2.pow(2)
 			
 			
@@ -3804,6 +3808,11 @@ addLayer("tptr_hn", {
 				done() { return player.tm.buyables[7].gte(31) },
 				effectDescription: "Base Honour Requirement is reduced to 1.",
 			},
+			3: {
+				requirementDescription: "TPTR Level 32",
+				done() { return player.tm.buyables[7].gte(32) },
+				effectDescription: "Gain 100% of Honour gain per second.",
+			},
 		},
 		
 		upgrades: {
@@ -4138,5 +4147,8 @@ addLayer("tptr_hn", {
 				formula: "log(O*P+1)*100",
 			},*/
 		},
-
+	 passiveGeneration(){
+		 if(player.tm.buyables[7].gte(32))return 1;
+		 return 0;
+	 }
 })

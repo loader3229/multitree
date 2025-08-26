@@ -442,7 +442,7 @@ addLayer("burning_e", {
     effect() {
         let base=3;
         let ret = Decimal.pow(base,Decimal.log10(player.burning_e.points.add(1)).pow(0.9));
-        //if (ret.gte("1e20000000")) ret = ret.sqrt().times("1e10000000")
+        if (ret.gte("1e1050000")) ret = ret.root(10).times("1e945000")
         return ret;
     },
 

@@ -16,7 +16,7 @@ addLayer("milestone_um", {
 	tabFormat: ["main-display"],
 	branches: ["milestone_m"],
 	update(){
-		player.milestone_um.points=new Decimal([0,0,2,5,9,14,16,18,21,24,28,30,34,39,40,42,45,47][player.tm.buyables[8].toNumber()]);
+		player.milestone_um.points=new Decimal([0,0,2,5,9,14,16,18,21,24,28,30,34,39,40,42,45,47,48,48,50][player.tm.buyables[8].toNumber()]);
 	}
 })
 
@@ -30,7 +30,7 @@ addLayer("milestone_m", {
     }},
     color: "#793784",
     requires(){
-		if(player.milestone_m.points.gte([0,5,10,16,20,25,25,29,32,35,38,40,43,45,48,50,55,60][player.tm.buyables[8].toNumber()]))return new Decimal(Infinity);
+		if(player.milestone_m.points.gte([0,5,10,16,20,25,25,29,32,35,38,40,43,45,48,50,55,60,65,68,70][player.tm.buyables[8].toNumber()]))return new Decimal(Infinity);
 		if(player.milestone_m.points.gte(55))return new Decimal(1);
 		return new Decimal("e2e8");
 	},
@@ -52,6 +52,9 @@ addLayer("milestone_m", {
 		if(player.milestone_m.points.gte(50)){
 			base = new Decimal(3.8);
 			if(player.milestone_m.points.gte(55))base = base.add(0.025);
+			if(player.milestone_m.points.gte(60))base = base.add(0.005);
+			if(player.milestone_m.points.gte(65))base = base.add(0.02);
+			if(player.milestone_m.points.gte(68))base = base.add(0.025);
 		}else{
 			if(player.milestone_m.points.gte(16))base = base.add(0.15);
 			if(player.milestone_m.points.gte(20))base = base.add(0.1);
@@ -750,7 +753,7 @@ addLayer("milestone_m", {
             unlocked() {return player[this.layer].best.gte(43)},
             done() {return player[this.layer].best.gte(44)}, // Used to determine when to give the milestone
             effectDescription:  function(){
-				let ret="First row of Prestige Upgrades is boosted.";
+				let ret="Prestige Upgrade 11-14 are better.";
 				if(player.tm.buyables[8].gte(16))ret+=" (Upgraded)";
 				return ret;
 			},
@@ -785,7 +788,7 @@ addLayer("milestone_m", {
 				return "3rd Milestone's base effect exponent ^1.0005";
 			},
 			style() {
-				if(player.tm.buyables[8].gte(17)&&player[this.layer].best.gte(45)){
+				if(player.tm.buyables[8].gte(17)&&player[this.layer].best.gte(46)){
 					return {backgroundColor: "#cccc00"};
 				}
 				return {};
@@ -800,7 +803,7 @@ addLayer("milestone_m", {
 				return "27th Milestone's effect ^2";
 			},
 			style() {
-				if(player.tm.buyables[8].gte(17)&&player[this.layer].best.gte(45)){
+				if(player.tm.buyables[8].gte(17)&&player[this.layer].best.gte(47)){
 					return {backgroundColor: "#cccc00"};
 				}
 				return {};
@@ -811,7 +814,15 @@ addLayer("milestone_m", {
             unlocked() {return player[this.layer].best.gte(47)},
             done() {return player[this.layer].best.gte(48)}, // Used to determine when to give the milestone
             effectDescription:  function(){
-				return "4th milestone is better.";
+				let ret="4th milestone is better.";
+				if(player.tm.buyables[8].gte(18))ret+=" (Upgraded)";
+				return ret;
+			},
+			style() {
+				if(player.tm.buyables[8].gte(18)&&player[this.layer].best.gte(48)){
+					return {backgroundColor: "#cccc00"};
+				}
+				return {};
 			},
         },
 		{
@@ -819,7 +830,15 @@ addLayer("milestone_m", {
             unlocked() {return player[this.layer].best.gte(48)},
             done() {return player[this.layer].best.gte(49)}, // Used to determine when to give the milestone
             effectDescription:  function(){
-				return "Super-Prestige Upgrade 11-14 are better.";
+				let ret="Super-Prestige Upgrade 11-14 are better.";
+				if(player.tm.buyables[8].gte(20))ret+=" (Upgraded)";
+				return ret;
+			},
+			style() {
+				if(player.tm.buyables[8].gte(20)&&player[this.layer].best.gte(49)){
+					return {backgroundColor: "#cccc00"};
+				}
+				return {};
 			},
         },
 		{
@@ -828,15 +847,15 @@ addLayer("milestone_m", {
             done() {return player[this.layer].best.gte(50)}, // Used to determine when to give the milestone
             effectDescription:  function(){
 				let ret="Milestone Power Boost Pion gain in The Incrementreeverse. Currently: "+format(tmp.milestone_m.milestone50Effect)+"x";
-				//if(player.tm.buyables[8].gte(3))ret+=" (Upgraded)";
+				if(player.tm.buyables[8].gte(20))ret+=" (Upgraded)";
 				return ret;
-			},/*
+			},
 			style() {
-				if(player.tm.buyables[8].gte(3)&&player[this.layer].best.gte(5)){
+				if(player.tm.buyables[8].gte(20)&&player[this.layer].best.gte(50)){
 					return {backgroundColor: "#cccc00"};
 				}
 				return {};
-			},*/
+			},
         },
 		{
 			requirementDescription: "51st MT-Milestone",
@@ -898,7 +917,7 @@ addLayer("milestone_m", {
             unlocked() {return player[this.layer].best.gte(56)},
             done() {return player[this.layer].best.gte(57)}, // Used to determine when to give the milestone
             effectDescription:  function(){
-				return "Unlock more upgrades, including a Multitree-Exclusive Super-Prestige Upgrade.";
+				return "Unlock more upgrades.";
 			},
         },
 		{
@@ -914,13 +933,100 @@ addLayer("milestone_m", {
             unlocked() {return player[this.layer].best.gte(58)},
             done() {return player[this.layer].best.gte(59)}, // Used to determine when to give the milestone
             effectDescription:  function(){
-				return "First row of Prestige Upgrades is boosted.";
+				return "Prestige Upgrade 11-14 are better.";
 			},
         },
 		{
 			requirementDescription: "60th MT-Milestone",
             unlocked() {return player[this.layer].best.gte(59)},
             done() {return player[this.layer].best.gte(60)}, // Used to determine when to give the milestone
+            effectDescription:  function(){
+				return "Multitree Upgrade 55 is better.";
+			},
+        },
+		{
+			requirementDescription: "61st MT-Milestone",
+            unlocked() {return player[this.layer].best.gte(60)},
+            done() {return player[this.layer].best.gte(61)}, // Used to determine when to give the milestone
+            effectDescription:  function(){
+				//if(player.tm.buyables[8].gte(16))return "3rd Milestone's base effect exponent ^1.001 (Upgraded)";
+				return "3rd Milestone's base effect exponent ^1.0001";
+			},/*
+			style() {
+				if(player.tm.buyables[8].gte(16)&&player[this.layer].best.gte(45)){
+					return {backgroundColor: "#cccc00"};
+				}
+				return {};
+			},*/
+        },
+		{
+			requirementDescription: "62nd MT-Milestone",
+            unlocked() {return player[this.layer].best.gte(61)},
+            done() {return player[this.layer].best.gte(62)}, // Used to determine when to give the milestone
+            effectDescription:  function(){
+				return "2nd Milestone is better.";
+			},
+        },
+		{
+			requirementDescription: "63rd MT-Milestone",
+            unlocked() {return player[this.layer].best.gte(62)},
+            done() {return player[this.layer].best.gte(63)}, // Used to determine when to give the milestone
+            effectDescription:  function(){
+				return "4th Milestone is better.";
+			},
+        },
+		{
+			requirementDescription: "64th MT-Milestone",
+            unlocked() {return player[this.layer].best.gte(63)},
+            done() {return player[this.layer].best.gte(64)}, // Used to determine when to give the milestone
+            effectDescription:  function(){
+				return "Prestige Upgrade 11-14 are better.";
+			},
+        },
+		{
+			requirementDescription: "65th MT-Milestone",
+            unlocked() {return player[this.layer].best.gte(64)},
+            done() {return player[this.layer].best.gte(65)}, // Used to determine when to give the milestone
+            effectDescription:  function(){
+				return "Multitree Upgrade 55 is better.";
+			},
+        },
+		{
+			requirementDescription: "66th MT-Milestone",
+            unlocked() {return player[this.layer].best.gte(65)},
+            done() {return player[this.layer].best.gte(66)}, // Used to determine when to give the milestone
+            effectDescription:  function(){
+				return "Enrollments in The Game Dev Tree are cheaper.";
+			},
+        },
+		{
+			requirementDescription: "67th MT-Milestone",
+            unlocked() {return player[this.layer].best.gte(66)},
+            done() {return player[this.layer].best.gte(67)}, // Used to determine when to give the milestone
+            effectDescription:  function(){
+				return "Endpoints in The Game Dev Tree are cheaper.";
+			},
+        },
+		{
+			requirementDescription: "68th MT-Milestone",
+            unlocked() {return player[this.layer].best.gte(67)},
+            done() {return player[this.layer].best.gte(68)}, // Used to determine when to give the milestone
+            effectDescription:  function(){
+				return "4th Milestone is better.";
+			},
+        },
+		{
+			requirementDescription: "69th MT-Milestone lol",
+            unlocked() {return player[this.layer].best.gte(68)},
+            done() {return player[this.layer].best.gte(69)}, // Used to determine when to give the milestone
+            effectDescription:  function(){
+				return "1.5x Origin gain in The Incrementreeverse";
+			},
+        },
+		{
+			requirementDescription: "70th MT-Milestone",
+            unlocked() {return player[this.layer].best.gte(69)},
+            done() {return player[this.layer].best.gte(70)}, // Used to determine when to give the milestone
             effectDescription:  function(){
 				return "Multitree Upgrade 55 is better.";
 			},
@@ -954,7 +1060,9 @@ addLayer("milestone_m", {
 	milestone2Effect(){
 		if(player.milestone_m.best.gte(52)){
 			let base=1.01;
-			let ret = Decimal.pow(base,Decimal.log10(player.points.add(1e10)).pow(hasUpgrade("milestone_sp",25)?0.34:1/3).add(1));
+			let power=hasUpgrade("milestone_sp",25)?0.34:1/3;
+			if(player.milestone_m.best.gte(62))power+=0.01;
+			let ret = Decimal.pow(base,Decimal.log10(player.points.add(1e10)).pow(power).add(1));
 			return ret;
 		}
 		if(player.milestone_m.best.gte(40)){
@@ -973,6 +1081,7 @@ addLayer("milestone_m", {
 		if(player.milestone_m.best.gte(45))m=m.pow(player.tm.buyables[8].gte(16)?1.001:1.0005);
 		if(player.milestone_m.best.gte(46))m=m.pow(player.tm.buyables[8].gte(17)?1.001:1.0005);
 		if(player.milestone_m.best.gte(51))m=m.pow(1.0005);
+		if(player.milestone_m.best.gte(61))m=m.pow(1.0001);
 		var b=new Decimal(2);
 		if(player.milestone_m.best.gte(4))b=b.add(layers.milestone_m.milestone4Effect());
 		if(player.tm.buyables[8].gte(3))m=m.mul(1.016);
@@ -996,6 +1105,9 @@ addLayer("milestone_m", {
 		return Decimal.pow(b,m);
 	},
 	milestone4EffectExponent(){
+		if(player.milestone_m.best.gte(68))return 0.55;
+		if(player.milestone_m.best.gte(63))return 0.54;
+		if(player.tm.buyables[8].gte(18))return 0.534;
 		if(player.milestone_m.best.gte(58))return 0.53;
 		if(player.milestone_m.best.gte(53))return 0.52;
 		if(player.tm.buyables[8].gte(16))return 0.515;
@@ -1044,6 +1156,7 @@ addLayer("milestone_m", {
 		return player.modpoints[8].add(100).log10();
 	},
 	milestone50Effect(){
+		if(player.tm.buyables[8].gte(20))return player.modpoints[8].add(100).log10().pow(3);
 		if(player.milestone_m.best.gte(55))return player.modpoints[8].add(100).log10().pow(2);
 		if(player.milestone_m.best.gte(54))return player.modpoints[8].add(100).log10();
 		return player.modpoints[8].add(100).log10().sqrt();
@@ -1102,6 +1215,7 @@ addLayer("milestone_p", {
 				if(player.milestone_m.points.gte(44))base+=0.1;
 				if(player.tm.buyables[8].gte(16))base+=0.1;
 				if(player.milestone_m.points.gte(59))base+=0.1;
+				if(player.milestone_m.points.gte(64))base+=0.1;
                 let ret = Decimal.pow(base,Decimal.log10(player[this.layer].points.add(1)).pow(0.9).add(1))
                 return ret;
             },
@@ -1121,6 +1235,7 @@ addLayer("milestone_p", {
 				if(player.milestone_m.points.gte(44))base+=0.1;
 				if(player.tm.buyables[8].gte(16))base+=0.1;
 				if(player.milestone_m.points.gte(59))base+=0.05;
+				if(player.milestone_m.points.gte(64))base+=0.05;
                 let ret = Decimal.pow(base,Decimal.log10(player[this.layer].points.add(1)).pow(0.9).add(1))
                 return ret;
             },
@@ -1140,6 +1255,7 @@ addLayer("milestone_p", {
 				if(player.milestone_m.points.gte(44))base+=0.025;
 				if(player.tm.buyables[8].gte(16))base+=0.025;
 				if(player.milestone_m.points.gte(59))base+=0.025;
+				if(player.milestone_m.points.gte(64))base+=0.025;
                 let ret = Decimal.pow(base,Decimal.log10(player[this.layer].points.add(1)).pow(0.9).add(1))
                 return ret;
             },
@@ -1159,6 +1275,7 @@ addLayer("milestone_p", {
 				if(player.milestone_m.points.gte(44))base+=0.025;
 				if(player.tm.buyables[8].gte(16))base+=0.025;
 				if(player.milestone_m.points.gte(59))base+=0.025;
+				if(player.milestone_m.points.gte(64))base+=0.025;
                 let ret = Decimal.pow(base,Decimal.log10(player[this.layer].points.add(1)).pow(0.9).add(1))
                 return ret;
             },
@@ -1204,6 +1321,36 @@ addLayer("milestone_p", {
             description: "21st milestone's effect ^5",
             cost: new Decimal("1e560"),
             unlocked() { return player.milestone_m.points.gte(34)}, // The upgrade is only visible when this is true
+        },
+		31: {
+			title: "Prestige Upgrade 31",
+            description: "Super-Prestige Upgrades 11-14 are better.",
+            cost: new Decimal("1e7000"),
+            unlocked() { return player.milestone_m.points.gte(57)}, // The upgrade is only visible when this is true
+        },
+		32: {
+			title: "Prestige Upgrade 32",
+            description: "Multitree Upgrade 55 is better.",
+            cost: new Decimal("1e7760"),
+            unlocked() { return player.milestone_m.points.gte(57)}, // The upgrade is only visible when this is true
+        },
+		33: {
+			title: "Prestige Upgrade 33",
+            description: "Incrementy Upgrade 13 in the Incrementreeverse is better.",
+            cost: new Decimal("1e8150"),
+            unlocked() { return player.milestone_m.points.gte(57)}, // The upgrade is only visible when this is true
+        },
+		34: {
+			title: "Prestige Upgrade 34",
+            description: "Incrementy Upgrade 13 in the Incrementreeverse is better.",
+            cost: new Decimal("1e8800"),
+            unlocked() { return player.milestone_m.points.gte(57)}, // The upgrade is only visible when this is true
+        },
+		35: {
+			title: "Prestige Upgrade 35",
+            description: "Incrementy Upgrade 13 in the Incrementreeverse is better.",
+            cost: new Decimal("1e8950"),
+            unlocked() { return player.milestone_m.points.gte(57)}, // The upgrade is only visible when this is true
         },
 	},
 	branches: ["milestone_m"],
@@ -1272,6 +1419,8 @@ addLayer("milestone_sp", {
 				if(player.milestone_m.points.gte(31))base+=2.5;
 				if(player.tm.buyables[8].gte(12))base+=2.5;
 				if(player.milestone_m.points.gte(49))base+=2.5;
+				if(hasUpgrade("milestone_p",31))base+=2.5;
+				if(player.tm.buyables[8].gte(20))base+=2.5;
                 let ret = Decimal.pow(base,Decimal.log10(player[this.layer].points.add(1)).pow(0.9).add(1))
                 return ret;
             },
@@ -1287,6 +1436,8 @@ addLayer("milestone_sp", {
 				if(player.milestone_m.points.gte(32))base+=0.5;
 				if(player.tm.buyables[8].gte(12))base+=0.5;
 				if(player.milestone_m.points.gte(49))base+=0.5;
+				if(hasUpgrade("milestone_p",31))base+=0.5;
+				if(player.tm.buyables[8].gte(20))base+=0.5;
                 let ret = Decimal.pow(base,Decimal.log10(player[this.layer].points.add(1)).pow(0.9).add(1))
                 return ret;
             },
@@ -1302,6 +1453,8 @@ addLayer("milestone_sp", {
 				if(player.milestone_m.points.gte(33))base+=0.25;
 				if(player.tm.buyables[8].gte(12))base+=0.25;
 				if(player.milestone_m.points.gte(49))base+=0.25;
+				if(hasUpgrade("milestone_p",31))base+=0.25;
+				if(player.tm.buyables[8].gte(20))base+=0.25;
                 let ret = Decimal.pow(base,Decimal.log10(player[this.layer].points.add(1)).pow(0.9).add(1))
                 return ret;
             },
@@ -1317,6 +1470,8 @@ addLayer("milestone_sp", {
 				if(player.milestone_m.points.gte(34))base+=0.25;
 				if(player.tm.buyables[8].gte(12))base+=0.25;
 				if(player.milestone_m.points.gte(49))base+=0.25;
+				if(hasUpgrade("milestone_p",31))base+=0.25;
+				if(player.tm.buyables[8].gte(20))base+=0.25;
                 let ret = Decimal.pow(base,Decimal.log10(player[this.layer].points.add(1)).pow(0.9).add(1))
                 return ret;
             },

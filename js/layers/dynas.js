@@ -331,7 +331,7 @@ addLayer("dynas_wf", {
 	effect() {
 		let eff = player.dynas_wf.points.pow(1.25);
 		if(hasUpgrade("dynas_wf",23))eff = eff.mul(5);
-		if(hasUpgrade("dynas_wf",32))eff = eff.mul(1.5);
+		if(hasUpgrade("dynas_wf",32))eff = eff.mul(hasUpgrade("dynas_wf",34)?2:1.5);
 		eff = eff.mul(buyableEffect("dynas_bd", 11));
 		eff = eff.mul(buyableEffect("dynas_wf", 21));
 		if (hasUpgrade("dynas_wf", 33)) eff = eff.mul(upgradeEffect("dynas_wf", 33));
@@ -344,7 +344,8 @@ addLayer("dynas_wf", {
 		let wue = wu.add(1).log(1e10).add(1).cbrt().recip();//.pow(tmp.buyables.dynas_wf[23].effect)
 		if(hasUpgrade("dynas_wf",25))wue = wue.sqrt();
 
-		let wde = wd.add(1).pow(0.1).pow(wue)//.pow(tmp.buyables.dynas_wf[22].effect)
+		wue = wue.max(0.001);
+		let wde = wd.add(1).pow(0.1).pow(wue).pow(tmp.dynas_wf.buyables[22].effect)
 		if(hasUpgrade("dynas_wf",21))wde = wde.mul(wue.pow(3).add(1));
 		if (player.dynas_b.banking & 1) wde = wde.pow(0.5)
 		return [wde,wue]
@@ -473,7 +474,10 @@ addLayer("dynas_wf", {
 		},
 		32: {
 				title: "Workfinder Upgrade 32",
-			description: "Find work 1.5 times faster.",
+			description(){
+				if(hasUpgrade("dynas_wf",34))return "Find work 2 times faster.";
+				return "Find work 1.5 times faster.";
+			},
 				cost: new Decimal(66666),
 				unlocked() { return player.tm.buyables[9].gte(11) },
 		},
@@ -487,6 +491,24 @@ addLayer("dynas_wf", {
 					return ret;
 				},
 				effectDisplay() { return "x" + format(this.effect()) },
+		},
+		34: {
+				title: "Workfinder Upgrade 34",
+			description: "Workfinder Upgrade 32 is better, \"Increase workfinders' strength\" buyable is cheaper.",
+				cost: new Decimal(81000),
+				unlocked() { return player.tm.buyables[9].gte(12) },
+		},
+		35: {
+				title: "Workfinder Upgrade 35",
+			description: "Finish work faster based on work finding/finishing speed.",
+				cost: new Decimal(86000),
+			effect() {
+				let ret=layers.dynas_wf.effect().div(layers.dynas_w.effect2()).sqrt().mul(1.1);
+				if(hasUpgrade("dynas_wf",35))ret=ret.pow(2);
+				return ret.max(1.1);
+			},
+				effectDisplay() { return "x" + format(this.effect()) },
+				unlocked() { return player.tm.buyables[9].gte(12) },
 		},
 	},
 
@@ -588,7 +610,7 @@ addLayer("dynas_wf", {
 		21: {
 			title: () => "Increase workfinders' strength",
 			cost(x=player.dynas_wf.buyables[21]) {
-				let cost = Decimal.pow(x.add(100), x.sqrt()).mul(10)
+				let cost = Decimal.pow(x.add(hasUpgrade("dynas_wf",34)?61:100), x.sqrt()).mul(hasUpgrade("dynas_wf",34)?7:10)
 				return cost.floor()
 			},
 			effect(x=player.dynas_wf.buyables[21]) { // Effects of owning x of the items, x is a decimal
@@ -611,35 +633,35 @@ addLayer("dynas_wf", {
 				player[this.layer].points = player[this.layer].points.sub(cost)
 				player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
 			},
-		},/*
+		},
 		22: {
 			title: () => "Increase work quality",
-			cost(x) {
+			cost(x=player.dynas_wf.buyables[22]) {
 				if (x.gte(10)) x = x.pow(x.div(10))
-				let cost = Decimal.pow(1e6, x).mul(1e29)
+				let cost = Decimal.pow(10, x).mul(1e12)
 				return cost.floor()
 			},
-			effect(x) { // Effects of owning x of the items, x is a decimal
+			effect(x=player.dynas_wf.buyables[22]) { // Effects of owning x of the items, x is a decimal
 				let eff = x.mul(0.4).add(1).cbrt()
 				return eff;
 			},
 			display() { // Everything else displayed in the buyable button after the title
-				let data = tmp.buyables[this.layer][this.id]
+				let data = tmp[this.layer].buyables[this.id]
 				return "Level " + player[this.layer].buyables[this.id] + "\n\
-				Cost: " + format(data.cost) + " coins\n\
+				Cost: " + format(data.cost) + " finished work\n\
 				Boosts the finished work's effect.\n\
 				Currently: ^" + format(data.effect)
 			},
-			unl() { return player[this.layer].unl },
+			unlocked() { return player.tm.buyables[9].gte(13) },
 			canAfford() {
-				return player.c.points.gte(tmp.buyables[this.layer][this.id].cost)
+				return player[this.layer].workDone.gte && player[this.layer].workDone.gte(tmp[this.layer].buyables[this.id].cost)
 			},
 			buy() {
-				cost = tmp.buyables[this.layer][this.id].cost
-				player.c.points = player.c.points.sub(cost)
+				cost = tmp[this.layer].buyables[this.id].cost
+				player[this.layer].workDone = player[this.layer].workDone.sub(cost)
 				player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
 			},
-		},
+		},/*
 		23: {
 			title: () => "Increase work planning skills",
 			cost(x) {
@@ -703,7 +725,7 @@ autoPrestige: () => hasMilestone("dynas_w",2),
 						},
                         {}],
 			["display-text",
-				function () {if(player.tm.buyables[9].lt(11))return "More Buyable at The Dynas Tree Level 11"; if(player.tm.buyables[9].lt(9))return "More Buyable at The Dynas Tree Level 9";if(player.tm.buyables[9].lt(8))return "More Buyable at The Dynas Tree Level 8";return "" }],
+				function () { if(player.tm.buyables[9].lt(8))return "More Buyable at The Dynas Tree Level 8";if(player.tm.buyables[9].lt(9))return "More Buyable at The Dynas Tree Level 9";if(player.tm.buyables[9].lt(11))return "More Buyable at The Dynas Tree Level 11";return "" }],
 						"milestones",
 						["clickable",1],
 						"buyables",
@@ -763,6 +785,9 @@ effect2(){
 					
 					eff = eff.mul(buyableEffect("dynas_bd", 11));
 		if (hasUpgrade("dynas_wf", 33)) eff = eff.mul(upgradeEffect("dynas_wf", 33));
+		if (hasUpgrade("dynas_wf", 35)) eff = eff.mul(1.1);
+		if (hasUpgrade("dynas_wf", 35)) eff = eff.max(eff.mul(1.1).mul(layers.dynas_wf.effect()).sqrt());
+		
 	return eff;
 },
 
@@ -1265,7 +1290,7 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 				function () { return "<h3>Bankings</h3><br/><h5>Note: Enabling/Disabling bankings will force a bank reset.<br/>Total multiplier to dynas point generation: ×" + format(tmp.dynas_b.buyables[11].effect.mul(tmp.dynas_b.buyables[12].effect).mul(tmp.dynas_b.buyables[13].effect)) + "</h5>" }],
 			"buyables",
 			["display-text",
-				function () { if(player.tm.buyables[9].lt(12))return "More Banking at The Dynas Tree Level 12";if(player.tm.buyables[9].lt(9))return "More Banking at The Dynas Tree Level 9";if(player.tm.buyables[9].lt(7))return "More Banking at The Dynas Tree Level 7";return player.dynas_b.banking & 16 ? ("You have " + format(player.dynas_b.speed) + " speed.") : "" }],
+				function () { if(player.tm.buyables[9].lt(7))return "More Banking at The Dynas Tree Level 7";if(player.tm.buyables[9].lt(9))return "More Banking at The Dynas Tree Level 9";if(player.tm.buyables[9].lt(12))return "More Banking at The Dynas Tree Level 12";return player.dynas_b.banking & 16 ? ("You have " + format(player.dynas_b.speed) + " speed.") : "" }],
 			, "milestones", "upgrades"],
 /*
 	hotkeys: [

@@ -503,7 +503,7 @@ addLayer("dynas_wf", {
 			description: "Finish work faster based on work finding/finishing speed.",
 				cost: new Decimal(86000),
 			effect() {
-				let ret=layers.dynas_wf.effect().div(layers.dynas_w.effect2()).sqrt().mul(1.1);
+				let ret=layers.dynas_wf.effect().div(layers.dynas_w.effect2()).max(0).sqrt().mul(1.1);
 				if(hasUpgrade("dynas_wf",35))ret=ret.pow(2);
 				return ret.max(1.1);
 			},

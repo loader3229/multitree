@@ -2982,6 +2982,7 @@ addLayer("incrementy_b", {
 							if(hasUpgrade("incrementy_sp",11))ret+=(player.incrementy_sp.upgrades||[]).length;
 							if(hasUpgrade("incrementy_sp",11)&&hasUpgrade("incrementy_sp",31))ret+=(player.incrementy_sp.upgrades||[]).length;
 							if(hasMilestone("incrementy_o",5))ret+=10;
+							if(hasUpgrade("incrementy_o",21))ret+=(player.incrementy_o.upgrades||[]).length;
 							return ret;
 						},
                 },
@@ -3027,6 +3028,7 @@ addLayer("incrementy_b", {
 							if(hasUpgrade("incrementy_sp",11))ret+=(player.incrementy_sp.upgrades||[]).length;
 							if(hasUpgrade("incrementy_sp",11)&&hasUpgrade("incrementy_sp",31))ret+=(player.incrementy_sp.upgrades||[]).length;
 							if(hasMilestone("incrementy_o",5))ret+=10;
+							if(hasUpgrade("incrementy_o",21))ret+=(player.incrementy_o.upgrades||[]).length;
 							return ret;
 						},
                 },
@@ -3070,6 +3072,7 @@ addLayer("incrementy_b", {
 							if(hasUpgrade("incrementy_sp",11))ret+=(player.incrementy_sp.upgrades||[]).length;
 							if(hasUpgrade("incrementy_sp",11)&&hasUpgrade("incrementy_sp",31))ret+=(player.incrementy_sp.upgrades||[]).length;
 							if(hasMilestone("incrementy_o",5))ret+=10;
+							if(hasUpgrade("incrementy_o",21))ret+=(player.incrementy_o.upgrades||[]).length;
 							return ret;
 						},
                 },
@@ -3116,6 +3119,7 @@ addLayer("incrementy_b", {
 							if(hasUpgrade("incrementy_sp",11))ret+=(player.incrementy_sp.upgrades||[]).length;
 							if(hasUpgrade("incrementy_sp",11)&&hasUpgrade("incrementy_sp",31))ret+=(player.incrementy_sp.upgrades||[]).length;
 							if(hasMilestone("incrementy_o",5))ret+=10;
+							if(hasUpgrade("incrementy_o",21))ret+=(player.incrementy_o.upgrades||[]).length;
 							return ret;
 						},
                         countsAs: [11, 12, 21],
@@ -4434,6 +4438,12 @@ addLayer("incrementy_o", {
                         description: "Unlock 2nd Origin Buyable",
                         cost: new Decimal(100000),
                         unlocked(){return player.tm.buyables[5].gte(44)}
+                },
+                21: {
+                        title: "Origin Upgrade 21",
+                        description: "Each Origin Upgrade increase Boson Challenge completion limit by 1",
+                        cost: new Decimal(1e6),
+                        unlocked(){return player.tm.buyables[5].gte(44)}
                 },/*
                 13: {
                         title: "Grothendieck",
@@ -4461,7 +4471,7 @@ addLayer("incrementy_o", {
                 },
                 21: {
                         title: "Novikov",
-                        description: "Keep ¦Ð upgrades, ¦Ð milestones, I upgrades, and multiply Origin gain by 1.5",
+                        description: "Keep ï¿½ï¿½ upgrades, ï¿½ï¿½ milestones, I upgrades, and multiply Origin gain by 1.5",
                         cost: new Decimal(5),
                         unlocked(){
                                 return hasUpgrade("o", 15) || player.c.best.gt(0)

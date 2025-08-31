@@ -252,7 +252,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte("e14e13");
+	return player.points.gte("e152e12");
 }
 
 

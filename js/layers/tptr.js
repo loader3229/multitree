@@ -1382,7 +1382,7 @@ addLayer("tptr_s", {
 				},
 				effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
 					let eff = Decimal.pow(x.plus(1).plus(tmp.tptr_s.freeSpaceBuildings).times(tmp.tptr_s.buildingPower), player.tptr_s.points.sqrt()).times(x.plus(tmp.tptr_s.buyables[this.id].freeLevels).times(tmp.tptr_s.buildingPower).max(1).times(4)).max(1);
-					//if (player.hs.unlocked) eff = eff.pow(buyableEffect("hs", 21));
+					if (player.tptr_hs.unlocked) eff = eff.pow(buyableEffect("tptr_hs", 21));
 					return eff;
                 },
 				display() { // Everything else displayed in the buyable button after the title
@@ -1427,7 +1427,7 @@ addLayer("tptr_s", {
 				},
 				effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
 					let eff = x.plus(tmp.tptr_s.buyables[this.id].freeLevels).times(tmp.tptr_s.buildingPower).sqrt();
-					//if (player.hs.unlocked) eff = eff.pow(buyableEffect("hs", 22));
+					if (player.tptr_hs.unlocked) eff = eff.pow(buyableEffect("tptr_hs", 22));
 					return eff;
                 },
 				display() { // Everything else displayed in the buyable button after the title
@@ -1472,7 +1472,7 @@ addLayer("tptr_s", {
 				},
 				effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
 					let eff = Decimal.pow(1e18, x.plus(tmp.tptr_s.buyables[this.id].freeLevels).times(tmp.tptr_s.buildingPower).pow(0.9))
-					//if (player.hs.unlocked) eff = eff.pow(buyableEffect("hs", 23));
+					if (player.tptr_hs.unlocked) eff = eff.pow(buyableEffect("tptr_hs", 23));
 					//eff = softcap("spaceBuilding3", eff);
 					if(eff.gte(new Decimal("e1e12"))){
 						return Decimal.pow(10, eff.log10().root(3).times(new Decimal("e1e12").log10().pow(2/3)));
@@ -1524,8 +1524,8 @@ addLayer("tptr_s", {
 				effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
 					let ret = x.plus(tmp.tptr_s.buyables[this.id].freeLevels).times(tmp.tptr_s.buildingPower).times((hasUpgrade("tptr_s", 15))?3:1).add(1).pow(1.25);
 					//ret = softcap("spaceBuilding4", ret);
-					//if (player.hs.unlocked) ret = ret.times(buyableEffect("hs", 24));
-					if(ret.gte(1e6))return ret.log10().pow(1).times(new Decimal(1e6).div(new Decimal(1e6).log10().pow(1)));
+					if(ret.gte(1e6))ret=ret.log10().pow(1).times(new Decimal(1e6).div(new Decimal(1e6).log10().pow(1)));
+					if (player.tptr_hs.unlocked) ret = ret.times(buyableEffect("tptr_hs", 24));
 					return ret
 				},
 				display() { // Everything else displayed in the buyable button after the title
@@ -1567,7 +1567,7 @@ addLayer("tptr_s", {
 				effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
 					let ret = x.plus(tmp.tptr_s.buyables[this.id].freeLevels).times(tmp.tptr_s.buildingPower).div(2);
 					if (hasUpgrade("tptr_q", 32)) ret = ret.times(2);
-					//if (player.hs.unlocked) ret = ret.times(buyableEffect("hs", 25));
+					if (player.tptr_hs.unlocked) ret = ret.times(buyableEffect("tptr_hs", 25));
 					return ret.floor();
                 },
 				display() { // Everything else displayed in the buyable button after the title
@@ -4151,4 +4151,446 @@ addLayer("tptr_hn", {
 		 if(player.tm.buyables[7].gte(32))return 1;
 		 return 0;
 	 }
+})
+
+
+
+addLayer("tptr_hs", {
+		name: "tptr_hs", // This is optional, only used in a few places, If absent it just uses the layer id.
+        symbol: "HS", // This appears on the layer's node. Default is the id with the first letter capitalized
+        position: 3, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+        startData() { return {
+            unlocked: false,
+			points: new Decimal(0),
+			best: new Decimal(0),
+			total: new Decimal(0),
+			spentHS: new Decimal(0),
+			buildLim: new Decimal(1),
+			first: 0,
+			auto: false,
+        }},
+		roundUpCost: true,
+        color: "#dfdfff",
+        requires() { return new Decimal(1080) }, // Can be a function that takes requirement increases into account
+        resource: "hyperspace energy", // Name of prestige currency 
+        baseResource: "space energy", // Name of resource prestige is based on
+        baseAmount() {return player.tptr_s.points}, // Get the current amount of baseResource
+        type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+        exponent() { 
+			let exp = new Decimal(60);
+			//if (player.i.buyables[11].gte(4)) exp = exp.times(buyableEffect("s", 19));
+			return exp;
+		}, // Prestige currency exponent
+        gainMult() { // Calculate the multiplier for main currency from bonuses
+            mult = new Decimal(1);
+			//if (hasUpgrade("g", 35) && player.i.buyables[12].gte(2)) mult = mult.times(upgradeEffect("g", 35));
+			//if (hasUpgrade("e", 41) && player.i.buyables[12].gte(3)) mult = mult.times(upgradeEffect("e", 41));
+			//if (hasUpgrade("t", 41) && player.i.buyables[12].gte(4)) mult = mult.times(2.5e3);
+			//if (hasUpgrade("s", 33) && player.i.buyables[12].gte(5)) mult = mult.times(upgradeEffect("s", 33));
+			//if (player.ma.unlocked) mult = mult.times(tmp.ma.effect);
+			//if ((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes("i"):false) mult = mult.times(Decimal.pow(10, player.i.hb));
+            return mult
+        },
+        gainExp() { // Calculate the exponent on main currency from bonuses
+            return new Decimal(1)
+        },
+		effect() {
+			return player.tptr_hs.points.add(1).log10().add(1).log10().mul(2).add(1);
+		},
+		effectDescription() {
+			return "which are adding hyper building limit progress in TPTC by "+format(tmp.tptr_hs.effect.sub(1).mul(100))+"%";
+		},
+        row: 5, // Row the layer is in on the tree (0 is the first row)
+		passiveGeneration() { return 0 },
+        doReset(l){ 
+			if(l=="tptr_p" || l=="tptr_b" || l=="tptr_g" || l=="tptr_t" || l=="tptr_e" || l=="tptr_s" || l=="tptr_sb" || l=="tptr_sg" || l=="tptr_o" || l=="tptr_h" || l=="tptr_q" || l=="tptr_ss" || l=="tptr_m" || l=="tptr_ba" || l=="tptr_ps" || l=="tptr_hn" || l=="tptr_n" || l=="tptr_hs" || l=="tptr_i" || !l.startsWith("tptr_")){return;}
+			var b=new Decimal(player.tptr_hs.best);
+			layerDataReset("tptr_hs",["upgrades","milestones","challenges","buyables","buildLim"]);
+			player.tptr_hs.best=b;
+        },
+        layerShown(){return player.tm.currentTree==7 && hasUpgrade("tm",29) },
+        branches: ["tptr_ss", "tptr_ba"],
+		tabFormat: ["main-display",
+			"prestige-button",
+			"resource-display",
+			["display-text", function() { return "You have "+formatWhole(player.tptr_ba.points)+" Balance Energy" }],
+			"blank",
+			["buyable", 11],
+			"blank", "blank",
+			"respec-button",
+			"blank",
+			["display-text", function() { return "Hyper Building Power: "+format(tmp.tptr_hs.buildingPower.times(100))+"%"}], "blank",
+			["row", [["buyable", 21], ["buyable", 22], ["buyable", 23], ["buyable", 24], ["buyable", 25], ["buyable", 26], ["buyable", 27], ["buyable", 28], ["buyable", 29], ["buyable", 30]]],
+			"blank",
+			["display-text", function() { return "Hyper Building Limit: "+formatWhole(player.tptr_hs.buildLim)+"("+formatWhole(tmp.tptr_hs.buildLimit)+"), Progress to next limit upgrade: "+format(tmp.tptr_hs.realBuildLimit.sub(tmp.tptr_hs.buildLimit).mul(100))+"%" }], "blank",
+            ["display-text",function(){return "Get more Super-Generators to increase the progress.";}],
+			["display-text",function(){return "You have "+formatWhole(player.tptr_hs.spentHS)+" used Hyperspace."}],
+		],
+		update(diff) {
+			player.tptr_hs.buildLim = player.tptr_hs.buildLim.max(tmp.tptr_hs.buildLimit);
+			//if (hasMilestone("ma", 5) && player.hs.auto && player.ma.current!="hs") tmp.hs.buyables[11].buyMax();
+		},
+		hyperspace() {
+			let total = player.tptr_hs.buyables[11];
+			let amt = total.sub(player.tptr_hs.spentHS);
+			return amt;
+		},
+		buildLimScaling() { return /*((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes(this.layer):false)?0.8:*/1 },
+		buildLimit() { return player.tptr_sg.points.sub(21).max(0).plus(1).sqrt().div(tmp.tptr_hs.buildLimScaling).floor() },
+		realBuildLimit() { return player.tptr_sg.points.sub(21).max(0).plus(1).sqrt().div(tmp.tptr_hs.buildLimScaling) },
+		buildingPower() {
+			if (!player[this.layer].unlocked) return new Decimal(0);
+			let pow = new Decimal(1)
+			/*if (hasUpgrade("hn", 54)) pow = pow.times(upgradeEffect("hn", 54));
+			if (player.n.buyables[11].gte(5)) pow = pow.plus(buyableEffect("o", 33));
+			if (player.i.buyables[11].gte(5)) pow = pow.plus(buyableEffect("s", 20));
+			if (player.ma.unlocked) pow = pow.plus(tmp.ma.effect.max(1).log10().div(40));
+			if (hasAchievement("a", 113)) pow = pow.plus(.1);
+			if ((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes(this.layer):false) pow = pow.plus(player.hs.buyables[11].div(1000))
+			if (player.c.unlocked && tmp.c) pow = pow.plus(tmp.c.eff1);*/
+			return pow;
+		},
+		buyables: {
+			rows: 2,
+			cols: 10,
+			showRespec() { return player.tptr_hs.unlocked },
+            respec() { // Optional, reset things and give back your currency. Having this function makes a respec button appear
+				player.tptr_hs.spentHS = new Decimal(0);
+				let totalHS = player[this.layer].buyables[11]
+                resetBuyables(this.layer)
+				player[this.layer].buyables[11] = totalHS;
+                doReset(this.layer, true) // Force a reset
+            },
+            respecText: "Respec Hyper Buildings", // Text on Respec button, optional
+			11: {
+				title: "Hyperspace",
+				scaleRate() {
+					let rate = new Decimal(1);
+					//if (hasUpgrade("t", 32) && player.i.buyables[12].gte(4)) rate = new Decimal(2/3);
+					//if (player.ma.current=="hs") rate = rate.times(4)
+					return rate;
+				},
+				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
+                    x = x.times(tmp[this.layer].buyables[this.id].scaleRate);
+					let y = x;
+					if (y.gte(10)) y = y.pow(5).div(1e4);
+					let cost = {hs: Decimal.pow(10, y.pow(0.9)).floor(), ba: Decimal.pow(10, x.max(x.div(1.5).pow(2)).times(40).add(360))}
+					return cost;
+                },
+				display() { // Everything else displayed in the buyable button after the title
+                    let data = tmp[this.layer].buyables[this.id]
+                    let display = ("Cost: " + formatWhole(data.cost.hs) + " Hyperspace Energy"+"\nCost: "+formatWhole(data.cost.ba)+" Balance Energy"+"\n\
+					Amount: " + formatWhole(tmp.tptr_hs.hyperspace)+" / "+formatWhole(player[this.layer].buyables[this.id]))
+					return display;
+                },
+                unlocked() { return player[this.layer].unlocked }, 
+                canAfford() {
+					let cost = tmp[this.layer].buyables[this.id].cost
+                    return player.tptr_hs.unlocked && player.tptr_hs.points.gte(cost.hs) && player.tptr_ba.points.gte(cost.ba)
+				},
+                buy() { 
+                    cost = tmp[this.layer].buyables[this.id].cost
+					player.tptr_hs.points = player.tptr_hs.points.sub(cost.hs);
+					player.tptr_ba.points = player.tptr_ba.points.sub(cost.ba);
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
+                },
+                buyMax() {
+					let y = player.hs.points.max(1).log10().root(.9);
+					if (y.gte(10)) y = y.times(1e4).root(5);
+					let target = y.min(player.ba.points.max(1).log10().sub(360).div(40).sqrt().times(1.5)).div(tmp[this.layer].buyables[this.id].scaleRate).plus(1).floor();
+					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
+				},
+                style() { return {'height':'200px', 'width':'200px'}},
+			},
+			21: {
+				title: "Primary Hyper Building",
+				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
+                   return new Decimal(1);
+                },
+				display() { // Everything else displayed in the buyable button after the title
+                    let data = tmp[this.layer].buyables[this.id]
+                    let display = ("Cost: 1 Hyperspace\n\
+					Amount: " + formatWhole(player[this.layer].buyables[this.id])+" / "+formatWhole(player.tptr_hs.buildLim)+"\n\n\
+					Primary Space Building Effect: ^"+format(tmp[this.layer].buyables[this.id].effect))
+					return display;
+                },
+                unlocked() { return player[this.layer].unlocked }, 
+                canAfford() {
+					return player.tptr_hs.unlocked && player[this.layer].buyables[this.id].lt(player.tptr_hs.buildLim) && layers.tptr_hs.hyperspace().gte(1);
+				},
+				effect() {
+					return softcap(player[this.layer].buyables[this.id],new Decimal(3),new Decimal(0.2)).times(tmp.tptr_hs.buildingPower).times(5e3).plus(1);
+				},
+                buy() { 
+					player.tptr_hs.spentHS = player.tptr_hs.spentHS.plus(1);
+					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].plus(1).min(player.tptr_hs.buildLim);
+                },
+                buyMax() {
+					// later :)
+				},
+                style() { return {'height':'100px'}},
+				autoed() { return false },
+			},
+			22: {
+				title: "Secondary Hyper Building",
+				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
+                   return new Decimal(1);
+                },
+				display() { // Everything else displayed in the buyable button after the title
+                    let data = tmp[this.layer].buyables[this.id]
+                    let display = ("Cost: 1 Hyperspace\n\
+					Amount: " + formatWhole(player[this.layer].buyables[this.id])+" / "+formatWhole(player.tptr_hs.buildLim)+"\n\n\
+					Secondary Space Building Effect: ^"+format(tmp[this.layer].buyables[this.id].effect))
+					return display;
+                },
+                unlocked() { return player[this.layer].unlocked }, 
+                canAfford() {
+					return player.tptr_hs.unlocked && player[this.layer].buyables[this.id].lt(player.tptr_hs.buildLim) && layers.tptr_hs.hyperspace().gte(1);
+				},
+				effect() {
+					return softcap(player[this.layer].buyables[this.id],new Decimal(3),new Decimal(0.2)).times(tmp.tptr_hs.buildingPower).times(40).plus(1);
+				},
+                buy() { 
+					player.tptr_hs.spentHS = player.tptr_hs.spentHS.plus(1);
+					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].plus(1).min(player.tptr_hs.buildLim);
+                },
+                buyMax() {
+					// later :)
+				},
+                style() { return {'height':'100px'}},
+				autoed() { return false },
+			},
+			23: {
+				title: "Tertiary Hyper Building",
+				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
+                   return new Decimal(1);
+                },
+				display() { // Everything else displayed in the buyable button after the title
+                    let data = tmp[this.layer].buyables[this.id]
+                    let display = ("Cost: 1 Hyperspace\n\
+					Amount: " + formatWhole(player[this.layer].buyables[this.id])+" / "+formatWhole(player.tptr_hs.buildLim)+"\n\n\
+					Tertiary Space Building Effect: ^"+format(tmp[this.layer].buyables[this.id].effect))
+					return display;
+                },
+                unlocked() { return player[this.layer].unlocked }, 
+                canAfford() {
+					return player.tptr_hs.unlocked && player[this.layer].buyables[this.id].lt(player.tptr_hs.buildLim) && layers.tptr_hs.hyperspace().gte(1);
+				},
+				effect() {
+					return softcap(player[this.layer].buyables[this.id],new Decimal(3),new Decimal(0.2)).times(tmp.tptr_hs.buildingPower).pow(0.8).times(800).plus(1);
+				},
+                buy() { 
+					player.tptr_hs.spentHS = player.tptr_hs.spentHS.plus(1);
+					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].plus(1).min(player.tptr_hs.buildLim);
+                },
+                buyMax() {
+					// later :)
+				},
+                style() { return {'height':'100px'}},
+				autoed() { return false },
+			},
+			24: {
+				title: "Quaternary Hyper Building",
+				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
+                   return new Decimal(1);
+                },
+				display() { // Everything else displayed in the buyable button after the title
+                    let data = tmp[this.layer].buyables[this.id]
+                    let display = ("Cost: 1 Hyperspace\n\
+					Amount: " + formatWhole(player[this.layer].buyables[this.id])+" / "+formatWhole(player.tptr_hs.buildLim)+"\n\n\
+					Quaternary Space Building Effect: x"+format(tmp[this.layer].buyables[this.id].effect)+(" (unaffected by softcap)"))
+					return display;
+                },
+                unlocked() { return player[this.layer].unlocked }, 
+                canAfford() {
+					return player.tptr_hs.unlocked && player[this.layer].buyables[this.id].lt(player.tptr_hs.buildLim) && layers.tptr_hs.hyperspace().gte(1);
+				},
+				effect() {
+					return softcap(player[this.layer].buyables[this.id],new Decimal(3),new Decimal(0.2)).times(tmp.tptr_hs.buildingPower).pow(0.8).times(5e3).plus(1);
+				},
+                buy() { 
+					player.tptr_hs.spentHS = player.tptr_hs.spentHS.plus(1);
+					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].plus(1).min(player.tptr_hs.buildLim);
+                },
+                buyMax() {
+					// later :)
+				},
+                style() { return {'height':'100px'}},
+				autoed() { return false },
+			},
+			25: {
+				title: "Quinary Hyper Building",
+				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
+                   return new Decimal(1);
+                },
+				display() { // Everything else displayed in the buyable button after the title
+                    let data = tmp[this.layer].buyables[this.id]
+                    let display = ("Cost: 1 Hyperspace\n\
+					Amount: " + formatWhole(player[this.layer].buyables[this.id])+" / "+formatWhole(player.tptr_hs.buildLim)+"\n\n\
+					Quinary Space Building Effect: x"+format(tmp[this.layer].buyables[this.id].effect))
+					return display;
+                },
+                unlocked() { return player[this.layer].unlocked }, 
+                canAfford() {
+					return player.tptr_hs.unlocked && player[this.layer].buyables[this.id].lt(player.tptr_hs.buildLim) && layers.tptr_hs.hyperspace().gte(1);
+				},
+				effect() {
+					return softcap(player[this.layer].buyables[this.id],new Decimal(3),new Decimal(0.2)).times(tmp.tptr_hs.buildingPower).pow(0.75).times(0.25).plus(1);
+				},
+                buy() { 
+					player.tptr_hs.spentHS = player.tptr_hs.spentHS.plus(1);
+					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].plus(1).min(player.tptr_hs.buildLim);
+                },
+                buyMax() {
+					// later :)
+				},
+                style() { return {'height':'100px'}},
+				autoed() { return false },
+			},/*
+			26: {
+				title: "Senary Hyper Building",
+				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
+                   return new Decimal(1);
+                },
+				display() { // Everything else displayed in the buyable button after the title
+                    let data = tmp[this.layer].buyables[this.id]
+                    let display = ("Cost: 1 Hyperspace\n\
+					Amount: " + formatWhole(player[this.layer].buyables[this.id])+" / "+formatWhole(player.hs.buildLim)+"\n\n\
+					Senary Space Building Effect: ^"+format(tmp[this.layer].buyables[this.id].effect)+(tmp.nerdMode?" (Formula: (level^1.1)/1.2+1)":""))
+					return display;
+                },
+                unlocked() { return player[this.layer].unlocked && player.i.buyables[11].gte(1) }, 
+                canAfford() {
+					return player.hs.unlocked && player[this.layer].buyables[this.id].lt(player.hs.buildLim) && layers.hs.hyperspace().gte(1);
+				},
+				effect() {
+					return softcap("hsBuilds", player[this.layer].buyables[this.id]).times(tmp.hs.buildingPower).pow(1.1).div(1.2).plus(1);
+				},
+                buy() { 
+					player.hs.spentHS = player.hs.spentHS.plus(1);
+					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].plus(1).min(player.hs.buildLim);
+                },
+                buyMax() {
+					// later :)
+				},
+                style() { return {'height':'100px'}},
+				autoed() { return false },
+			},
+			27: {
+				title: "Septenary Hyper Building",
+				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
+                   return new Decimal(1);
+                },
+				display() { // Everything else displayed in the buyable button after the title
+                    let data = tmp[this.layer].buyables[this.id]
+                    let display = ("Cost: 1 Hyperspace\n\
+					Amount: " + formatWhole(player[this.layer].buyables[this.id])+" / "+formatWhole(player.hs.buildLim)+"\n\n\
+					Septenary Space Building Effect: ^"+format(tmp[this.layer].buyables[this.id].effect)+(tmp.nerdMode?" (Formula: level/5+1)":""))
+					return display;
+                },
+                unlocked() { return player[this.layer].unlocked && player.i.buyables[11].gte(2) }, 
+                canAfford() {
+					return player.hs.unlocked && player[this.layer].buyables[this.id].lt(player.hs.buildLim) && layers.hs.hyperspace().gte(1);
+				},
+				effect() {
+					return softcap("hsBuilds", player[this.layer].buyables[this.id]).times(tmp.hs.buildingPower).div(5).plus(1);
+				},
+                buy() { 
+					player.hs.spentHS = player.hs.spentHS.plus(1);
+					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].plus(1).min(player.hs.buildLim);
+                },
+                buyMax() {
+					// later :)
+				},
+                style() { return {'height':'100px'}},
+				autoed() { return false },
+			},
+			28: {
+				title: "Octonary Hyper Building",
+				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
+                   return new Decimal(1);
+                },
+				display() { // Everything else displayed in the buyable button after the title
+                    let data = tmp[this.layer].buyables[this.id]
+                    let display = ("Cost: 1 Hyperspace\n\
+					Amount: " + formatWhole(player[this.layer].buyables[this.id])+" / "+formatWhole(player.hs.buildLim)+"\n\n\
+					Octonary Space Building Effect: x"+format(tmp[this.layer].buyables[this.id].effect)+(tmp.nerdMode?" (Formula: level/1.15+1)":""))
+					return display;
+                },
+                unlocked() { return player[this.layer].unlocked && player.i.buyables[11].gte(3) }, 
+                canAfford() {
+					return player.hs.unlocked && player[this.layer].buyables[this.id].lt(player.hs.buildLim) && layers.hs.hyperspace().gte(1);
+				},
+				effect() {
+					return softcap("hsBuilds", player[this.layer].buyables[this.id]).times(tmp.hs.buildingPower).div(1.15).plus(1);
+				},
+                buy() { 
+					player.hs.spentHS = player.hs.spentHS.plus(1);
+					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].plus(1).min(player.hs.buildLim);
+                },
+                buyMax() {
+					// later :)
+				},
+                style() { return {'height':'100px'}},
+				autoed() { return false },
+			},
+			29: {
+				title: "Nonary Hyper Building",
+				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
+                   return new Decimal(1);
+                },
+				display() { // Everything else displayed in the buyable button after the title
+                    let data = tmp[this.layer].buyables[this.id]
+                    let display = ("Cost: 1 Hyperspace\n\
+					Amount: " + formatWhole(player[this.layer].buyables[this.id])+" / "+formatWhole(player.hs.buildLim)+"\n\n\
+					Nonary Space Building Effect: ^"+format(tmp[this.layer].buyables[this.id].effect)+(tmp.nerdMode?" (Formula: level/5+1)":""))
+					return display;
+                },
+                unlocked() { return player[this.layer].unlocked && player.i.buyables[11].gte(4) && player.ma.current!="hs" }, 
+                canAfford() {
+					return player.hs.unlocked && player[this.layer].buyables[this.id].lt(player.hs.buildLim) && layers.hs.hyperspace().gte(1);
+				},
+				effect() {
+					return softcap("hsBuilds", player[this.layer].buyables[this.id]).times(tmp.hs.buildingPower).div(5).plus(1);
+				},
+                buy() { 
+					player.hs.spentHS = player.hs.spentHS.plus(1);
+					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].plus(1).min(player.hs.buildLim);
+                },
+                buyMax() {
+					// later :)
+				},
+                style() { return {'height':'100px'}},
+				autoed() { return false },
+			},
+			30: {
+				title: "Decary Hyper Building",
+				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
+                   return new Decimal(1);
+                },
+				display() { // Everything else displayed in the buyable button after the title
+                    let data = tmp[this.layer].buyables[this.id]
+                    let display = ("Cost: 1 Hyperspace\n\
+					Amount: " + formatWhole(player[this.layer].buyables[this.id])+" / "+formatWhole(player.hs.buildLim)+"\n\n\
+					Decary Space Building Effect: x"+format(tmp[this.layer].buyables[this.id].effect)+(tmp.nerdMode?" (Formula: sqrt(level)/1.5+1)":""))
+					return display;
+                },
+                unlocked() { return player[this.layer].unlocked && player.i.buyables[11].gte(5) }, 
+                canAfford() {
+					return player.hs.unlocked && player[this.layer].buyables[this.id].lt(player.hs.buildLim) && layers.hs.hyperspace().gte(1);
+				},
+				effect() {
+					return softcap("hsBuilds", player[this.layer].buyables[this.id]).times(tmp.hs.buildingPower).sqrt().div(1.5).plus(1);
+				},
+                buy() { 
+					player.hs.spentHS = player.hs.spentHS.plus(1);
+					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].plus(1).min(player.hs.buildLim);
+                },
+                buyMax() {
+					// later :)
+				},
+                style() { return {'height':'100px'}},
+				autoed() { return false },
+			},*/
+		},
 })

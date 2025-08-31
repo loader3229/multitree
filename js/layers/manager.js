@@ -74,7 +74,7 @@
 				let ret=[["display-text","You can upgrade Multiplier from other trees now!"],["display-text","P="+format(mfot.p,4)],["blank","4px"]];
 				for(i=2;player.tm.points.gte(i);i++){
 					let m=mfot[i];
-					let n=m.log10().root(mfot.p);
+					let n=m.max(1).log10().root(mfot.p);
 					s=s.add(n);
 					ret.push(["row",[["display-text",TREES[i]+" - log10("+format(m,4)+")^(1/P)="+format(n,4)]]]);
 					if(i==6 && !hasUpgrade("tm",55))i++;

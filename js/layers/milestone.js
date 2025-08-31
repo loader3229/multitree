@@ -9,14 +9,14 @@ addLayer("milestone_um", {
     color: "#ccbb00",
     resource: "upgraded milestones", // Name of prestige currency
     type: "none",
-    row: 1,
+    row: 3,
     layerShown(){return player.tm.currentTree==8 && player.tm.buyables[8].gte(2)},
 	doReset(){},
 	effectDescription: "Upgrade the tree to gain more.",
 	tabFormat: ["main-display"],
 	branches: ["milestone_m"],
 	update(){
-		player.milestone_um.points=new Decimal([0,0,2,5,9,14,16,18,21,24,28,30,34,39,40,42,45,47,48,48,50][player.tm.buyables[8].toNumber()]);
+		player.milestone_um.points=new Decimal([0,0,2,5,9,14,16,18,21,24,28,30,34,39,40,42,45,47,48,48,50,52][player.tm.buyables[8].toNumber()]);
 	}
 })
 
@@ -30,7 +30,7 @@ addLayer("milestone_m", {
     }},
     color: "#793784",
     requires(){
-		if(player.milestone_m.points.gte([0,5,10,16,20,25,25,29,32,35,38,40,43,45,48,50,55,60,65,68,70][player.tm.buyables[8].toNumber()]))return new Decimal(Infinity);
+		if(player.milestone_m.points.gte([0,5,10,16,20,25,25,29,32,35,38,40,43,45,48,50,55,60,65,68,70,70][player.tm.buyables[8].toNumber()]))return new Decimal(Infinity);
 		if(player.milestone_m.points.gte(55))return new Decimal(1);
 		return new Decimal("e2e8");
 	},
@@ -862,15 +862,15 @@ addLayer("milestone_m", {
             unlocked() {return player[this.layer].best.gte(50)},
             done() {return player[this.layer].best.gte(51)}, // Used to determine when to give the milestone
             effectDescription:  function(){
-				//if(player.tm.buyables[8].gte(16))return "3rd Milestone's base effect exponent ^1.001 (Upgraded)";
+				if(player.tm.buyables[8].gte(21))return "3rd Milestone's base effect exponent ^1.001 (Upgraded)";
 				return "3rd Milestone's base effect exponent ^1.0005";
-			},/*
+			},
 			style() {
-				if(player.tm.buyables[8].gte(16)&&player[this.layer].best.gte(45)){
+				if(player.tm.buyables[8].gte(21)&&player[this.layer].best.gte(51)){
 					return {backgroundColor: "#cccc00"};
 				}
 				return {};
-			},*/
+			},
         },
 		{
 			requirementDescription: "52nd MT-Milestone",
@@ -878,6 +878,13 @@ addLayer("milestone_m", {
             done() {return player[this.layer].best.gte(52)}, // Used to determine when to give the milestone
             effectDescription:  function(){
 				return "2nd Milestone is better.";
+				if(player.tm.buyables[8].gte(21))ret+=" (Upgraded)";
+			},
+			style() {
+				if(player.tm.buyables[8].gte(21)&&player[this.layer].best.gte(52)){
+					return {backgroundColor: "#cccc00"};
+				}
+				return {};
 			},
         },
 		{
@@ -1061,6 +1068,7 @@ addLayer("milestone_m", {
 		if(player.milestone_m.best.gte(52)){
 			let base=1.01;
 			let power=hasUpgrade("milestone_sp",25)?0.34:1/3;
+            if(player.tm.buyables[8].gte(21))power=0.35;
 			if(player.milestone_m.best.gte(62))power+=0.01;
 			let ret = Decimal.pow(base,Decimal.log10(player.points.add(1e10)).pow(power).add(1));
 			return ret;
@@ -1080,7 +1088,7 @@ addLayer("milestone_m", {
 		if(player.milestone_m.best.gte(41))m=m.pow(player.tm.buyables[8].gte(15)?1.001:1.0005);
 		if(player.milestone_m.best.gte(45))m=m.pow(player.tm.buyables[8].gte(16)?1.001:1.0005);
 		if(player.milestone_m.best.gte(46))m=m.pow(player.tm.buyables[8].gte(17)?1.001:1.0005);
-		if(player.milestone_m.best.gte(51))m=m.pow(1.0005);
+		if(player.milestone_m.best.gte(51))m=m.pow(player.tm.buyables[8].gte(21)?1.001:1.0005);
 		if(player.milestone_m.best.gte(61))m=m.pow(1.0001);
 		var b=new Decimal(2);
 		if(player.milestone_m.best.gte(4))b=b.add(layers.milestone_m.milestone4Effect());
@@ -1174,6 +1182,7 @@ addLayer("milestone_p", {
     }},
     color: "#658091",
     requires(){
+        if(player.tm.buyables[8].gte(21))return new Decimal(1);
 		return new Decimal(1e6);
 	},
     resource: "prestige points", // Name of prestige currency
@@ -1192,7 +1201,7 @@ addLayer("milestone_p", {
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
-		let m=new Decimal(1);
+		let m=layers.milestone_pb.effect();
 		return m;
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)
@@ -1386,6 +1395,7 @@ addLayer("milestone_sp", {
     }},
     color: "#65A0B0",
     requires(){
+        if(player.tm.buyables[8].gte(21))return new Decimal(1);
 		return new Decimal(1e98);
 	}, // Can be a function that takes requirement increases into account
     resource: "super-prestige points", // Name of prestige currency
@@ -1543,10 +1553,132 @@ addLayer("milestone_sp", {
 	softcap:new Decimal(Infinity),
 	softcapPower:new Decimal(1),
 		doReset(l){
-			if(l=="milestone_p" || l=="milestone_sp" || !l.startsWith("milestone_")){return;}
+			if(l=="milestone_p" || l=="milestone_sp" || l=="milestone_pb" || !l.startsWith("milestone_")){return;}
 			var b=new Decimal(player[this.layer].best);
 			layerDataReset(this.layer,["upgrades","milestones","challenges"]);
 			player[this.layer].best=b;
 			return;
 		}
 })
+
+
+addLayer("milestone_pb", {
+    name: "prestige boost", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "PB", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+    }},
+    color: "#70C0A0",
+    requires(){
+		return new Decimal("1e10000");
+	}, // Can be a function that takes requirement increases into account
+    resource: "prestige boosts", // Name of prestige currency
+    baseResource: "prestige points", // Name of resource prestige is based on
+    baseAmount() {return player.milestone_p.points}, // Get the current amount of baseResource
+    type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    row: 2, // Row the layer is in on the tree (0 is the first row)
+    layerShown(){return player.tm.currentTree==8 && player.tm.buyables[8].gte(21)},
+	branches(){
+		return ["milestone_p"];
+	},
+	softcap:new Decimal(Infinity),
+	softcapPower:new Decimal(1),
+	base(){
+		return new Decimal("1e10000");
+	},
+	exponent: function(x){
+		if(x===undefined)x=player.milestone_pb.points;
+		let p=new Decimal(1.1);
+		if(x.gte(15)){
+			let scaling=x.sub(15).pow(2).div(2600);
+			//if(hasUpgrade("t",24))scaling=scaling.div(1.1);
+			//if(player.m.effective.gte(111))scaling=scaling.div(player.um.points.gte(111)?1.07:1.048);
+			//if(player.m.effective.gte(117))scaling=scaling.div(1.02);
+			//if(hasUpgrade("pb",41))scaling=scaling.div(upgradeEffect("pb",41));
+			p=p.add(scaling);
+		}
+		return p;
+	},
+	effect(){
+		let p=0.5;
+		let m=0.015;
+		let e=new Decimal(0);/*
+		if(hasUpgrade("pb",11)){
+			p+=0.1;
+			m+=0.011;
+		}
+		if(hasUpgrade("pb",12)){
+			p+=0.05;
+			m+=0.005;
+		}
+		if(hasUpgrade("pb",13)){
+			p+=0.01;
+			m+=0.00251;
+		}
+		if(hasUpgrade("pb",14)){
+			p+=0.005;
+			m+=0.001;
+		}
+		if(hasUpgrade("pb",21)){
+			p+=0.005;
+		}
+		if(hasUpgrade("pb",22)){
+			m+=0.00275;
+		}
+		if(hasUpgrade("pb",23)){
+			p+=0.01;
+			m+=0.001004;
+		}
+		if(hasUpgrade("pb",24)){
+			m+=0.00201;
+		}
+		if(hasUpgrade("pb",44)){
+			m+=0.000426;
+		}
+		if(player.r.stage==0){
+			if(player.ap.challenges[11]>=1){
+				p+=0.01;
+			}
+			if(player.ap.challenges[11]>=2){
+				m+=0.001;
+			}
+			if(player.ap.challenges[11]>=3){
+				p+=0.01;
+				m+=0.002*(player.ap.challenges[11]-3);
+			}
+		}else{
+			m+=0.002*(player.ap.challenges[11]+layers.ap.freeChall().toNumber());
+		}
+		m+=0.002*(player.ap.challenges[31]+layers.ap.freeChall().toNumber());
+		if(player.ap.challenges[31]>=17&&player.r.stage==0){
+			m+=0.0003;
+		}
+		if(hasUpgrade("hb",12))e=e.add(upgradeEffect("hb",12));
+		if(hasUpgrade("hb",31))e=e.add(upgradeEffect("hb",31));
+		e=e.add(player.ep.buyables[11].gte(7)?tmp.ep.sevenEffect:0)
+		if(player.um.points.gte(50) && player.r.stage>=1){
+			p+=0.02;
+		}
+		//console.log(p,m);*/
+		return new Decimal(1).add(player.milestone_pb.points.add(e).pow(p).mul(m));//.pow(layers.hb.effect());
+	},
+	effectDescription(){
+		return "prestige points ^"+format(layers.milestone_pb.effect(),4)
+	},
+		doReset(l){
+			if(l=="milestone_p" || l=="milestone_sp" || l=="milestone_pb" || !l.startsWith("milestone_")){return;}
+			var b=new Decimal(player[this.layer].best);
+			layerDataReset(this.layer,["upgrades","milestones","challenges"]);
+			player[this.layer].best=b;
+			return;
+		}
+});

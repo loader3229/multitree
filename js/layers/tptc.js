@@ -3156,6 +3156,7 @@ addLayer("tptc_hs", {
 		if(hasUpgrade("tptc_hs",12))ret=ret.add(upgradeEffect("tptc_hs",12));
 		if(hasUpgrade("tptc_i",11))ret=ret.add(upgradeEffect("tptc_i",11));
 		if(player.tptc_mb.buyables[13].gte(2))ret=ret.add(buyableEffect("tptc_ma",12));
+        ret = ret.add(tmp.tptr_hs.effect.sub(1));
 		return ret;
 	},
 	buildLimit(){

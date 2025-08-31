@@ -682,7 +682,7 @@ addLayer("tptc_t", {
 		let ret = player.tptc_t.points.add(player.tptc_t.buyables[11].mul(inChallenge("tptr_h",31)?0:1));
 		if(hasUpgrade("tptc_t",15)){
 			let power=1;
-			if(hasUpgrade("tm",61))power+=(Math.pow(player.timePlayed+d,0.55)/1000);
+			if(hasUpgrade("tm",61))power+=(Math.pow(Math.min(player.timePlayed+d,86400*7),0.55)/1000);
 			let mult=0.5;
 			ret = ret.add(player.tptc_t.points.pow(1/power).add(player.tptc_t.buyables[11].pow(1/power)).pow(power).mul(mult));
 		}

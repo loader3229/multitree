@@ -123,23 +123,18 @@ function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
 
-	let gain = new Decimal(1)
-	if(hasUpgrade("tptc_p",11))gain = gain.mul(upgradeEffect("tptc_p",11));
-	if(hasUpgrade("tptc_p",12))gain = gain.mul(upgradeEffect("tptc_p",12));
-	gain = gain.mul(tmp.tptc_b.effect);
-	gain = gain.mul(tmp.tptc_g.getGenPowerEff);
-	gain = gain.mul(tmp.tptc_t.getEnergyEff);
-	gain = gain.mul(tmp.tptc_s.buyables[11].effect);
-	gain = gain.mul(tmp.tptc_q.quirkEff);
-	if(hasUpgrade("tptc_sp",12))gain = gain.mul(upgradeEffect("tptc_sp",12));
-	gain = gain.mul(tmp.tm.buyables[0].effect);
-	
-	
+	let gain=getMultiplierFromTree1();
+
 	let mfot=getMultiplierFromOtherTrees()[1];
-	
+
+	let power=getMultiplierPowerQ();
+
 	if(inChallenge("tptr_h",22)&&inChallenge("incrementy_am",12))return mfot.pow(0.1);
 	if(inChallenge("tptr_h",22))return mfot;
-	gain=gain.mul(mfot);
+
+	if(hasUpgrade("tm",62)){
+		gain = Decimal.pow(10,gain.max(1).log10().root(power).add(mfot.max(1).log10().root(power)).pow(power));
+	}else gain=gain.mul(mfot);
 	
 	if(inChallenge("incrementy_am",12))gain=gain.pow(0.1);
 	
@@ -150,6 +145,25 @@ function getPointGen() {
 	//if(gain.gte("ee100"))gain = Decimal.pow(10,gain.log10().log10().mul(1e98));
 	
 	gain = gain.mul((sha512_256(localStorage.supporterCode).slice(0,2) == '8f' && window.supporterCodeInput)?2:1);
+	return gain;
+}
+function getMultiplierPowerQ(){
+	let power=new Decimal(1);
+	power=power.add(player.tm.q_upg.mul(0.01));
+	return power;
+}
+function getMultiplierFromTree1() {
+	
+	let gain = new Decimal(1)
+	if(hasUpgrade("tptc_p",11))gain = gain.mul(upgradeEffect("tptc_p",11));
+	if(hasUpgrade("tptc_p",12))gain = gain.mul(upgradeEffect("tptc_p",12));
+	gain = gain.mul(tmp.tptc_b.effect);
+	gain = gain.mul(tmp.tptc_g.getGenPowerEff);
+	gain = gain.mul(tmp.tptc_t.getEnergyEff);
+	gain = gain.mul(tmp.tptc_s.buyables[11].effect);
+	gain = gain.mul(tmp.tptc_q.quirkEff);
+	if(hasUpgrade("tptc_sp",12))gain = gain.mul(upgradeEffect("tptc_sp",12));
+	gain = gain.mul(tmp.tm.buyables[0].effect);
 	return gain;
 }
 
@@ -232,7 +246,7 @@ var displayThings = [
 		}
 		if(getMultiplierFromOtherTrees()[1].gte(2) && (!inChallenge("tptr_h",22))&&(!inChallenge("incrementy_am",12))){
 			if(player.points.gte("e9e15"))return "Point softcap starts at "+format("e9e15");
-			return "Point Multiplier from TPTC: "+format(getPointGen().div(getMultiplierFromOtherTrees()[1]));
+			return "Point Multiplier from TPTC: "+format(getMultiplierFromTree1());
 		}
 		return "";
 	},
@@ -252,7 +266,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte("e152e12");
+	return player.points.gte("e181e12");
 }
 
 

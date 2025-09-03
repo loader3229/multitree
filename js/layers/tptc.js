@@ -463,6 +463,13 @@ addLayer("tptc_b", {
                 cost: new Decimal(22e8),
                 unlocked() { return hasUpgrade("tm",22); }, // The upgrade is only visible when this is true
             },
+			25: {
+				title: "Booster Upgrade 25",
+                description: "The second effect of Boosters in TPTR is better.",
+                cost: new Decimal(3e9),
+                unlocked() { return hasUpgrade("tm",22); }, // The upgrade is only visible when this is true
+            },
+
 	 }
 });
 
@@ -643,6 +650,13 @@ addLayer("tptc_g", {
                 cost: new Decimal(22e8),
                 unlocked() { return hasUpgrade("tm",22); }, // The upgrade is only visible when this is true
             },
+			25: {
+				title: "Generator Upgrade 25",
+                description: "The second effect of Generators in TPTR is better.",
+                cost: new Decimal(3e9),
+                unlocked() { return hasUpgrade("tm",22); }, // The upgrade is only visible when this is true
+            },
+
 	 }
 });
 

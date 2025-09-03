@@ -361,6 +361,7 @@ addLayer("tptr_b", {
 		if (hasUpgrade("tptc_b", 22))eff2 = Decimal.pow(1.1,player.tptr_b.points.div(2));
 		if (hasUpgrade("tptc_b", 23))eff2 = Decimal.pow(1.2,player.tptr_b.points.div(2));
 		if (hasUpgrade("tptc_b", 24))eff2 = Decimal.pow(1.3,player.tptr_b.points.div(2));
+		if (hasUpgrade("tptc_b", 25))eff2 = Decimal.pow(1.51,player.tptr_b.points.div(2));
 		if (hasUpgrade("tptc_b", 13))eff2 = eff2.pow(2)
 		let ret = [Decimal.pow(tmp.tptr_b.effectBase, player.tptr_b.points).max(0).times(hasUpgrade("tptr_p", 43)?tmp.tptr_q.enEff:1), eff2];
 		return ret;
@@ -562,6 +563,7 @@ addLayer("tptr_g", {
 		if (hasUpgrade("tptc_g", 22))eff2 = Decimal.pow(1.1,player.tptr_g.points.div(2));
 		if (hasUpgrade("tptc_g", 23))eff2 = Decimal.pow(1.2,player.tptr_g.points.div(2));
 		if (hasUpgrade("tptc_g", 24))eff2 = Decimal.pow(1.3,player.tptr_g.points.div(2));
+		if (hasUpgrade("tptc_g", 25))eff2 = Decimal.pow(1.51,player.tptr_g.points.div(2));
 			if (hasUpgrade("tptc_g", 13))eff2 = eff2.pow(2)
 			
 			

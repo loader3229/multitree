@@ -962,7 +962,8 @@ addLayer("incrementy_m", {
 		else if(!hasUpgrade("incrementy_pi",15) && ret.gte("e36e6"))ret = Decimal.pow(10, ret.log10().div(36).log10().mul(6e6));
 		else if(!(hasMilestone("incrementy_o",0)) && ret.gte("e4e7"))ret = Decimal.pow(10, ret.log10().div(4).log10().div(7).mul(4e7));
 		else if(!(hasMilestone("incrementy_o",2)) && ret.gte("e1e8"))ret = Decimal.pow(10, ret.log10().root(8).mul(1e7));
-		else if(ret.gte("e1e8"))ret = Decimal.pow(10, ret.log10().root(4).mul(1e6));
+		else if(!(hasUpgrade("tm",63)) && ret.gte("e1e8"))ret = Decimal.pow(10, ret.log10().root(4).mul(1e6));
+		else if(ret.gte("e125e6"))ret = Decimal.pow(10, ret.log10().root(3).mul(25e4));
 		ret = ret.times(tmp[this.layer].gainMult);
 		return ret;
 	},

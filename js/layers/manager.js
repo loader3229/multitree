@@ -7,6 +7,7 @@
 		points: new Decimal(1),
 		currentTree: 1,
 		p_upg: new Decimal(0),
+		q_upg: new Decimal(0),
     }},
     color: "#FFFFFF",
     requires: new Decimal(10), // Can be a function that takes requirement increases into account
@@ -71,7 +72,11 @@
 			content(){
 				let mfot=getMultiplierFromOtherTrees();
 				let s=new Decimal(0);
-				let ret=[["display-text","You can upgrade Multiplier from other trees now!"],["display-text","P="+format(mfot.p,4)],["blank","4px"]];
+				let ret=[["display-text","You can upgrade multiplier from other trees now!"],["display-text","P="+format(mfot.p,4)],["blank","4px"]];
+				if(hasUpgrade("tm",62)){
+					ret[0][1]="You can upgrade all point multipliers now!";
+					ret[2]=["display-text","Q="+format(getMultiplierPowerQ(),4)]
+				}
 				for(i=2;player.tm.points.gte(i);i++){
 					let m=mfot[i];
 					let n=m.max(1).log10().root(mfot.p);
@@ -80,8 +85,19 @@
 					if(i==6 && !hasUpgrade("tm",55))i++;
 				}
 				ret.push(["row",[["display-text","-------------------------------------------------------------"]]]);
-				ret.push(["row",[["display-text","Sum: "+format(s,4)]]]);
-				ret.push(["row",[["display-text","Total Multiplier: 10^("+format(s,4)+"^P×"+format(mfot[0],4)+")="+format(mfot[1],4)]]]);
+				ret.push(["row",[["display-text",(hasUpgrade("tm",62)?"Sum of Other Trees: ":"Sum: ")+format(s,4)]]]);
+				if(hasUpgrade("tm",62)){
+					let N=getMultiplierFromTree1().max(1).log10().root(getMultiplierPowerQ());
+					let M=Decimal.pow(10,mfot[1].max(1).log10().root(getMultiplierPowerQ()).add(N).pow(getMultiplierPowerQ()));
+					let P=mfot[1].max(1).log10().root(getMultiplierPowerQ());
+					ret.push(["row",[["display-text","Adjusted Sum: "+format(s,4)+"^(P/Q)="+format(P,4)]]]);
+					ret.push(["row",[["display-text","-------------------------------------------------------------"]]]);
+					ret.push(["row",[["display-text",TREES[1]+" - log10("+format(getMultiplierFromTree1(),4)+")^(1/Q)="+format(N,4)]]]);
+					ret.push(["row",[["display-text","Total Multiplier: 10^(("+format(P,4)+"+"+format(N,4)+")^Q)="+format(M,4)]]]);
+
+				}else{
+					ret.push(["row",[["display-text","Total Multiplier: 10^("+format(s,4)+"^P×"+format(mfot[0],4)+")="+format(mfot[1],4)]]]);
+				}
 				ret.push(["row",[["display-text","-------------------------------------------------------------"]]]);
 				ret.push(["clickable",0]);
 				return ret;
@@ -291,7 +307,7 @@
 					x=new Decimal(x);
 					if(x.lt(0.5))return new Decimal(0);
 					if(x.lt(15.5))return Decimal.pow(10,x.pow(4).mul(5e8).add(x.mul(5e8)));
-					if(x.lt(20.5))return Decimal.pow(10,x.mul(1.25).pow(5).mul(14687500));
+					if(x.lt(21.5))return Decimal.pow(10,x.mul(1.25).pow(5).mul(14687500));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -339,8 +355,11 @@
 	},
 	clickables: {
             0: {
-                title: "Upgrade P", // Optional, displayed at the top in a larger font
-                cost(x=player[this.layer].p_upg) { // cost for buying xth buyable, can be an object if there are multiple currencies
+                title(){
+			if(hasUpgrade("tm",62) && (this.cost_p().gte(this.cost_q())))return "Upgrade Q";
+			return "Upgrade P";
+		},
+                cost_p(x=player[this.layer].p_upg) { // cost for buying xth buyable, can be an object if there are multiple currencies
 					x=new Decimal(x);
 					if(x.gte(100))return Decimal.pow(10,x.pow(8));
 					if(x.gte(80))return Decimal.pow(10,x.add(1).pow(5).mul(1e5).mul(Decimal.pow(9,x.sub(59).div(40))));
@@ -352,18 +371,29 @@
 					if(x.gte(5))return Decimal.pow(10,x.mul(2e11).add(7.8e12));
 					return Decimal.pow(10,x.mul(1.6e11).add(7.8e12));
                 },
+                cost_q(x=player[this.layer].q_upg) { // cost for buying xth buyable, can be an object if there are multiple currencies
+					x=new Decimal(x);
+					return Decimal.pow(10,x.mul(4.05e12).add(1.5e14));
+                },
                 display() { // Everything else displayed in the buyable button after the title
                     let data = tmp[this.layer].clickables[this.id]
-                    return "Level: "+formatWhole(player[this.layer].p_upg)+"<br>Cost: "+format(data.cost)+" points";
+			if(hasUpgrade("tm",62)){
+				return "Level of P: "+formatWhole(player[this.layer].p_upg)+"<br>Level of Q: "+formatWhole(player[this.layer].q_upg)+"<br>Cost of P: "+format(data.cost_p)+" points"+"<br>Cost of Q: "+format(data.cost_q)+" points";
+
+			}
+                    return "Level: "+formatWhole(player[this.layer].p_upg)+"<br>Cost: "+format(data.cost_p)+" points";
                 },
                 unlocked() {return hasUpgrade("tm",51);}, 
 				canClick(){
 					let data = tmp[this.layer].clickables[this.id]
-					return player.points.gte(data.cost)
+					if(hasUpgrade("tm",62))return (player.points.gte(data.cost_p) || player.points.gte(data.cost_q))
+					return player.points.gte(data.cost_p)
 				},
 				onClick(){
 					let data = tmp[this.layer].clickables[this.id]
-					if(player.points.gte(this.cost()))player[this.layer].p_upg=player[this.layer].p_upg.add(1);
+					if(player.points.gte(this.cost_p()))player[this.layer].p_upg=player[this.layer].p_upg.add(1);
+					if(player.points.gte(this.cost_q()) && hasUpgrade("tm",62))player[this.layer].q_upg=player[this.layer].q_upg.add(1);
+
 				},
                 style: {'height':'100px','width':'150px'},
             },
@@ -706,6 +736,22 @@
                 description: "Time Upgrade 15 is boosted based on time played.",
                 cost: new Decimal("e684e11"),
                 unlocked() { return player[this.layer].points.gte(9); }, // The upgrade is only visible when this is true
+				currencyDisplayName: "points",
+				currencyInternalName: "points",
+            },
+		62: {
+				title: "Multitree Upgrade 62",
+                description: "Unlock another Multiplier Upgrade.",
+                cost: new Decimal("e152e12"),
+                unlocked() { return hasUpgrade(this.layer,51); }, // The upgrade is only visible when this is true
+				currencyDisplayName: "points",
+				currencyInternalName: "points",
+            },
+		63: {
+				title: "Multitree Upgrade 63",
+                description: "Matter Gain Softcap is weaker in The Incrementreeverse.",
+                cost: new Decimal("e160e12"),
+                unlocked() { return hasUpgrade(this.layer,51); }, // The upgrade is only visible when this is true
 				currencyDisplayName: "points",
 				currencyInternalName: "points",
             },

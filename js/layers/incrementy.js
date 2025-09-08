@@ -463,6 +463,7 @@ addLayer("incrementy_i", {
 				free(){
 					let ret=new Decimal(0);
 					if(hasUpgrade("incrementy_o",13))ret=ret.add(1);
+					if(hasUpgrade("incrementy_o",22))ret=ret.add((player.incrementy_o.upgrades||[]).length);
 					return ret;
 				},
         },
@@ -3880,6 +3881,7 @@ addLayer("incrementy_o", {
         mult = new Decimal(1)
 		if(hasUpgrade("incrementy_o",11))mult=mult.mul(Decimal.pow(2,player.incrementy_o.upgrades.length));
 		if(player.milestone_m.points.gte(69))mult=mult.mul(1.5)
+		if(player.milestone_pm.best.gte(1))mult = mult.mul(tmp.milestone_pm.milestone1Effect);
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -4444,6 +4446,12 @@ addLayer("incrementy_o", {
                         title: "Origin Upgrade 21",
                         description: "Each Origin Upgrade increase Boson Challenge completion limit by 1",
                         cost: new Decimal(1e6),
+                        unlocked(){return player.tm.buyables[5].gte(44)}
+                },
+                22: {
+                        title: "Origin Upgrade 22",
+                        description: "Get a free Incrementy Stamina level per Origin Upgrade",
+                        cost: new Decimal(1e7),
                         unlocked(){return player.tm.buyables[5].gte(44)}
                 },/*
                 13: {

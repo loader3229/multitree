@@ -282,7 +282,8 @@
 					if(x.lt(0.5))return new Decimal(0);
 					if(x.lt(13.5))return Decimal.pow(10,x.pow(2).mul(1e6).add(x.mul(5e5)).add(2e7));
 					if(x.lt(20.5))return Decimal.pow(10,x.pow(3).mul(1e5));
-					if(x.lt(32.5))return Decimal.pow(10,x.pow(x.div(4)).mul(300));
+					if(x.lt(31.5))return Decimal.pow(10,x.pow(x.div(4)).mul(300));
+					if(x.lt(33.5))return Decimal.pow(10,x.pow(6).mul(168600));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -307,7 +308,7 @@
 					x=new Decimal(x);
 					if(x.lt(0.5))return new Decimal(0);
 					if(x.lt(15.5))return Decimal.pow(10,x.pow(4).mul(5e8).add(x.mul(5e8)));
-					if(x.lt(21.5))return Decimal.pow(10,x.mul(1.25).pow(5).mul(14687500));
+					if(x.lt(22.5))return Decimal.pow(10,x.mul(1.25).pow(5).mul(14687500));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -333,7 +334,7 @@
 					if(x.lt(0.5))return new Decimal(0);
 					if(x.lt(7.5))return Decimal.pow(10,x.add(1).pow(2).mul(1e11).add(2e12));
 					if(x.lt(9.5))return Decimal.pow(10,x.add(1).pow(2).mul(2e11));
-					if(x.lt(13.5))return Decimal.pow(10,x.pow(x.div(5)).mul(3e11));
+					if(x.lt(12.5))return Decimal.pow(10,x.pow(x.div(5)).mul(3e11));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -373,6 +374,8 @@
                 },
                 cost_q(x=player[this.layer].q_upg) { // cost for buying xth buyable, can be an object if there are multiple currencies
 					x=new Decimal(x);
+					if(x.gte(100))return Decimal.pow(10,x.pow(8));
+					if(x.gte(16))return Decimal.pow(10,x.pow(2).mul(9e11));
 					return Decimal.pow(10,x.mul(4.05e12).add(1.5e14));
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -1104,7 +1107,7 @@
 					player.tptc_hs.points.gte("e5e2") && 
 					player.modpoints[6].gte(Decimal.pow(10,1e6));
 				},pay(){},
-                unlocked() { return player.tm.buyables[7].gte(30); }, // The upgrade is only visible when this is true
+                unlocked() { return player.tm.buyables[7].gte(32); }, // The upgrade is only visible when this is true
 				currencyDisplayName: "points",
 				currencyInternalName: "points",
 				style(){
@@ -1113,6 +1116,29 @@
 					return ret;
 				}
             },
+		48: {
+				title: "Add Nebula",
+				fullDisplay(){
+					return "<h2>Add Nebula</h2><br>Unlock Nebula in The Prestige Tree Rewritten.<br>\
+					Costs: "+format(new Decimal("e18e13"))+" points<br>\
+					"+format(new Decimal("e72e8"))+" Life Essence in The Prestige Tree Classic<br>\
+					"+format(Decimal.pow(10,2e6))+" hours of work in The Game Dev Tree"
+				},canAfford(){
+					return player.points.gte(new Decimal("e18e13")) && 
+					player.tptc_l.points.gte("e72e8") && 
+					player.modpoints[6].gte(Decimal.pow(10,2e6));
+				},pay(){},
+                unlocked() { return player.tm.buyables[7].gte(33); }, // The upgrade is only visible when this is true
+				currencyDisplayName: "points",
+				currencyInternalName: "points",
+				style(){
+					let ret={"width":"200px","height":"200px"};
+					if(hasUpgrade("tm",this.id))ret.backgroundColor="#430082";
+					if(hasUpgrade("tm",this.id))ret.color="white";
+					return ret;
+				}
+            },
+
 	}
 });
 

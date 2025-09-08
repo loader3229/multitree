@@ -2373,6 +2373,7 @@ addLayer("tptc_m", {
                 unlocked() { return hasUpgrade("tm",56); }, // The upgrade is only visible when this is true
 				effect() { // Calculate bonuses from the upgrade. Can return a single value or an object with multiple values
 					let ret=player.tptr_m.points.add(1);
+                    if (tmp.tptr_ps.impr[12].unlocked) ret = ret.times(tmp.tptr_ps.impr[12].effect);
 					if(ret.gte("e25000000"))ret = Decimal.pow(10,ret.log10().div(25000000).cbrt().mul(25000000));
 					return ret;
                 },

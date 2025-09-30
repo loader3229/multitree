@@ -1702,7 +1702,7 @@ addLayer("tptc_h", {
 	}},
 	color: "#a14040",
     requires: function(){
-		return new Decimal(2e4);
+		return new Decimal(1e4);
 	},
     resource: "hindrance spirit",
     baseResource: "time energy", 

@@ -1,5 +1,6 @@
 var player;
 var needCanvasUpdate = true;
+var currentTreeTemp = -1;
 
 // Don't change this
 const TMT_VERSION = {
@@ -215,7 +216,15 @@ function doReset(layer, force=false) {
 		if (row >= layers[layerResetting].row && (!force || layerResetting != layer)) completeChallenge(layerResetting)
 	}
 
-	player.points = (row == 0 ? decimalZero : getStartPoints())
+	if(layer.startsWith("tptc_"))player.points = new Decimal(0)
+	if(layer.startsWith("stardust_"))player.modpoints[2] = new Decimal(0)
+	if(layer.startsWith("forest_"))player.modpoints[3] = new Decimal(0)
+	if(layer.startsWith("burning_"))player.modpoints[4] = new Decimal(0)
+	if(layer.startsWith("incrementy_"))player.modpoints[5] = new Decimal(0)
+	if(layer.startsWith("gd_"))player.modpoints[6] = new Decimal(0)
+	if(layer.startsWith("tptr_"))player.modpoints[7] = new Decimal(0)
+	if(layer.startsWith("milestone_"))player.modpoints[8] = new Decimal(0)
+	if(layer.startsWith("dynas_"))player.modpoints[9] = new Decimal(0)
 
 	for (let x = row; x >= 0; x--) rowReset(x, layer)
 	for (r in OTHER_LAYERS){
@@ -254,6 +263,10 @@ function startChallenge(layer, x) {
 		enter = true
 	}	
 	doReset(layer, true)
+	if(layers[layer].challenges[x].resetPoints)player.points = new Decimal(0);
+	if(layer == "incrementy_q")doReset("incrementy_am",true);
+	if(layer == "incrementy_b")doReset("incrementy_am",true);
+	if(layer == "tptr_h")doReset("tptc_ge",true);
 	if(enter) {
 		Vue.set(player[layer], "activeChallenge", x)
 		run(layers[layer].challenges[x].onEnter, layers[layer].challenges[x])

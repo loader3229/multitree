@@ -1775,7 +1775,7 @@ addLayer("tptc_h", {
 				},
                 unlocked() { return player.tm.buyables[1].gte(7) },
                 goal: function(){
-					return new Decimal("1e320");
+					return new Decimal("1e300");
 				},
                 currencyDisplayName: "points",
                 currencyInternalName: "points",

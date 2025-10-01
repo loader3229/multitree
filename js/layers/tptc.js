@@ -1856,6 +1856,7 @@ addLayer("tptc_q", {
 	}},
 	color: "#ff2bf2",
     requires: function(){
+		if(player[this.layer].best.gte(1e4))return new Decimal(1e12);
 		return new Decimal(1e20);
 	},
     resource: "quirks",
@@ -1893,6 +1894,10 @@ addLayer("tptc_q", {
             0: {requirementDescription: "1 Quirks",
                 done() {return player[this.layer].best.gte(1)}, // Used to determine when to give the milestone
                 effectDescription: "Gain 100% of Enhance Point gain per second.",
+            },
+            1: {requirementDescription: "1e4 Quirks",
+                done() {return player[this.layer].best.gte(1e4)}, // Used to determine when to give the milestone
+                effectDescription: "Reduce quirk requirement.",
             },
 	},
 	

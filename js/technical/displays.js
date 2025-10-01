@@ -67,7 +67,7 @@ function updateOomps(diff)
 	if (player.points.lte(new Decimal(1e100)) || diff == 0) return
 
 	var pp = new Decimal(player.points);
-	var lp = tmp.other.lastPoints || new Decimal(1e10);
+	var lp = (tmp.other.lastPoints || new Decimal(1)).max(1);
 	if (pp.gt(lp)) {
 		if (pp.gte("10^^8")) {
 			pp = pp.slog(1e10)
@@ -75,9 +75,9 @@ function updateOomps(diff)
 			tmp.other.oomps = pp.sub(lp).div(diff)
 			tmp.other.oompsMag = -1;
 		} else {
-			while (pp.div(lp).log(10).div(diff).gte("100") && tmp.other.oompsMag <= 5 && lp.gt(0)) {
-				pp = pp.log(10)
-				lp = lp.log(10)
+			while (pp.div(lp.max(1)).max(1).log(10).max(1).div(diff).gte("100") && tmp.other.oompsMag <= 5 && lp.gt(0)) {
+				pp = pp.max(1).log(10).max(1)
+				lp = lp.max(1).log(10).max(1)
 				tmp.other.oomps = pp.sub(lp).div(diff)
 				tmp.other.oompsMag++;
 			}

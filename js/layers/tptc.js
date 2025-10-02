@@ -1856,6 +1856,7 @@ addLayer("tptc_q", {
 	}},
 	color: "#ff2bf2",
     requires: function(){
+		if(player[this.layer].best.gte(1e14))return new Decimal(1e6);
 		if(player[this.layer].best.gte(1e4))return new Decimal(1e12);
 		return new Decimal(1e20);
 	},
@@ -1897,6 +1898,10 @@ addLayer("tptc_q", {
             },
             1: {requirementDescription: "1e4 Quirks",
                 done() {return player[this.layer].best.gte(1e4)}, // Used to determine when to give the milestone
+                effectDescription: "Reduce quirk requirement.",
+            },
+            2: {requirementDescription: "1e14 Quirks",
+                done() {return player[this.layer].best.gte(1e14)}, // Used to determine when to give the milestone
                 effectDescription: "Reduce quirk requirement.",
             },
 	},
@@ -2145,6 +2150,7 @@ addLayer("tptc_m", {
 	}},
 	color: "#eb34c0",
     requires: function(){
+		if(player[this.layer].best.gte(1e5))return new Decimal(1e5);
 		return new Decimal(1e7);
 	},
     resource: "magic",
@@ -2178,6 +2184,11 @@ addLayer("tptc_m", {
                 done() {return player[this.layer].best.gte(1)}, // Used to determine when to give the milestone
                 effectDescription: "Autobuy Time Capsules/Super Boosters, Time Capsules/Super Boosters resets nothing. Autobuy Extra Time Capsules.",
             },
+            1: {requirementDescription: "1e5 Magic",
+                done() {return player[this.layer].best.gte(1e5)}, // Used to determine when to give the milestone
+                effectDescription: "Reduce magic requirement.",
+            },
+
 	},
 	clickables: {
             rows: 1,

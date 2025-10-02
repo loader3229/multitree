@@ -78,7 +78,7 @@ addLayer("stardust_s", {
 					if(hasUpgrade("stardust_s",43))ret=ret.pow(2);
                     return ret;
                 },
-                effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
+                effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
             },
 			13: {
 				title: "Stardust Upgrade 13",
@@ -89,7 +89,7 @@ addLayer("stardust_s", {
 					let ret=Decimal.pow(2,player.tm.buyables[2].pow(1.5));
 					return ret;
                 },
-                effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
+                effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
             },
 			21: {
 				title: "Stardust Upgrade 21",
@@ -103,7 +103,7 @@ addLayer("stardust_s", {
 					if(hasUpgrade("stardust_c",35))ret=ret.pow(upgradeEffect("stardust_c",35));
                     return ret;
                 },
-                effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
+                effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
             },
 			22: {
 				title: "Stardust Upgrade 22",
@@ -116,7 +116,7 @@ addLayer("stardust_s", {
 					if(hasUpgrade("stardust_c",32))ret=ret.pow(upgradeEffect("stardust_c",32));
                     return ret;
                 },
-                effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
+                effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
             },
 			23: {
 				title: "Stardust Upgrade 23",
@@ -402,7 +402,7 @@ addLayer("stardust_so", {
 					if(hasUpgrade("stardust_so",13))ret=ret.pow(2);
                     return ret;
                 },
-                effectDisplay() { return "/"+format(this.effect()) }, // Add formatting to the effect
+                effectDisplay() { return "/"+format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
             },
 			13: {
 				title: "Star Upgrade 13",
@@ -426,7 +426,7 @@ addLayer("stardust_so", {
                     let ret = Decimal.pow(base,Decimal.log10(player.stardust_so.points.add(1)).pow(0.9));
                     return ret;
                 },
-                effectDisplay() { return "/"+format(this.effect()) }, // Add formatting to the effect
+                effectDisplay() { return "/"+format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
             },
 		},
 		   branches: [["stardust_s", 5]],
@@ -628,7 +628,7 @@ addLayer("stardust_n", {
 					if(hasUpgrade("stardust_n",13))ret=ret.pow(2);
                     return ret;
                 },
-                effectDisplay() { return "/"+format(this.effect()) }, // Add formatting to the effect
+                effectDisplay() { return "/"+format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
             },
 			13: {
 				title: "Nebulae Upgrade 13",
@@ -767,7 +767,7 @@ addLayer("stardust_c", {
 					if(player.stardust_c.points.gte(41))ret=Decimal.pow(1e10,player.stardust_c.points);
 					return ret;
                 },
-                effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
+                effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
             },
 			14: {
 				title: "Crystal Upgrade 14",
@@ -796,7 +796,7 @@ addLayer("stardust_c", {
 					if(player.stardust_c.points.gte(28))ret=Decimal.pow(1e10,player.stardust_c.points);
 					return ret;
                 },
-                effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
+                effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
             },
 			21: {
 				title: "Crystal Upgrade 21",
@@ -858,7 +858,7 @@ addLayer("stardust_c", {
 					if(player.stardust_c.points.gte(41))ret=Decimal.pow(1e10,player.stardust_c.points);
 					return ret;
                 },
-                effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
+                effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
             },
 			31: {
 				title: "Crystal Upgrade 31",
@@ -879,7 +879,7 @@ addLayer("stardust_c", {
 					if(player.stardust_c.points.gte(1000))ret=new Decimal(200);
 					return ret;
                 },
-                effectDisplay() { return "^"+format(this.effect()) }, // Add formatting to the effect
+                effectDisplay() { return "^"+format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
             },
 			32: {
 				title: "Crystal Upgrade 32",
@@ -904,7 +904,7 @@ addLayer("stardust_c", {
 					if(player.stardust_c.points.gte(990))ret=new Decimal(18);
 					return ret;
                 },
-                effectDisplay() { return "^"+format(this.effect()) }, // Add formatting to the effect
+                effectDisplay() { return "^"+format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
             },
 			33: {
 				title: "Crystal Upgrade 33",
@@ -931,7 +931,7 @@ addLayer("stardust_c", {
 					let ret=Decimal.pow(275,player.stardust_c.points.sub(2).max(0).pow(2.3)).max(1);
 					return ret;
                 },
-                effectDisplay() { return "/"+format(this.effect()) }, // Add formatting to the effect
+                effectDisplay() { return "/"+format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
             },
 			35: {
 				title: "Crystal Upgrade 35",
@@ -953,7 +953,7 @@ addLayer("stardust_c", {
 					if(player.stardust_c.points.gte(950))ret=player.stardust_c.points.div(2.5);
 					return ret;
                 },
-                effectDisplay() { return "^"+format(this.effect()) }, // Add formatting to the effect
+                effectDisplay() { return "^"+format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
             },
 		},
 		   branches: [["stardust_s", 4]],

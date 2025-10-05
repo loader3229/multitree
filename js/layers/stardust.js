@@ -94,7 +94,7 @@ addLayer("stardust_s", {
 			21: {
 				title: "Stardust Upgrade 21",
                 description: "Points boost energy gain.",
-                cost: new Decimal(3e5),
+                cost: new Decimal(3e6),
                 unlocked() { return player.tm.buyables[2].gte(4); }, // The upgrade is only visible when this is true
 				effect() { // Calculate bonuses from the upgrade. Can return a single value or an object with multiple values
 					let base=1.03;
@@ -108,7 +108,7 @@ addLayer("stardust_s", {
 			22: {
 				title: "Stardust Upgrade 22",
                 description: "Stardust boost energy gain.",
-                cost: new Decimal(1e6),
+                cost: new Decimal(5e7),
                 unlocked() { return player.tm.buyables[2].gte(4); }, // The upgrade is only visible when this is true
 				effect() { // Calculate bonuses from the upgrade. Can return a single value or an object with multiple values
 					let base=2;
@@ -121,7 +121,7 @@ addLayer("stardust_s", {
 			23: {
 				title: "Stardust Upgrade 23",
                 description: "Unlock a Prestige upgrade in The Prestige Tree Classic.",
-                cost: new Decimal(5e7),
+                cost: new Decimal(1e10),
                 unlocked() { return player.tm.buyables[2].gte(4); }, // The upgrade is only visible when this is true
             },
 			31: {
@@ -387,7 +387,7 @@ addLayer("stardust_so", {
 			11: {
 				title: "Star Upgrade 11",
                 description: "Stardust Upgrade 12 is squared.",
-                cost: new Decimal(1000),
+                cost: new Decimal(1e5),
                 unlocked() { return player.tm.buyables[2].gte(4); }, // The upgrade is only visible when this is true
             },
 			12: {
@@ -613,7 +613,7 @@ addLayer("stardust_n", {
 			11: {
 				title: "Nebulae Upgrade 11",
                 description: "Stardust Upgrade 12 is squared.",
-                cost: new Decimal(100),
+                cost: new Decimal(1000),
                 unlocked() { return player.tm.buyables[2].gte(4); }, // The upgrade is only visible when this is true
             },
 			12: {

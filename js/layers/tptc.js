@@ -91,7 +91,7 @@ addLayer("tptc_p", {
                 description(){
 					return "Stardust gain in The Stardust Tree is boosted by your Prestige Points.";
 				},
-                cost: new Decimal("1e2400"),
+                cost: new Decimal("1e3600"),
                 unlocked() { return hasUpgrade("stardust_s",23); }, // The upgrade is only visible when this is true
 				effect() { // Calculate bonuses from the upgrade. Can return a single value or an object with multiple values
 					let base=1.03;

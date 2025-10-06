@@ -28,15 +28,17 @@ function drawTree() {
 	if (!retrieveCanvasData()) return;
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	for (layer in layers){
-		if (tmp[layer].layerShown == true && tmp[layer].branches){
-			for (branch in tmp[layer].branches)
-				{
-					drawTreeBranch(layer, tmp[layer].branches[branch])
-				}
+		if (tmp && tmp[layer]){
+			if (tmp[layer].layerShown == true && tmp[layer].branches){
+				for (branch in tmp[layer].branches)
+					{
+						drawTreeBranch(layer, tmp[layer].branches[branch])
+					}
+			}
+			drawComponentBranches(layer, tmp[layer].upgrades, "upgrade-")
+			drawComponentBranches(layer, tmp[layer].buyables, "buyable-")
+			drawComponentBranches(layer, tmp[layer].clickables, "clickable-")
 		}
-		drawComponentBranches(layer, tmp[layer].upgrades, "upgrade-")
-		drawComponentBranches(layer, tmp[layer].buyables, "buyable-")
-		drawComponentBranches(layer, tmp[layer].clickables, "clickable-")
 
 	}
 }

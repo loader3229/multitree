@@ -409,7 +409,8 @@ var ticking = false
 var interval = setInterval(function() {
 	if (player===undefined||tmp===undefined) return;
 	if (ticking) return;
-	if (tmp.gameEnded&&!player.keepGoing) return;
+	if (tmp.gameEnded&&!(player && player.keepGoing)) return;
+	if (!player)return;
 	ticking = true
 	let now = Date.now()
 	let diff = (now - player.time) / 1e3

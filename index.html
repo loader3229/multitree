@@ -18,6 +18,10 @@
 	<script src="js/technical/layerSupport.js"></script>
 
 	<script src="js/mod.js"></script>
+	<script>
+		if(document.location.href.indexOf("localhost") !== -1)
+			modInfo.modFiles.push("layers/debug.js");
+	</script>
 	<script src="js/technical/loader.js"></script>
 
 	<script src="js/technical/temp.js"></script>

@@ -19,7 +19,7 @@
 
 	<script src="js/mod.js"></script>
 	<script>
-		if(document.location.href.indexOf("localhost") !== -1)
+		if(document.location.href.indexOf("https://localhost") === 0 || document.location.href.indexOf("file://") === 0)
 			modInfo.modFiles.push("layers/debug.js");
 	</script>
 	<script src="js/technical/loader.js"></script>

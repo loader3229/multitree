@@ -232,7 +232,7 @@
 					if(x.lt(0.5))return new Decimal(0);
 					if(x.lt(10.5))return Decimal.pow(10,x.pow(2).mul(1e4).add(1e5));
 					if(x.lt(30.5))return Decimal.pow(10,x.pow(6));
-					if(x.lt(44.5))return Decimal.pow(10,x.pow(x.div(5)));
+					if(x.lt(45.5))return Decimal.pow(10,x.pow(x.div(5)));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -283,7 +283,7 @@
 					if(x.lt(13.5))return Decimal.pow(10,x.pow(2).mul(1e6).add(x.mul(5e5)).add(2e7));
 					if(x.lt(20.5))return Decimal.pow(10,x.pow(3).mul(1e5));
 					if(x.lt(31.5))return Decimal.pow(10,x.pow(x.div(4)).mul(300));
-					if(x.lt(33.5))return Decimal.pow(10,x.pow(6).mul(168600));
+					if(x.lt(34.5))return Decimal.pow(10,x.pow(6).mul(168600));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -308,7 +308,7 @@
 					x=new Decimal(x);
 					if(x.lt(0.5))return new Decimal(0);
 					if(x.lt(15.5))return Decimal.pow(10,x.pow(4).mul(5e8).add(x.mul(5e8)));
-					if(x.lt(22.5))return Decimal.pow(10,x.mul(1.25).pow(5).mul(14687500));
+					if(x.lt(23.5))return Decimal.pow(10,x.mul(1.25).pow(5).mul(14687500));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -334,7 +334,7 @@
 					if(x.lt(0.5))return new Decimal(0);
 					if(x.lt(7.5))return Decimal.pow(10,x.add(1).pow(2).mul(1e11).add(2e12));
 					if(x.lt(9.5))return Decimal.pow(10,x.add(1).pow(2).mul(2e11));
-					if(x.lt(12.5))return Decimal.pow(10,x.pow(x.div(5)).mul(3e11));
+					if(x.lt(14.5))return Decimal.pow(10,x.pow(x.div(5)).mul(3e11));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -1138,6 +1138,28 @@
 					return ret;
 				}
             },
+		49: {
+				title: "Rewrite Imperium",
+				fullDisplay(){
+					return "<h2>Rewrite Imperium</h2><br>Unlock Imperium Bricks in The Prestige Tree Rewritten. (Coming Soon...)<br>\
+					Costs: "+format(new Decimal("e264e12"))+" points<br>\
+					"+format(new Decimal("24800"))+" Imperium Bricks in The Prestige Tree Classic<br>\
+					"+format(Decimal.pow(10,2.19e6))+" hours of work in The Game Dev Tree"
+				},canAfford(){
+					return player.points.gte(new Decimal("e264e12")) && 
+					player.tptc_i.points.gte("24800") && 
+					player.modpoints[6].gte(Decimal.pow(10,2.19e6));
+				},pay(){},
+                unlocked() { return player.tm.buyables[7].gte(35); }, // The upgrade is only visible when this is true
+				currencyDisplayName: "points",
+				currencyInternalName: "points",
+				style(){
+					let ret={"width":"200px","height":"200px"};
+					if(hasUpgrade("tm",this.id))ret.backgroundColor="#e5dab7";
+					return ret;
+				}
+            },
+
 
 	}
 });

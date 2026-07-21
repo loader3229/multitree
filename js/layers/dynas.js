@@ -1372,7 +1372,7 @@ addLayer("dynas_m", {
 		},
 		1: {
 			requirementDescription: () => "10 Managers",
-			done() { return player[this.layer].best.gte(1) },
+			done() { return player[this.layer].best.gte(10) },
 			effectDescription: () => "Unfinished work won't have any negative effect now, and unfinished work gain x10"
 		},
 	},

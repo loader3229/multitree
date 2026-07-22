@@ -12,11 +12,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.8.1",
+	num: "1.8.2",
 	name: "",
 }
 
 let changelog = `
+	<h3>v1.8.2</h3><br>
+	- Endgame: e3.57e14 points<br>
 	<h3>v1.8</h3><br>
 	- Ported the game to Modding Tree 2.6.6.2<br>
 	- Endgame: e2.4e14 points<br>
@@ -209,7 +211,7 @@ function addedPlayerData() { return {
 var TREES=["","The Prestige Tree Classic","The Stardust Tree","The Prestige Forest","The Burning Tree","The Incrementreeverse","The Game Dev Tree","The Prestige Tree Rewritten","The Milestone Tree","The Dynas Tree","The Multitree"];
 var TREEAUTHOR=["","jacorb90","okamii17","unpingabot","thefinaluptake","pg132","thepaperpilot","jacorb90","loader3229","ducdat0507","loader3229"];
 var MODPOINTSNAME=["","","energy","energy","embers","incrementy","hours of work","rewritten points","milestone power","Dynas points","Multipoints"];
-var TREEVERS=[[],["","Pre-Alpha Build 1","Pre-Alpha Build 2","Alpha Build 1","Beta v1.0","Beta v1.1 Alpha 12","Beta v1.1","Beta v1.2","1.0","1.1","1.1","1.1","1.1","1.1","1.1","1.2","1.2","1.2","1.2","1.2","1.2"],["","0.0.3a","0.0.3a","0.0.3a","0.0.3a","0.0.3a","0.0.3a","0.0.3a","0.0.3a","0.0.3a","0.0.3a","0.0.3a","0.0.3a"],["","0.0","0.0","0.0","0.0","0.0","0.0","0.0","0.0","0.0"],["","0.0.1","0.0.2","0.2.0","0.2.0","0.2.0","0.2.0"],["","0.1","0.3","0.4","0.5","0.5","0.6","0.7","0.8","0.8","0.8","0.85","0.85","0.85","0.87","0.87","0.88","0.88","0.88","0.9","0.9","0.9","0.9","0.9","0.9","0.91","0.91","0.92","0.92","0.92","0.92","0.92","0.92","0.92","0.92","0.92","0.92","0.92","0.92","0.92","0.92","0.92","0.92","0.93","0.93"],["","0.0","0.1","0.2","0.2","0.2","1.0","1.0","1.0","1.0","1.0","1.0"],["","0.1","0.2","0.3","0.3","0.3","0.3","0.4","0.4","0.4","0.5","0.5","0.5","0.5","0.5","0.5","0.5","0.5","0.5","0.5","0.5","0.5","0.5","0.5","0.6","0.6","0.6","0.6","0.6","0.6","1.0","1.0","1.1","1.1","1.1"],["","1.005","1.010","1.016","1.020","1.025","1.025","1.029","1.032","1.035","1.038","1.040","1.043","1.045","1.048","1.050","1.055","1.060","1.065","1.068","1.070","1.070","1.070","1.070"],["","0.0.1","0.0.1","0.0.1","0.0.1","0.1.0","0.1.0","0.1.0","0.1.0","0.1.0","0.2.0","0.2.0","0.2.0","0.2.0","0.2.0"],["","2.0"]];
+var TREEVERS=[[],["","Pre-Alpha Build 1","Pre-Alpha Build 2","Alpha Build 1","Beta v1.0","Beta v1.1 Alpha 12","Beta v1.1","Beta v1.2","1.0","1.1","1.1","1.1","1.1","1.1","1.1","1.2","1.2","1.2","1.2","1.2","1.2"],["","0.0.3a","0.0.3a","0.0.3a","0.0.3a","0.0.3a","0.0.3a","0.0.3a","0.0.3a","0.0.3a","0.0.3a","0.0.3a","0.0.3a"],["","0.0","0.0","0.0","0.0","0.0","0.0","0.0","0.0","0.0"],["","0.0.1","0.0.2","0.2.0","0.2.0","0.2.0","0.2.0"],["","0.1","0.3","0.4","0.5","0.5","0.6","0.7","0.8","0.8","0.8","0.85","0.85","0.85","0.87","0.87","0.88","0.88","0.88","0.9","0.9","0.9","0.9","0.9","0.9","0.91","0.91","0.92","0.92","0.92","0.92","0.92","0.92","0.92","0.92","0.92","0.92","0.92","0.92","0.92","0.92","0.92","0.92","0.93","0.93","0.93"],["","0.0","0.1","0.2","0.2","0.2","1.0","1.0","1.0","1.0","1.0","1.0"],["","0.1","0.2","0.3","0.3","0.3","0.3","0.4","0.4","0.4","0.5","0.5","0.5","0.5","0.5","0.5","0.5","0.5","0.5","0.5","0.5","0.5","0.5","0.5","0.6","0.6","0.6","0.6","0.6","0.6","1.0","1.0","1.1","1.1","1.1","1.1"],["","1.005","1.010","1.016","1.020","1.025","1.025","1.029","1.032","1.035","1.038","1.040","1.043","1.045","1.048","1.050","1.055","1.060","1.065","1.068","1.070","1.070","1.070","1.070","1.071"],["","0.0.1","0.0.1","0.0.1","0.0.1","0.1.0","0.1.0","0.1.0","0.1.0","0.1.0","0.2.0","0.2.0","0.2.0","0.2.0","0.2.0"],["","2.0"]];
 
 // Display extra things at the top of the page
 var displayThings = [
@@ -259,7 +261,7 @@ var displayThings = [
 	function(){
 		if(player.tm.currentTree==8){
 			let ret="";
-			if(player.tm.buyables[8].gte(10))return "";
+			if(player.tm.buyables[8].gte(10))return "The above effect is unaffected by TPTR-exclusive softcap (starts at ee7)";
 			
 			if(player.milestone_m.best.gte(20))ret=format((tmp.milestone_m.powerEffect[0]||new Decimal(1)).pow(player.tm.buyables[8].gte(8)?0.7:player.milestone_m.best.gte(28)?0.6:player.milestone_m.best.gte(26)?0.5:player.tm.buyables[8].gte(6)?0.42:0.4))+"x Rewritten Point gain in TPTR";
 			if(player.milestone_m.best.gte(7))ret=format((tmp.milestone_m.powerEffect[0]||new Decimal(1)).pow(player.milestone_m.best.gte(19)?0.35:player.tm.buyables[8].gte(4)?(1/3):player.milestone_m.best.gte(15)?0.3:player.milestone_m.best.gte(9)?0.25:player.milestone_m.best.gte(8)?0.2:0.1))+"x Rewritten Point gain in TPTR";
@@ -272,7 +274,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return hasUpgrade("tm",49);//player.points.gte("e24e13");
+	return player.points.gte("e357e12");
 }
 
 

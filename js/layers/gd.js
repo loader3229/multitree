@@ -1172,12 +1172,12 @@ addLayer("gd_f", {
                         {}],
                     ["display-text",
                         function() {
-							return 'Fans are capped by your points.';
+							if(hasUpgrade("gd_g",35))return 'Because of Good Will Upgrade 35, your fans are set to your best points in this D/L/G reset.';if(!hasUpgrade("gd_g",35))return 'Fans are capped by your points.';
 						},
                         {}],
                     ["display-text",
                         function() {
-							return 'Your best fame are multiplying your fans by ' + format(tmp.gd_f.fansGain) + ' per second';
+							if(!hasUpgrade("gd_g",35))return 'Your best fame are multiplying your fans by ' + format(tmp.gd_f.fansGain) + ' per second';
 						},
                         {}],
 						"milestones",
@@ -1361,6 +1361,10 @@ addLayer("gd_f", {
 					if(hasUpgrade('gd_g',32)){
 						ret=ret.pow(player.gd_f.fans.add(1).log10().add(1).log10().div(100).add(1));
 					}
+					
+					if(hasUpgrade('gd_g',35)){
+						ret=player[this.layer].buyables[this.id].add(1).log10().pow(2).div(80).add(1).pow(layers.gd_g.effect()[1]).pow(player.gd_f.fans.add(1).log10().add(1).log10().div(100).add(1));
+					}
 					return ret;
 				},
                 buyMax() {}, // You'll have to handle this yourself if you want
@@ -1368,7 +1372,8 @@ addLayer("gd_f", {
             },
 	},
 	 update(diff){
-		player.gd_f.fans=player.gd_f.fans.mul(tmp.gd_f.fansGain.pow(diff)).min(player.points).max(player.gd_f.fans);
+		if(!hasUpgrade("gd_g",35))player.gd_f.fans=player.gd_f.fans.mul(tmp.gd_f.fansGain.pow(diff)).min(player.points).max(player.gd_f.fans);
+		else player.gd_f.fans=player.gd_f.fans.max(player.points);
 		if(player.gd_g.points.gte(4)){
 			player.gd_f.buyables[11]=player.gd_f.buyables[11].max(player.gd_f.points);
 			if(hasUpgrade("gd_g", 23)){
@@ -2005,6 +2010,16 @@ addLayer("gd_g", {
 				currencyLayer: "gd_g",
                 unlocked() { return player[this.layer].best.gte(27) && hasUpgrade("tm",52); }, // The upgrade is only visible when this is true
             },
+			35: {
+				title: "Good Will Upgrade 35",
+                description: "Your points are your fans now and ever! Your fans count is set to your points. Also 5th fame buyable is better.",
+                cost: new Decimal(3),
+				currencyDisplayName: "unused good will",
+				currencyInternalName: "unused",
+				currencyLayer: "gd_g",
+                unlocked() { return player[this.layer].best.gte(30) && hasUpgrade("tm",52); }, // The upgrade is only visible when this is true
+            },
+
 		},
 	milestones: {
             0: {requirementDescription: "3 good will",

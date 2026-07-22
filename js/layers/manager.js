@@ -284,6 +284,7 @@
 					if(x.lt(20.5))return Decimal.pow(10,x.pow(3).mul(1e5));
 					if(x.lt(31.5))return Decimal.pow(10,x.pow(x.div(4)).mul(300));
 					if(x.lt(34.5))return Decimal.pow(10,x.pow(6).mul(168600));
+					if(x.lt(35.5))return Decimal.pow(10,x.pow(7).mul(10000));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -308,7 +309,7 @@
 					x=new Decimal(x);
 					if(x.lt(0.5))return new Decimal(0);
 					if(x.lt(15.5))return Decimal.pow(10,x.pow(4).mul(5e8).add(x.mul(5e8)));
-					if(x.lt(22.5))return Decimal.pow(10,x.mul(1.25).pow(5).mul(14687500));
+					if(x.lt(23.5))return Decimal.pow(10,x.mul(1.25).pow(5).mul(14687500));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -729,6 +730,7 @@
 					if(hasUpgrade("milestone_p",32))ret = ret.pow(2);
 					if(player.milestone_m.best.gte(65))ret = ret.pow(2);
 					if(player.milestone_m.best.gte(70))ret = ret.pow(2.5);
+            if(player.tm.buyables[8].gte(24))ret = ret.pow(1.25);
 					return ret;
 				},
 				currencyDisplayName: "points",
@@ -754,6 +756,14 @@
 				title: "Multitree Upgrade 63",
                 description: "Matter Gain Softcap is weaker in The Incrementreeverse.",
                 cost: new Decimal("e160e12"),
+                unlocked() { return hasUpgrade(this.layer,51); }, // The upgrade is only visible when this is true
+				currencyDisplayName: "points",
+				currencyInternalName: "points",
+            },
+		64: {
+				title: "Multitree Upgrade 64",
+                description: "Prestige Points effect in TPTR ^10, also unlock more Prestige Upgrades in TPTC.",
+                cost: new Decimal("e279e12"),
                 unlocked() { return hasUpgrade(this.layer,51); }, // The upgrade is only visible when this is true
 				currencyDisplayName: "points",
 				currencyInternalName: "points",
@@ -1141,7 +1151,7 @@
 		49: {
 				title: "Rewrite Imperium",
 				fullDisplay(){
-					return "<h2>Rewrite Imperium</h2><br>Unlock Imperium Bricks in The Prestige Tree Rewritten. (Coming Soon...)<br>\
+					return "<h2>Rewrite Imperium</h2><br>Unlock Imperium Bricks in The Prestige Tree Rewritten.<br>\
 					Costs: "+format(new Decimal("e264e12"))+" points<br>\
 					"+format(new Decimal("24800"))+" Imperium Bricks in The Prestige Tree Classic<br>\
 					"+format(Decimal.pow(10,2.19e6))+" hours of work in The Game Dev Tree"

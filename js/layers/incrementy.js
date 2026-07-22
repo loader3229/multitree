@@ -123,6 +123,7 @@ addLayer("incrementy_i", {
 					if(hasUpgrade("milestone_p",33))ret = player.modpoints[5].add(1).pow(1.6);
 					if(hasUpgrade("milestone_p",34))ret = player.modpoints[5].add(1).pow(1.8);
 					if(hasUpgrade("milestone_p",35))ret = player.modpoints[5].add(1).pow(2);
+					if(player.tm.buyables[8].gte(24))ret = player.modpoints[5].add(1).pow(2.01);
                     return ret;
 				},
                 effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
@@ -464,6 +465,8 @@ addLayer("incrementy_i", {
 					let ret=new Decimal(0);
 					if(hasUpgrade("incrementy_o",13))ret=ret.add(1);
 					if(hasUpgrade("incrementy_o",22))ret=ret.add((player.incrementy_o.upgrades||[]).length);
+                                ret = ret.plus(layers.incrementy_o.buyables[13].effect())
+
 					return ret;
 				},
         },
@@ -4017,23 +4020,23 @@ addLayer("incrementy_o", {
                                 return
                         },
                         unlocked(){ return hasUpgrade("incrementy_o", 15) },
-                },/*
+                },
                 13: {
                         title: "Stamina Boost",
                         display(){
                                 let additional = ""
-                                let ex = layers.o.buyables[13].extra()
+                                let ex = layers.incrementy_o.buyables[13].extra()
                                 if (ex.gt(0)) additional = "+" + formatWhole(ex)
 
-                                let start = "<b><h2>Amount</h2>: " + formatWhole(player.o.buyables[13]) + additional + "</b><br>"
-                                let eff = "<b><h2>Effect</h2>: " + formatWhole(layers.o.buyables[13].effect()) + " Free Stamina Levels</b><br>"
-                                let cost = "<b><h2>Cost</h2>: " + format(layers.o.buyables[13].cost()) + " Origins</b><br>"
-                                let eformula = "<b><h2>Effect formula</h2>:<br> x" + (layers.o.buyables[13].total().gt(10) ? "*10" : "^2") +"</b><br>"
+                                let start = "<b><h2>Amount</h2>: " + formatWhole(player.incrementy_o.buyables[13]) + additional + "</b><br>"
+                                let eff = "<b><h2>Effect</h2>: " + formatWhole(layers.incrementy_o.buyables[13].effect()) + " Free Stamina Levels</b><br>"
+                                let cost = "<b><h2>Cost</h2>: " + format(layers.incrementy_o.buyables[13].cost()) + " Origins</b><br>"
+                                let eformula = "<b><h2>Effect formula</h2>:<br> x" + (layers.incrementy_o.buyables[13].total().gt(10) ? "*10" : "^2") +"</b><br>"
                                 let end = shiftDown ? eformula : "Shift to see details"
                                 return "<br>" + start + eff + cost + end
                         },
                         cost(a){
-                                let x = getBuyableAmount("o", 13).plus(a)
+                                let x = getBuyableAmount("incrementy_o", 13).plus(a)
                                 let base1 = 4
                                 let base2 = 1.5
                                 let exp2 = x.times(x)
@@ -4044,34 +4047,34 @@ addLayer("incrementy_o", {
                                 return base
                         },
                         effect(){
-                                let x = layers.o.buyables[13].total()
-                                return Decimal.times(x, x.min(10))
+                                let x = layers.incrementy_o.buyables[13].total()
+                                return Decimal.times(x, x.min(1))
                         },
                         canAfford(){
-                                return player.o.points.gte(layers.o.buyables[13].cost())
+                                return player.incrementy_o.points.gte(layers.incrementy_o.buyables[13].cost())
                         },
                         total(){
-                                return getBuyableAmount("o", 13).plus(layers.o.buyables[13].extra())
+                                return getBuyableAmount("incrementy_o", 13).plus(layers.incrementy_o.buyables[13].extra())
                         },
                         extra(){
                                 let ret = new Decimal(0)
-                                ret = ret.plus(layers.o.buyables[23].total())
-                                ret = ret.plus(layers.o.buyables[33].total())
-                                if (hasUpgrade("f", 31)) ret = ret.plus(layers.f.buyables[13].total())
-                                if (devSpeedUp && layers.o.buyables[13].unlocked()) ret = ret.plus(1)
+                                //ret = ret.plus(layers.incrementy_o.buyables[23].total())
+                                //ret = ret.plus(layers.incrementy_o.buyables[33].total())
+                                //if (hasUpgrade("f", 31)) ret = ret.plus(layers.f.buyables[13].total())
+                                //if (devSpeedUp && layers.o.buyables[13].unlocked()) ret = ret.plus(1)
                                 return ret
                         },
                         buy(){
-                                let cost = layers.o.buyables[13].cost()
-                                if (!layers.o.buyables[13].canAfford()) return
-                                player.o.buyables[13] = player.o.buyables[13].plus(1)
-                                player.o.points = player.o.points.minus(cost)
+                                let cost = layers.incrementy_o.buyables[13].cost()
+                                if (!layers.incrementy_o.buyables[13].canAfford()) return
+                                player.incrementy_o.buyables[13] = player.incrementy_o.buyables[13].plus(1)
+                                player.incrementy_o.points = player.incrementy_o.points.minus(cost)
                         },
                         buyMax(maximum){       
                                 return
                         },
-                        unlocked(){ return hasUpgrade("o", 23) },
-                },
+                        unlocked(){ return hasUpgrade("incrementy_o", 23) },
+                },/*
                 21: {
                         title: "Particle Boost",
                         display(){
@@ -4453,6 +4456,12 @@ addLayer("incrementy_o", {
                         description: "Get a free Incrementy Stamina level per Origin Upgrade",
                         cost: new Decimal(1e7),
                         unlocked(){return player.tm.buyables[5].gte(44)}
+                },
+                23: {
+                        title: "Origin Upgrade 23",
+                        description: "Unlock 3rd Origin Buyable",
+                        cost: new Decimal(1e8),
+                        unlocked(){return player.tm.buyables[5].gte(45)}
                 },/*
                 13: {
                         title: "Grothendieck",
@@ -4480,7 +4489,7 @@ addLayer("incrementy_o", {
                 },
                 21: {
                         title: "Novikov",
-                        description: "Keep �� upgrades, �� milestones, I upgrades, and multiply Origin gain by 1.5",
+                        description: "Keep    upgrades,    milestones, I upgrades, and multiply Origin gain by 1.5",
                         cost: new Decimal(5),
                         unlocked(){
                                 return hasUpgrade("o", 15) || player.c.best.gt(0)

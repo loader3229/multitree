@@ -16,7 +16,7 @@ addLayer("milestone_um", {
 	tabFormat: ["main-display"],
 	branches: ["milestone_m"],
 	update(){
-		player.milestone_um.points=new Decimal([0,0,2,5,9,14,16,18,21,24,28,30,34,39,40,42,45,47,48,48,50,52,54,55,57][player.tm.buyables[8].toNumber()]);
+		player.milestone_um.points=new Decimal([0,0,2,5,9,14,16,18,21,24,28,30,34,39,40,42,45,47,48,48,50,52,54,55,57,59][player.tm.buyables[8].toNumber()]);
 	}
 })
 
@@ -30,7 +30,7 @@ addLayer("milestone_m", {
     }},
     color: "#793784",
     requires(){
-		if(player.milestone_m.points.gte([0,5,10,16,20,25,25,29,32,35,38,40,43,45,48,50,55,60,65,68,70,70,70,70,71][player.tm.buyables[8].toNumber()]))return new Decimal(Infinity);
+		if(player.milestone_m.points.gte([0,5,10,16,20,25,25,29,32,35,38,40,43,45,48,50,55,60,65,68,70,70,70,70,71,73][player.tm.buyables[8].toNumber()]))return new Decimal(Infinity);
 		if(player.milestone_m.points.gte(55))return new Decimal(1);
 		return new Decimal("e2e8");
 	},
@@ -977,16 +977,36 @@ addLayer("milestone_m", {
             unlocked() {return player[this.layer].best.gte(57)},
             done() {return player[this.layer].best.gte(58)}, // Used to determine when to give the milestone
             effectDescription:  function(){
-				return "4th Milestone is better.";
+				let ret="4th Milestone is better.";
+				if(player.tm.buyables[8].gte(25))ret+=" (Upgraded)";
+				return ret;
+
 			},
+			style() {
+				if(player.tm.buyables[8].gte(25)&&player[this.layer].best.gte(58)){
+					return {backgroundColor: "#cccc00"};
+				}
+				return {};
+			},
+
         },
 		{
 			requirementDescription: "59th MT-Milestone",
             unlocked() {return player[this.layer].best.gte(58)},
             done() {return player[this.layer].best.gte(59)}, // Used to determine when to give the milestone
             effectDescription:  function(){
-				return "Prestige Upgrade 11-14 are better.";
+				let ret="Prestige Upgrade 11-14 are better.";
+				if(player.tm.buyables[8].gte(25))ret+=" (Upgraded)";
+				return ret;
+
 			},
+			style() {
+				if(player.tm.buyables[8].gte(25)&&player[this.layer].best.gte(59)){
+					return {backgroundColor: "#cccc00"};
+				}
+				return {};
+			},
+
         },
 		{
 			requirementDescription: "60th MT-Milestone",
@@ -1091,6 +1111,22 @@ addLayer("milestone_m", {
 				return "Unlock more Super-Prestige upgrades.";
 			},
         },
+		{
+			requirementDescription: "72nd MT-Milestone",
+            unlocked() {return player[this.layer].best.gte(71)},
+            done() {return player[this.layer].best.gte(72)}, // Used to determine when to give the milestone
+            effectDescription:  function(){
+				return "Multitree Upgrade 61 is better.";
+			},
+        },
+		{
+			requirementDescription: "73th MT-Milestone",
+            unlocked() {return player[this.layer].best.gte(72)},
+            done() {return player[this.layer].best.gte(73)}, // Used to determine when to give the milestone
+            effectDescription:  function(){
+				return "4th Milestone is better.";
+			},
+        },
 
 	],
 	milestone1Effect(){
@@ -1131,6 +1167,7 @@ addLayer("milestone_m", {
 			if(player.milestone_m.best.gte(62))power+=0.01;
 			if(hasUpgrade("milestone_sp",31))power+=0.015;
 			if(hasUpgrade("milestone_sp",32))power+=0.03;
+			if(hasUpgrade("milestone_sp",33))power+=0.015;
 			let ret = Decimal.pow(base,Decimal.log10(player.points.add(1e10)).pow(power).add(1));
 			return ret;
 		}
@@ -1174,6 +1211,8 @@ addLayer("milestone_m", {
 		return Decimal.pow(b,m);
 	},
 	milestone4EffectExponent(){
+		if(player.milestone_m.best.gte(73))return 0.565;
+		if(player.tm.buyables[8].gte(25))return 0.56;
 		if(player.tm.buyables[8].gte(22))return 0.555;
 		if(player.milestone_m.best.gte(68))return 0.55;
 		if(player.milestone_m.best.gte(63))return 0.54;
@@ -1220,6 +1259,7 @@ addLayer("milestone_m", {
 		if(player.tm.buyables[8].gte(17))p=p.pow(1.5);
 		if(player.milestone_pm.points.gte(2))p=p.pow(2);
 		if(player.milestone_pm.points.gte(3))p=p.pow(2);
+		if(player.milestone_pm.points.gte(4))p=p.pow(2);
 		return p;
 	},
 	milestone29Effect(){
@@ -1291,6 +1331,7 @@ addLayer("milestone_p", {
 				if(player.milestone_m.points.gte(44))base+=0.1;
 				if(player.tm.buyables[8].gte(16))base+=0.1;
 				if(player.milestone_m.points.gte(59))base+=0.1;
+				if(player.tm.buyables[8].gte(25))base+=0.1;
 				if(player.milestone_m.points.gte(64))base+=0.1;
                 let ret = Decimal.pow(base,Decimal.log10(player[this.layer].points.add(1)).pow(0.9).add(1))
                 return ret;
@@ -1311,6 +1352,7 @@ addLayer("milestone_p", {
 				if(player.milestone_m.points.gte(44))base+=0.1;
 				if(player.tm.buyables[8].gte(16))base+=0.1;
 				if(player.milestone_m.points.gte(59))base+=0.05;
+				if(player.tm.buyables[8].gte(25))base+=0.05;
 				if(player.milestone_m.points.gte(64))base+=0.05;
                 let ret = Decimal.pow(base,Decimal.log10(player[this.layer].points.add(1)).pow(0.9).add(1))
                 return ret;
@@ -1331,6 +1373,7 @@ addLayer("milestone_p", {
 				if(player.milestone_m.points.gte(44))base+=0.025;
 				if(player.tm.buyables[8].gte(16))base+=0.025;
 				if(player.milestone_m.points.gte(59))base+=0.025;
+				if(player.tm.buyables[8].gte(25))base+=0.025;
 				if(player.milestone_m.points.gte(64))base+=0.025;
                 let ret = Decimal.pow(base,Decimal.log10(player[this.layer].points.add(1)).pow(0.9).add(1))
                 return ret;
@@ -1351,6 +1394,7 @@ addLayer("milestone_p", {
 				if(player.milestone_m.points.gte(44))base+=0.025;
 				if(player.tm.buyables[8].gte(16))base+=0.025;
 				if(player.milestone_m.points.gte(59))base+=0.025;
+				if(player.tm.buyables[8].gte(25))base+=0.025;
 				if(player.milestone_m.points.gte(64))base+=0.025;
                 let ret = Decimal.pow(base,Decimal.log10(player[this.layer].points.add(1)).pow(0.9).add(1))
                 return ret;
@@ -1625,6 +1669,12 @@ addLayer("milestone_sp", {
             cost: new Decimal("1e2100"),
             unlocked() { return player.milestone_m.points.gte(71)}, // The upgrade is only visible when this is true
         },
+		33: {
+			title: "Super-Prestige Upgrade 33",
+            description: "2nd MT-Milestone is better.",
+            cost: new Decimal("1e3700"),
+            unlocked() { return player.milestone_m.points.gte(71)}, // The upgrade is only visible when this is true
+        },
 
 
 	},
@@ -1835,6 +1885,23 @@ addLayer("milestone_pm", {
 			requirementDescription: "3rd Power Milestone",
             unlocked() {return player[this.layer].best.gte(2)},
             done() {return player[this.layer].best.gte(3)}, // Used to determine when to give the milestone
+            effectDescription: function(){
+				let ret="27th MT-Milestone's effect ^2";
+                return ret;
+			},
+			style() {
+				/*if(player.tm.buyables[8].gte(2)&&player[this.layer].best.gte(1)){
+					return {backgroundColor: "#cccc00"};
+				}*/
+				return {};
+			},
+
+        },
+
+		{
+			requirementDescription: "4th Power Milestone",
+            unlocked() {return player[this.layer].best.gte(3)},
+            done() {return player[this.layer].best.gte(4)}, // Used to determine when to give the milestone
             effectDescription: function(){
 				let ret="27th MT-Milestone's effect ^2";
                 return ret;

@@ -49,6 +49,9 @@ addLayer("tptr_p", {
 			let mult2 = tmp[this.layer].gainMult;let mult3 = new Decimal(1);
 			if(player.tm.buyables[8].gte(1))mult2=mult2.div(tmp.milestone_m.powerEffect[0]);
 			if(player.tm.buyables[8].gte(1))mult3=mult3.mul(tmp.milestone_m.powerEffect[0]);
+			if(hasUpgrade("tptc_p",62))mult2=mult2.div(upgradeEffect("tptc_p",32));
+			if(hasUpgrade("tptc_p",62))mult3=mult3.mul(upgradeEffect("tptc_p",32));
+
 			let gain2 = tmp[this.layer].baseAmount.div(tmp[this.layer].requires).pow(tmp[this.layer].exponent).times(mult2).pow(tmp[this.layer].gainExp);
 			if(gain2.gte("ee7"))gain2 = gain2.mul("ee7").sqrt();
 			if(gain2.gte("ee11"))gain2 = Decimal.pow(10,gain2.log10().mul(1e11).sqrt());
@@ -77,6 +80,7 @@ addLayer("tptr_p", {
 					if(hasUpgrade("tptr_p",12))ret=ret.mul(upgradeEffect("tptr_p",12));
 					if(hasUpgrade("tptr_p",13))ret=ret.mul(upgradeEffect("tptr_p",13));
 					if(hasUpgrade("tptr_p",22))ret=ret.mul(upgradeEffect("tptr_p",22));
+					if(hasUpgrade("tptc_p",62))ret=ret.mul(upgradeEffect("tptc_p",32));
 					ret=ret.mul(tmp.tptr_b.effect[0]);
 					ret=ret.mul(tmp.tptr_g.powerEff);
 					if (player.tptr_t.unlocked) ret = ret.times(tmp.tptr_t.enEff);

@@ -104,7 +104,7 @@ addLayer("dynas_c", {
 				effect() {
 					if (player.dynas_b.banking & 2)return new Decimal(1);
                     let base=1.1;
-                    let ret = Decimal.pow(base,Decimal.log10(player.points.add(1)).pow(hasUpgrade("dynas_c",43)?0.235:hasUpgrade("dynas_w",15)?0.225:hasUpgrade("dynas_w",13)?0.2:hasUpgrade("dynas_c",35)?0.175:hasUpgrade("dynas_c",32)?0.15:hasUpgrade("dynas_c",24)?0.125:0.1));
+                    let ret = Decimal.pow(base,Decimal.log10(player.points.add(1)).pow(hasUpgrade("dynas_c",44)?0.24:hasUpgrade("dynas_c",43)?0.235:hasUpgrade("dynas_w",15)?0.225:hasUpgrade("dynas_w",13)?0.2:hasUpgrade("dynas_c",35)?0.175:hasUpgrade("dynas_c",32)?0.15:hasUpgrade("dynas_c",24)?0.125:0.1));
 					if(hasUpgrade("dynas_c",14))ret=ret.mul(upgradeEffect("dynas_c",14));
 					if(hasUpgrade("dynas_c",21))ret=ret.mul(upgradeEffect("dynas_c",21));
 					ret=ret.mul(tmp.dynas_wf.effect2[0]);
@@ -289,6 +289,14 @@ addLayer("dynas_c", {
 					return "Coin Upgrade 13 is better."
 				},
                 cost: new Decimal('e2e3'),
+                unlocked() { return player.tm.buyables[9].gte(10); }, // The upgrade is only visible when this is true
+			},
+			44: {
+				title: "Coin Upgrade 44",
+                description() {
+					return "Coin Upgrade 13 is better."
+				},
+                cost: new Decimal('e5e3'),
                 unlocked() { return player.tm.buyables[9].gte(10); }, // The upgrade is only visible when this is true
 			},
 		},

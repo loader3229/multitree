@@ -322,6 +322,12 @@ addLayer("tptc_p", {
                 cost: new Decimal(1),
                 unlocked() { return hasUpgrade("tm",64); }, // The upgrade is only visible when this is true
             },
+			62: {
+				title: "Prestige Upgrade 62",
+                description: "Prestige Upgrade 32 is unaffected by TPTR-exclusive softcap and boost rewritten points.",
+                cost: new Decimal("e2.333333e14"),
+                unlocked() { return hasUpgrade("tm",64); }, // The upgrade is only visible when this is true
+            },
 		},  
 		
 		doReset(l){
@@ -706,8 +712,12 @@ addLayer("tptc_t", {
 		let ret = player.tptc_t.points.add(player.tptc_t.buyables[11].mul(inChallenge("tptr_h",31)?0:1));
 		if(hasUpgrade("tptc_t",15)){
 			let power=1;
-			if(hasUpgrade("tm",61))power+=(Math.pow(Math.min(player.timePlayed+d,86400*8),0.55)/1000);
 			let mult=0.5;
+			if(hasUpgrade("tm",61)){
+				let time = Math.min(player.timePlayed+d,86400*8);
+				if(player.milestone_m.points.gte(72))power+=(Math.pow(time,0.6)/1000);
+				else power+=(Math.pow(time,0.55)/1000);
+			}
 			ret = ret.add(player.tptc_t.points.pow(1/power).add(player.tptc_t.buyables[11].pow(1/power)).pow(power).mul(mult));
 		}
 		return ret;
@@ -4286,6 +4296,7 @@ addLayer("tptc_ge", {
 					if(hasUpgrade("tptc_ge",12))b=b.pow(2);
 					if(hasUpgrade("tptc_ge",13))b=b.pow(2);
 					if(hasUpgrade("tptc_ge",14))b=b.pow(2);
+					if(hasUpgrade("tptc_ge",15))b=b.pow(2);
 					return b;
 				},
                 effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
@@ -4306,6 +4317,12 @@ addLayer("tptc_ge", {
 				title: "Gear Upgrade 14",
                 description: "Gear Upgrade 11's effect ^2",
                 cost: new Decimal("ee9"),
+                unlocked() { return player.tm.buyables[1].gte(19) },
+            },
+			15: {
+				title: "Gear Upgrade 15",
+                description: "Gear Upgrade 11's effect ^2",
+                cost: new Decimal("ee10"),
                 unlocked() { return player.tm.buyables[1].gte(19) },
             },
 		},

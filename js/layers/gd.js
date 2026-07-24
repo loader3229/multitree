@@ -360,6 +360,12 @@ addLayer("gd_u", {
                 cost: new Decimal(3e108),
                 unlocked() { return hasUpgrade("gd_r",44); },
 			},
+			73: {
+				title: "Update Upgrade 73",
+                description: "Sidney also reduce diploma requirement.",
+                cost: new Decimal(1e118),
+                unlocked() { return hasUpgrade("gd_r",44); },
+			},
 	 },
 	 update(diff){
 		if(hasUpgrade("gd_u",11)){
@@ -2174,7 +2180,7 @@ addLayer("gd_a", {
                 buy() { 
 					if(confirm("This will force an API reset! Are you sure?")){
 						player[this.layer].upgrades=[];
-						player[this.layer].buyables={11:new Decimal(0),12:new Decimal(0),21:new Decimal(0),22:new Decimal(0)};
+						player[this.layer].buyables={1:new Decimal(0),11:new Decimal(0),12:new Decimal(0),21:new Decimal(0),22:new Decimal(0)};
 						doReset(this.layer,true);
 					}
                 },
@@ -2348,6 +2354,7 @@ addLayer("gd_d", {
     resetDescription: "Graduate for ",
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+		if(hasUpgrade("gd_g",15) && hasUpgrade("gd_l",15) && hasUpgrade("gd_u",73))mult = mult.div(upgradeEffect("gd_l",15));
 		return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -2746,7 +2753,7 @@ addLayer("gd_l", {
     color: "#09DE89",
     branches: [ 'gd_s', 'gd_f' ],
     row: 3,
-    position: 4,
+    position: 3,
     resource: "lectures",
     baseResource: "fame",
     resetDescription: "Teach ",

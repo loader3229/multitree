@@ -44,6 +44,7 @@ addLayer("gd_u", {
 		if(hasUpgrade("gd_u",45))mult = mult.mul(upgradeEffect("gd_u",45));
 		if(player.milestone_m.best.gte(29))mult = mult.mul(tmp.milestone_m.milestone29Effect);
 		mult = mult.mul(tmp.gd_a.buyables[22].effect);
+		if(hasUpgrade("gd_t",11))mult = mult.mul(upgradeEffect("gd_t",11));
 		return mult;
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -365,6 +366,17 @@ addLayer("gd_u", {
                 description: "Sidney also reduce diploma requirement.",
                 cost: new Decimal(1e118),
                 unlocked() { return hasUpgrade("gd_r",44); },
+			},
+			74: {
+				title: "Update Upgrade 74",
+                description: "Update boost Time Flux and Lectures.",
+                cost: new Decimal(1e127),
+                unlocked() { return hasUpgrade("gd_r",44); },
+				effect() {
+                    let ret=Decimal.pow(10,player.gd_u.points.add(10).log10().pow(0.5));
+					return ret;
+				},
+                effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
 			},
 	 },
 	 update(diff){
@@ -1110,6 +1122,12 @@ addLayer("gd_r", {
 				title: "Refactor Upgrade 44",
                 description: "Unlock more Update upgrades.",
                 cost: new Decimal(3850),
+				unlocked(){return hasUpgrade("gd_a",14);}
+			},
+			45: {
+				title: "Refactor Upgrade 45",
+                description: "Unlock Time Flux upgrades.",
+                cost: new Decimal(4514),
 				unlocked(){return hasUpgrade("gd_a",14);}
 			},
 	 },
@@ -1866,7 +1884,7 @@ addLayer("gd_g", {
             },
 		},
 		upgrades: {
-            rows: 3,
+            rows: 4,
             cols: 5,
 			11: {
 				title: "Good Will Upgrade 11",
@@ -2025,6 +2043,15 @@ addLayer("gd_g", {
 				currencyLayer: "gd_g",
                 unlocked() { return player[this.layer].best.gte(30) && hasUpgrade("tm",52); }, // The upgrade is only visible when this is true
             },
+			41: {
+				title: "Good Will Upgrade 41",
+                description: "Fame Buyable 'Github' boost Time Flux and Lectures.",
+                cost: new Decimal(4),
+				currencyDisplayName: "unused good will",
+				currencyInternalName: "unused",
+				currencyLayer: "gd_g",
+                unlocked() { return player[this.layer].best.gte(34) && hasUpgrade("tm",52); }, // The upgrade is only visible when this is true
+            },
 
 		},
 	milestones: {
@@ -2037,6 +2064,10 @@ addLayer("gd_g", {
                 effectDescription: "Autobuy fame buyables, fame buyables are cheaper.",
             },
 	},
+		canBuyMax() {return hasMilestone("gd_d",5)},
+		resetsNothing() {return hasMilestone("gd_d",5)},
+		autoPrestige() {return hasMilestone("gd_d",5)},
+
 });
 
 
@@ -2107,16 +2138,21 @@ addLayer("gd_a", {
 				ret=tmp.gd_a.upgrades[player.gd_a.upgrades[i]].cost.add(ret);
 			}
 			for(var i in player.gd_a.buyables){
-				if(i!=1)ret=player.gd_a.buyables[i].add(ret);
+				if(i!=1 && !hasUpgrade("gd_a",15))ret=player.gd_a.buyables[i].add(ret);
 			}
 			return ret;
 		},
 		update(diff){
 			player.gd_a.unused=player.gd_a.points.sub(layers.gd_a.usedEndpoints());
+			if(hasUpgrade("gd_a",15)){
+			for(var i in player.gd_a.buyables){
+				if(i!=1)player.gd_a.buyables[i]=player.gd_a.points;
+			}
+			}
 		},
 		upgrades: {
             rows: 1,
-            cols: 4,
+            cols: 5,
 			11: {
 				title: "API Upgrade 11",
                 description: "Unlock refactor upgrades.",
@@ -2153,6 +2189,15 @@ addLayer("gd_a", {
 				currencyLayer: "gd_a",
                 unlocked() { return hasUpgrade("gd_a",13) && hasMilestone("gd_a",2); }, // The upgrade is only visible when this is true
             },
+			15: {
+				title: "API Upgrade 15",
+                description: "Upgrade the API to let endpoint to do everything. All API buyables amount is set to your current endpoints forever.",
+                cost: new Decimal(210),
+				currencyDisplayName: "unused endpoints",
+				currencyInternalName: "unused",
+				currencyLayer: "gd_a",
+                unlocked() { return hasUpgrade("gd_a",14); }, // The upgrade is only visible when this is true
+            },
 		},
 	milestones: {
             0: {requirementDescription: "1 Endpoints",
@@ -2165,7 +2210,7 @@ addLayer("gd_a", {
             },
             2: {requirementDescription: "205 Endpoints",
                 done() {return player[this.layer].best.gte(205)}, // Used to determine when to give the milestone
-                effectDescription: "Unlock a new  API upgrade.",
+                effectDescription: "Unlock a new API upgrade.",
             },
 	},
 	
@@ -2184,6 +2229,7 @@ addLayer("gd_a", {
 						doReset(this.layer,true);
 					}
                 },
+                unlocked() { return !hasUpgrade("gd_a",15); },
                 buyMax() {}, // You'll have to handle this yourself if you want
                 style: {'height':'60px'},
             },
@@ -2325,7 +2371,9 @@ addLayer("gd_a", {
                 style: {'height':'222px'},
             },
 	},
-		canBuyMax() {return hasMilestone("gd_a",1)},
+		canBuyMax() {return hasMilestone("gd_a",1) || hasMilestone("gd_d",5)},
+		resetsNothing() {return hasMilestone("gd_d",5)},
+		autoPrestige() {return hasMilestone("gd_d",5)},
 });
 
 
@@ -2395,6 +2443,11 @@ addLayer("gd_d", {
                 unlocked() {return hasUpgrade("gd_r",35) && hasUpgrade("gd_f",35);}, // Used to determine when to give the milestone
                 done() {return player[this.layer].best.gte(19)}, // Used to determine when to give the milestone
                 effectDescription: "Enrollments are cheaper.",
+            },
+			5: {requirementDescription: "100 diplomas",
+                unlocked() {return hasUpgrade("gd_r",35) && hasUpgrade("gd_f",35);}, // Used to determine when to give the milestone
+                done() {return player[this.layer].best.gte(100)}, // Used to determine when to give the milestone
+                effectDescription: "Autoget A/D/G, A/D/G resets nothing, you can buy max A/D/G.",
             }
 	},
         effect(){
@@ -2455,6 +2508,9 @@ addLayer("gd_d", {
             style: { width: "400px", height: "320px" }
         }
 	},
+		canBuyMax() {return hasMilestone("gd_d",5)},
+		resetsNothing() {return hasMilestone("gd_d",5)},
+		autoPrestige() {return hasMilestone("gd_d",5)},
 });
 
 
@@ -2494,6 +2550,9 @@ addLayer("gd_t", {
 		if(hasUpgrade("gd_e", 23))mult = mult.mul(20);
 		if(hasUpgrade("gd_r", 35))mult = mult.mul(5);
 		if(player.milestone_m.best.gte(30))mult = mult.mul(tmp.milestone_m.milestone29Effect);
+		if(hasUpgrade("gd_u", 74))mult = mult.mul(upgradeEffect("gd_u",74));
+		if(hasUpgrade("gd_t", 12))mult = mult.mul(upgradeEffect("gd_t",12));
+		if(hasUpgrade("gd_u",45) && hasUpgrade("gd_g",41))mult = mult.mul(upgradeEffect("gd_u",45));
 		return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -2537,7 +2596,9 @@ addLayer("gd_t", {
         if (inChallenge("gd_d", 22)) return 1
         return player[this.layer].shards.add(1);
     },
-	
+	ringEffectBase(){
+		return new Decimal(2);
+	},
     buyables: {
         rows: 9,
         cols: 1,
@@ -2556,7 +2617,7 @@ addLayer("gd_t", {
             },
             effect() {
                 if (getBuyableAmount(this.layer, this.id).gt(0))
-                    return new Decimal(2).pow(getBuyableAmount(this.layer, this.id).sub(1)).times(buyableEffect(this.layer, 21).multiplier).times(player.milestone_m.best.gte(21)?tmp.milestone_m.milestone21Effect:1).times(hasUpgrade("gd_u",53)?upgradeEffect("gd_u",53):1);
+                    return new Decimal(tmp[this.layer].ringEffectBase).pow(getBuyableAmount(this.layer, this.id).sub(1)).times(buyableEffect(this.layer, 21).multiplier).times(player.milestone_m.best.gte(21)?tmp.milestone_m.milestone21Effect:1).times(hasUpgrade("gd_u",53)?upgradeEffect("gd_u",53):1);
                 return new Decimal(0)
             },
             style: { width: "600px", height: "120px" }
@@ -2578,7 +2639,7 @@ addLayer("gd_t", {
             effect() {
                 return {
                     multiplier: player.gd_t.rings[0].add(1),
-                    rate: getBuyableAmount(this.layer, this.id).gt(0) ? new Decimal(2).pow(getBuyableAmount(this.layer, this.id).sub(1)).mul(buyableEffect(this.layer, 31).multiplier).times(player.milestone_m.best.gte(21)?tmp.milestone_m.milestone21Effect:1).times(hasUpgrade("gd_u",53)?upgradeEffect("gd_u",53):1) : new Decimal(0)
+                    rate: getBuyableAmount(this.layer, this.id).gt(0) ? new Decimal(tmp[this.layer].ringEffectBase).pow(getBuyableAmount(this.layer, this.id).sub(1)).mul(buyableEffect(this.layer, 31).multiplier).times(player.milestone_m.best.gte(21)?tmp.milestone_m.milestone21Effect:1).times(hasUpgrade("gd_u",53)?upgradeEffect("gd_u",53):1) : new Decimal(0)
                 }
             },
             style: { width: "600px", height: "120px" }
@@ -2600,7 +2661,7 @@ addLayer("gd_t", {
             effect() {
                 return {
                     multiplier: player.gd_t.rings[1].add(1),
-                    rate: getBuyableAmount(this.layer, this.id).gt(0) ? new Decimal(2).pow(getBuyableAmount(this.layer, this.id).sub(1)).mul(buyableEffect(this.layer, 41).multiplier).times(player.milestone_m.best.gte(21)?tmp.milestone_m.milestone21Effect:1).times(hasUpgrade("gd_u",53)?upgradeEffect("gd_u",53):1) : new Decimal(0)
+                    rate: getBuyableAmount(this.layer, this.id).gt(0) ? new Decimal(tmp[this.layer].ringEffectBase).pow(getBuyableAmount(this.layer, this.id).sub(1)).mul(buyableEffect(this.layer, 41).multiplier).times(player.milestone_m.best.gte(21)?tmp.milestone_m.milestone21Effect:1).times(hasUpgrade("gd_u",53)?upgradeEffect("gd_u",53):1) : new Decimal(0)
                 }
             },
             style: { width: "600px", height: "120px" }
@@ -2622,7 +2683,7 @@ addLayer("gd_t", {
             effect() {
                 return {
                     multiplier: player.gd_t.rings[2].add(1),
-                    rate: getBuyableAmount(this.layer, this.id).gt(0) ? new Decimal(2).pow(getBuyableAmount(this.layer, this.id).sub(1)).mul(buyableEffect(this.layer, 51).multiplier).times(player.milestone_m.best.gte(21)?tmp.milestone_m.milestone21Effect:1).times(hasUpgrade("gd_u",53)?upgradeEffect("gd_u",53):1) : new Decimal(0)
+                    rate: getBuyableAmount(this.layer, this.id).gt(0) ? new Decimal(tmp[this.layer].ringEffectBase).pow(getBuyableAmount(this.layer, this.id).sub(1)).mul(buyableEffect(this.layer, 51).multiplier).times(player.milestone_m.best.gte(21)?tmp.milestone_m.milestone21Effect:1).times(hasUpgrade("gd_u",53)?upgradeEffect("gd_u",53):1) : new Decimal(0)
                 }
             },
             style: { width: "600px", height: "120px" }
@@ -2644,7 +2705,7 @@ addLayer("gd_t", {
             effect() {
                 return {
                     multiplier: player.gd_t.rings[3].add(1),
-                    rate: getBuyableAmount(this.layer, this.id).gt(0) ? new Decimal(2).pow(getBuyableAmount(this.layer, this.id).sub(1)).mul(buyableEffect(this.layer, 61).multiplier).times(player.milestone_m.best.gte(21)?tmp.milestone_m.milestone21Effect:1).times(hasUpgrade("gd_u",53)?upgradeEffect("gd_u",53):1) : new Decimal(0)
+                    rate: getBuyableAmount(this.layer, this.id).gt(0) ? new Decimal(tmp[this.layer].ringEffectBase).pow(getBuyableAmount(this.layer, this.id).sub(1)).mul(buyableEffect(this.layer, 61).multiplier).times(player.milestone_m.best.gte(21)?tmp.milestone_m.milestone21Effect:1).times(hasUpgrade("gd_u",53)?upgradeEffect("gd_u",53):1) : new Decimal(0)
                 }
             },
             style: { width: "600px", height: "120px" }
@@ -2666,7 +2727,7 @@ addLayer("gd_t", {
             effect() {
                 return {
                     multiplier: player.gd_t.rings[4].add(1),
-                    rate: getBuyableAmount(this.layer, this.id).gt(0) ? new Decimal(2).pow(getBuyableAmount(this.layer, this.id).sub(1)).mul(buyableEffect(this.layer, 71).multiplier).times(player.milestone_m.best.gte(21)?tmp.milestone_m.milestone21Effect:1).times(hasUpgrade("gd_u",53)?upgradeEffect("gd_u",53):1) : new Decimal(0)
+                    rate: getBuyableAmount(this.layer, this.id).gt(0) ? new Decimal(tmp[this.layer].ringEffectBase).pow(getBuyableAmount(this.layer, this.id).sub(1)).mul(buyableEffect(this.layer, 71).multiplier).times(player.milestone_m.best.gte(21)?tmp.milestone_m.milestone21Effect:1).times(hasUpgrade("gd_u",53)?upgradeEffect("gd_u",53):1) : new Decimal(0)
                 }
             },
             style: { width: "600px", height: "120px" }
@@ -2688,7 +2749,7 @@ addLayer("gd_t", {
             effect() {
                 return {
                     multiplier: player.gd_t.rings[5].add(1),
-                    rate: getBuyableAmount(this.layer, this.id).gt(0) ? new Decimal(2).pow(getBuyableAmount(this.layer, this.id).sub(1)).mul(buyableEffect(this.layer, 81).multiplier).times(player.milestone_m.best.gte(21)?tmp.milestone_m.milestone21Effect:1).times(hasUpgrade("gd_u",53)?upgradeEffect("gd_u",53):1) : new Decimal(0)
+                    rate: getBuyableAmount(this.layer, this.id).gt(0) ? new Decimal(tmp[this.layer].ringEffectBase).pow(getBuyableAmount(this.layer, this.id).sub(1)).mul(buyableEffect(this.layer, 81).multiplier).times(player.milestone_m.best.gte(21)?tmp.milestone_m.milestone21Effect:1).times(hasUpgrade("gd_u",53)?upgradeEffect("gd_u",53):1) : new Decimal(0)
                 }
             },
             style: { width: "600px", height: "120px" }
@@ -2710,7 +2771,7 @@ addLayer("gd_t", {
             effect() {
                 return {
                     multiplier: player.gd_t.rings[6].add(1),
-                    rate: getBuyableAmount(this.layer, this.id).gt(0) ? new Decimal(2).pow(getBuyableAmount(this.layer, this.id).sub(1)).mul(buyableEffect(this.layer, 91).multiplier).times(player.milestone_m.best.gte(21)?tmp.milestone_m.milestone21Effect:1).times(hasUpgrade("gd_u",53)?upgradeEffect("gd_u",53):1) : new Decimal(0)
+                    rate: getBuyableAmount(this.layer, this.id).gt(0) ? new Decimal(tmp[this.layer].ringEffectBase).pow(getBuyableAmount(this.layer, this.id).sub(1)).mul(buyableEffect(this.layer, 91).multiplier).times(player.milestone_m.best.gte(21)?tmp.milestone_m.milestone21Effect:1).times(hasUpgrade("gd_u",53)?upgradeEffect("gd_u",53):1) : new Decimal(0)
                 }
             },
             style: { width: "600px", height: "120px" }
@@ -2732,7 +2793,7 @@ addLayer("gd_t", {
             effect() {
                 return {
                     multiplier: player.gd_t.rings[7].add(1),
-                    rate: getBuyableAmount(this.layer, this.id).gt(0) ? new Decimal(2).pow(getBuyableAmount(this.layer, this.id).sub(1)).times(player.milestone_m.best.gte(21)?tmp.milestone_m.milestone21Effect:1).times(hasUpgrade("gd_u",53)?upgradeEffect("gd_u",53):1) : new Decimal(0)
+                    rate: getBuyableAmount(this.layer, this.id).gt(0) ? new Decimal(tmp[this.layer].ringEffectBase).pow(getBuyableAmount(this.layer, this.id).sub(1)).times(player.milestone_m.best.gte(21)?tmp.milestone_m.milestone21Effect:1).times(hasUpgrade("gd_u",53)?upgradeEffect("gd_u",53):1) : new Decimal(0)
                 }
             },
             style: { width: "600px", height: "120px" },
@@ -2744,6 +2805,34 @@ addLayer("gd_t", {
 		if(player.gd_d.best.gte(9))ret=ret+1;
 		return ret;
 	},
+    upgrades: {
+        rows: 1,
+        cols: 5,
+        11: {
+            title: "Time Flux Upgrade 11",
+            cost: new Decimal(1e100),
+            description() { return "Time Flux boost update gain." },
+            effect() { return player.gd_t.points.pow(0.05) },
+            effectDisplay() { return `${format(this.effect())}x` },
+            unlocked() { return hasUpgrade("gd_r", 45) },
+        },
+        12: {
+            title: "Time Flux Upgrade 12",
+            cost: new Decimal(1e114),
+            description() { return "Endpoints boost Time Flux and Lectures." },
+            effect() { return Decimal.pow(player.gd_a.points.div(1000).add(1),player.gd_a.points.pow(0.8)) },
+            effectDisplay() { return `${format(this.effect())}x` },
+            unlocked() { return hasUpgrade("gd_r", 45) },
+        },
+        13: {
+            title: "Time Flux Upgrade 13",
+            cost: new Decimal(1e128),
+            description() { return "Time Flux boost Lectures." },
+            effect() { return player.gd_t.points.pow(0.025) },
+            effectDisplay() { return `${format(this.effect())}x` },
+            unlocked() { return hasUpgrade("gd_r", 45) },
+        },
+}
 });
 
 
@@ -2792,6 +2881,11 @@ addLayer("gd_l", {
 		if(hasUpgrade("gd_c", 24))mult = mult.mul(20);
 		if(hasUpgrade("gd_f", 35))mult = mult.mul(2.5);
 		if(player.milestone_m.best.gte(30))mult = mult.mul(tmp.milestone_m.milestone29Effect);
+		if(hasUpgrade("gd_u", 74))mult = mult.mul(upgradeEffect("gd_u",74));
+		if(hasUpgrade("gd_t", 12))mult = mult.mul(upgradeEffect("gd_t",12));
+		if(hasUpgrade("gd_t", 13))mult = mult.mul(upgradeEffect("gd_t",13));
+		if(hasUpgrade("gd_u",45) && hasUpgrade("gd_g",41))mult = mult.mul(upgradeEffect("gd_u",45));
+
         return mult
     },
     gainExp() {

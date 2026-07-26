@@ -902,6 +902,8 @@ addLayer("stardust_c", {
 					if(player.stardust_c.points.gte(760))ret=new Decimal(15.2);
 					if(player.stardust_c.points.gte(836))ret=player.stardust_c.points.div(55);
 					if(player.stardust_c.points.gte(990))ret=new Decimal(18);
+					if(player.stardust_c.points.gte(1080))ret=player.stardust_c.points.div(60);
+					if(player.stardust_c.points.gte(1200))ret=new Decimal(20);
 					return ret;
                 },
                 effectDisplay() { return "^"+format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect
@@ -951,6 +953,8 @@ addLayer("stardust_c", {
 					if(player.stardust_c.points.gte(250))ret=player.stardust_c.points.div(2);
 					if(player.stardust_c.points.gte(760))ret=new Decimal(380);
 					if(player.stardust_c.points.gte(950))ret=player.stardust_c.points.div(2.5);
+					if(player.stardust_c.points.gte(1250))ret=new Decimal(500);
+
 					return ret;
                 },
                 effectDisplay() { return "^"+format(upgradeEffect(this.layer, this.id)) }, // Add formatting to the effect

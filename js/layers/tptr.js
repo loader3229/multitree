@@ -1800,7 +1800,7 @@ addLayer("tptr_sb", {
 		},
 		effect() {
 			//if (!unl(this.layer)) return new Decimal(1);
-			return [Decimal.pow(this.effectBase(), player.tptr_sb.points).max(0),player.tptr_sb.points.add(1).pow(hasUpgrade("tptc_sb",14)?2:hasUpgrade("tptc_sb",11)?1.15:1)];
+			return [Decimal.pow(this.effectBase(), player.tptr_sb.points).max(0),player.tptr_sb.points.add(1).pow(hasUpgrade("tptc_sb",21)?3.2:hasUpgrade("tptc_sb",14)?2:hasUpgrade("tptc_sb",11)?1.15:1)];
 		},
 		effectDescription() {
 			return "which are multiplying the Booster base by "+format(tmp.tptr_sb.effect[0])+"x and are boosting your super booster base in TPTC by "+format(tmp.tptr_sb.effect[1])+"x";
@@ -4276,7 +4276,11 @@ addLayer("tptr_hs", {
 		},
 		buildLimScaling() { return /*((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes(this.layer):false)?0.8:*/1 },
 		buildLimit() { return player.tptr_sg.points.sub(21).max(0).plus(1).sqrt().div(tmp.tptr_hs.buildLimScaling).floor() },
-		realBuildLimit() { return player.tptr_sg.points.sub(21).max(0).plus(1).sqrt().div(tmp.tptr_hs.buildLimScaling) },
+		realBuildLimit() { 
+if(player.tptr_sg.points.sub(21).max(0).plus(1).sqrt().div(tmp.tptr_hs.buildLimScaling).lte(2)){
+return new Decimal(1).sub(player.tptr_sg.points.sub(21).max(0).plus(1).div(new Decimal(tmp.tptr_hs.buildLimScaling).pow(2)).sub(5).recip());
+}
+return player.tptr_sg.points.sub(21).max(0).plus(1).sqrt().div(tmp.tptr_hs.buildLimScaling) },
 		buildingPower() {
 			if (!player[this.layer].unlocked) return new Decimal(0);
 			let pow = new Decimal(1)

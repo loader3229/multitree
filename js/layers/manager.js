@@ -309,7 +309,7 @@
 					x=new Decimal(x);
 					if(x.lt(0.5))return new Decimal(0);
 					if(x.lt(15.5))return Decimal.pow(10,x.pow(4).mul(5e8).add(x.mul(5e8)));
-					if(x.lt(24.5))return Decimal.pow(10,x.mul(1.25).pow(5).mul(14687500));
+					if(x.lt(25.5))return Decimal.pow(10,x.mul(1.25).pow(5).mul(14687500));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -731,6 +731,7 @@
 					if(player.milestone_m.best.gte(65))ret = ret.pow(2);
 					if(player.milestone_m.best.gte(70))ret = ret.pow(2.5);
             if(player.tm.buyables[8].gte(24))ret = ret.pow(1.25);
+            if(player.tm.buyables[8].gte(26))ret = ret.pow(1.6);
 					return ret;
 				},
 				currencyDisplayName: "points",

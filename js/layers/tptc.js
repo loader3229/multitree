@@ -85,6 +85,7 @@ addLayer("tptc_p", {
                 cost: new Decimal("e1e6"),
                 unlocked() { return hasUpgrade("tm",15); },
 				effect() { // Calculate bonuses from the upgrade. Can return a single value or an object with multiple values
+					if(hasUpgrade("tptc_p",63))return (1+(player.tm.upgrades.length||0)*((player.tptc_p.upgrades.length||0)*0.00032+0.05))**2;
 					if(hasUpgrade("tptc_p",31))return (1+(player.tm.upgrades.length||0)*0.05)**2;
 					return 1+(player.tm.upgrades.length||0)*0.05;
                 },
@@ -328,6 +329,13 @@ addLayer("tptc_p", {
                 cost: new Decimal("e2.333333e14"),
                 unlocked() { return hasUpgrade("tm",64); }, // The upgrade is only visible when this is true
             },
+			63: {
+				title: "Prestige Upgrade 63",
+                description: "Prestige Upgrade 15's effect is boosted by Prestige Upgrades bought.",
+                cost: new Decimal("e2.74e14"),
+                unlocked() { return hasUpgrade("tm",64); }, // The upgrade is only visible when this is true
+            },
+
 		},  
 		
 		doReset(l){
@@ -714,7 +722,7 @@ addLayer("tptc_t", {
 			let power=1;
 			let mult=0.5;
 			if(hasUpgrade("tm",61)){
-				let time = Math.min(player.timePlayed+d,86400*8);
+				let time = Math.min(player.timePlayed+d,86400*9);
 				if(player.milestone_m.points.gte(72))power+=(Math.pow(time,0.6)/1000);
 				else power+=(Math.pow(time,0.55)/1000);
 			}
@@ -1568,11 +1576,11 @@ addLayer("tptc_sb", {
 			onPress(){if (player.tm.currentTree==1 && canReset(this.layer)) doReset(this.layer)}, unlocked(){return player.tm.currentTree==1}}
      ],
 	 upgrades: {
-            rows: 1,
+            rows: 2,
             cols: 5,
 			11: {
 				title: "Super-Booster Upgrade 11",
-                description(){return "The second Super-Booster effect in TPTR ^"+(hasUpgrade("tptc_sb",14)?2:1.15)},
+                description(){return "The second Super-Booster effect in TPTR ^"+(hasUpgrade("tptc_sb",21)?3.2:hasUpgrade("tptc_sb",14)?2:1.15)},
                 cost: new Decimal(29),
                 unlocked() { return hasUpgrade("tm",31); }, // The upgrade is only visible when this is true
             },
@@ -1598,6 +1606,12 @@ addLayer("tptc_sb", {
 				title: "Super-Booster Upgrade 15",
                 description: "Magic Upgrade 15 is better.",
                 cost: new Decimal(81),
+                unlocked() { return hasUpgrade("tm",56); }, // The upgrade is only visible when this is true
+            },
+			21: {
+				title: "Super-Booster Upgrade 21",
+                description: "Super-Booster upgrade 11 is better.",
+                cost: new Decimal(88),
                 unlocked() { return hasUpgrade("tm",56); }, // The upgrade is only visible when this is true
             },
 	 }

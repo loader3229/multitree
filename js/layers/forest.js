@@ -136,6 +136,7 @@ addLayer("forest_p", {
 					if(hasUpgrade("forest_p",24))ret=ret.pow(2);
 					ret=ret.pow(player.forest_A.best.pow(0.7).add(1));
 					ret=ret.pow(new Decimal(player.forest_A.upgrades.length).mul(0.25).add(1));
+					ret = ret.min("e5e13");
 					return ret;
                 },
 				effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect

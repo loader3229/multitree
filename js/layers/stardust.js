@@ -76,6 +76,7 @@ addLayer("stardust_s", {
 					if(hasUpgrade("stardust_c",31))ret=ret.pow(upgradeEffect("stardust_c",31));
 					if(hasUpgrade("stardust_s",14))ret=ret.pow(2);
 					if(hasUpgrade("stardust_s",43))ret=ret.pow(2);
+					ret = ret.min("e5e13");
                     return ret;
                 },
                 effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect

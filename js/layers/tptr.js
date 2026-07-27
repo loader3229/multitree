@@ -367,6 +367,7 @@ addLayer("tptr_b", {
 		if (hasUpgrade("tptc_b", 23))eff2 = Decimal.pow(1.2,player.tptr_b.points.div(2));
 		if (hasUpgrade("tptc_b", 24))eff2 = Decimal.pow(1.3,player.tptr_b.points.div(2));
 		if (hasUpgrade("tptc_b", 25))eff2 = Decimal.pow(1.51,player.tptr_b.points.div(2));
+		if (hasUpgrade("tptc_e", 22))eff2 = Decimal.pow(1.75,player.tptr_b.points.div(2));
 		if (hasUpgrade("tptc_b", 13))eff2 = eff2.pow(2)
 		let ret = [Decimal.pow(tmp.tptr_b.effectBase, player.tptr_b.points).max(0).times(hasUpgrade("tptr_p", 43)?tmp.tptr_q.enEff:1), eff2];
 		return ret;
@@ -569,6 +570,7 @@ addLayer("tptr_g", {
 		if (hasUpgrade("tptc_g", 23))eff2 = Decimal.pow(1.2,player.tptr_g.points.div(2));
 		if (hasUpgrade("tptc_g", 24))eff2 = Decimal.pow(1.3,player.tptr_g.points.div(2));
 		if (hasUpgrade("tptc_g", 25))eff2 = Decimal.pow(1.51,player.tptr_g.points.div(2));
+		if (hasUpgrade("tptc_e", 22))eff2 = Decimal.pow(1.75,player.tptr_g.points.div(2));
 			if (hasUpgrade("tptc_g", 13))eff2 = eff2.pow(2)
 			
 			
@@ -825,7 +827,7 @@ addLayer("tptr_t", {
 			else return {
 				gain: Decimal.pow(tmp.tptr_t.effBaseMult.times(tmp.tptr_t.effGainBaseMult).times(3).pow(tmp.tptr_t.effBasePow), player.tptr_t.points.times(tmp.tptr_t.nonExtraTCPow).plus(player.tptr_t.buyables[11].mul(inChallenge("tptr_h",31)?0:1)).plus(tmp.tptr_t.freeExtraTimeCapsules)).sub(1).max(0).times(player.tptr_t.points.times(tmp.tptr_t.nonExtraTCPow).plus(player.tptr_t.buyables[11].mul(inChallenge("tptr_h",31)?0:1)).gt(0)?1:0).times(tmp.tptr_t.enGainMult).mul(inChallenge("tptr_h",32)?0:1).max(0),
 				limit: Decimal.pow(tmp.tptr_t.effBaseMult.times(tmp.tptr_t.effLimBaseMult).times(2).pow(tmp.tptr_t.effBasePow), player.tptr_t.points.times(tmp.tptr_t.nonExtraTCPow).plus(player.tptr_t.buyables[11].mul(inChallenge("tptr_h",31)?0:1)).plus(tmp.tptr_t.freeExtraTimeCapsules)).sub(1).max(0).times(100).times(player.tptr_t.points.times(tmp.tptr_t.nonExtraTCPow).plus(player.tptr_t.buyables[11].mul(inChallenge("tptr_h",31)?0:1)).gt(0)?1:0).times(tmp.tptr_t.enCapMult).max(0),
-				tptc_t_boost: player.tptr_t.points.pow(hasUpgrade("tptc_t",11)?3:1).pow(hasUpgrade("tptc_t",12)?3:1).pow(hasUpgrade("tptc_t",13)?20/9:1).add(1)
+				tptc_t_boost: (hasUpgrade("tptc_t",21)?Decimal.pow(1.1220184543019634355910389464779,player.tptr_t.points).max(player.tptr_t.points):player.tptr_t.points).pow(hasUpgrade("tptc_t",11)?3:1).pow(hasUpgrade("tptc_t",12)?3:1).pow(hasUpgrade("tptc_t",13)?20/9:1).add(1)
 			}
 		},
 		effectDescription() {
@@ -1367,7 +1369,8 @@ addLayer("tptr_s", {
 			showRespec() { return player.tptr_s.unlocked },
             respec() { // Optional, reset things and give back your currency. Having this function makes a respec button appear
 				player[this.layer].spent = new Decimal(0);
-                resetBuyables(this.layer)
+                player[this.layer].buyables=getStartBuyables(this.layer)
+		updateTemp()
                 doReset(this.layer, true) // Force a reset
             },
             respecText: "Respec Space Buildings", // Text on Respec button, optional

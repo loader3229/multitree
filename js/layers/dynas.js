@@ -17,7 +17,7 @@ addLayer("dynas_c", {
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
-        mult = new Decimal(1)
+       let mult = new Decimal(1)
 		mult=mult.mul(tmp.dynas_b.effect);
 		mult=mult.mul(tmp.dynas_m.effect);
 		if(hasUpgrade("tptc_p",51))mult=mult.mul(upgradeEffect("tptc_p",51));
@@ -26,8 +26,10 @@ addLayer("dynas_c", {
 		return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
-		if (player.dynas_b.banking & 4) return new Decimal(0.1)
-        return new Decimal(1)
+		let mult = new Decimal(1)
+		if (player.dynas_b.banking & 4) mult = mult.mul(0.1)
+		if (inChallenge("dynas_t", 11)) mult = mult.mul(0.5)
+        	return mult
     },
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [],
@@ -71,7 +73,7 @@ addLayer("dynas_c", {
 	if (player.dynas_b.banking & 4) ret = ret.pow(0.1)
 	if (player.dynas_b.banking & 8) ret = player.dynas_c.points.pow(0.1).add(10)
 	if (player.dynas_b.banking & 16) ret = ret.pow(Decimal.pow(player.dynas_b.bankTime, 2).add(1).recip())  
-
+		if (inChallenge("dynas_t", 11)) ret = ret.pow(0.5)
                     return ret;
                 },
 			},
@@ -143,6 +145,7 @@ addLayer("dynas_c", {
 					if(hasUpgrade("dynas_c",41))ret=ret.add(1).pow(3.5e8);
 					else ret=ret.add(1).pow(3.5e6);
 					if(hasUpgrade("dynas_sp",12))ret=ret.pow(upgradeEffect("dynas_sp",12));
+					ret = ret.min("e5e13");
 					return ret;
                 },
                 effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
@@ -330,6 +333,7 @@ addLayer("dynas_wf", {
 	base: 5000,
     exponent: 0.6, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
+	if(inChallenge("dynas_t",12))return Decimal.dInf;
         mult = new Decimal(1)
 		return mult
     },
@@ -346,9 +350,11 @@ addLayer("dynas_wf", {
 		if(hasUpgrade("dynas_wf",32))eff = eff.mul(hasUpgrade("dynas_wf",34)?2:1.5);
 		eff = eff.mul(buyableEffect("dynas_bd", 11));
 		eff = eff.mul(buyableEffect("dynas_wf", 21));
+		eff = eff.mul(buyableEffect("dynas_wf", 23));
 		if (hasUpgrade("dynas_wf", 33)) eff = eff.mul(upgradeEffect("dynas_wf", 33));
 		if(hasUpgrade("dynas_sp",15))eff = eff.mul(upgradeEffect("dynas_sp",15));
 		if(hasMilestone("dynas_m",1))eff = eff.mul(10);
+		if(hasChallenge("dynas_t",12))eff = eff.mul(challengeEffect("dynas_t",12));
 		return eff
 	},
 	effect2() {
@@ -536,7 +542,7 @@ addLayer("dynas_wf", {
 			title: () => "Increase workers' strength",
 			cost(x=player.dynas_wf.buyables[11]) {
 				if (x.gte(10)) x = x.pow(x.div(10))
-				let cost = Decimal.pow(10, x).mul(1000)
+				let cost = Decimal.pow(10, x).mul(hasMilestone("dynas_m",2)?1:1000)
 				return cost.floor()
 			},
 			effect(x=player.dynas_wf.buyables[11]) { // Effects of owning x of the items, x is a decimal
@@ -571,7 +577,7 @@ addLayer("dynas_wf", {
 			title: () => "Increase workers' dexterity",
 			cost(x=player.dynas_wf.buyables[12]) {
 				if (x.gte(10)) x = x.pow(x.div(10))
-				let cost = Decimal.pow(10, x).mul(2000)
+				let cost = Decimal.pow(10, x).mul(hasMilestone("dynas_m",2)?1:2000)
 				return cost.floor()
 			},
 			effect(x=player.dynas_wf.buyables[12]) { // Effects of owning x of the items, x is a decimal
@@ -599,7 +605,7 @@ addLayer("dynas_wf", {
 			title: () => "Increase workers' collaborativeness",
 			cost(x=player.dynas_wf.buyables[13]) {
 				if (x.gte(10)) x = x.pow(x.div(10))
-				let cost = Decimal.pow(20, x).mul(5000)
+				let cost = Decimal.pow(20, x).mul(hasMilestone("dynas_m",2)?1:5000)
 				return cost.floor()
 			},
 			effect(x=player.dynas_wf.buyables[13]) { // Effects of owning x of the items, x is a decimal
@@ -626,7 +632,7 @@ addLayer("dynas_wf", {
 		21: {
 			title: () => "Increase workfinders' strength",
 			cost(x=player.dynas_wf.buyables[21]) {
-				let cost = Decimal.pow(x.add(hasUpgrade("dynas_wf",34)?61:100), x.sqrt()).mul(hasUpgrade("dynas_wf",34)?7:10)
+				let cost = Decimal.pow(x.add(hasMilestone("dynas_m",2)?50:hasUpgrade("dynas_wf",34)?61:100), x.sqrt()).mul(hasMilestone("dynas_m",2)?1:hasUpgrade("dynas_wf",34)?7:10)
 				return cost.floor()
 			},
 			effect(x=player.dynas_wf.buyables[21]) { // Effects of owning x of the items, x is a decimal
@@ -654,7 +660,7 @@ addLayer("dynas_wf", {
 			title: () => "Increase work quality",
 			cost(x=player.dynas_wf.buyables[22]) {
 				if (x.gte(10)) x = x.pow(x.div(10))
-				let cost = Decimal.pow(10, x).mul(1e12)
+				let cost = Decimal.pow(10, x).mul(hasMilestone("dynas_m",2)?1e9:1e12)
 				return cost.floor()
 			},
 			effect(x=player.dynas_wf.buyables[22]) { // Effects of owning x of the items, x is a decimal
@@ -677,35 +683,35 @@ addLayer("dynas_wf", {
 				player[this.layer].workDone = player[this.layer].workDone.sub(cost)
 				player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
 			},
-		},/*
+		},
 		23: {
-			title: () => "Increase work planning skills",
+			title: () => "Increase worker-workfinder synergy",
 			cost(x) {
 				if (x.gte(10)) x = x.pow(x.div(10))
-				let cost = Decimal.pow(1e10, x).mul(1e40)
+				let cost = Decimal.pow(10, x).mul(1e15)
 				return cost.floor()
 			},
 			effect(x) { // Effects of owning x of the items, x is a decimal
-				let eff = x.mul(0.02).add(1).recip()
+				let eff = Decimal.pow(x.add(1), 1.5);
 				return eff;
 			},
 			display() { // Everything else displayed in the buyable button after the title
-				let data = tmp.buyables[this.layer][this.id]
+				let data = tmp[this.layer].buyables[this.id]
 				return "Level " + player[this.layer].buyables[this.id] + "\n\
 				Cost: " + format(data.cost) + " coins\n\
-				Reduces the unfinished work penalty.\n\
-				Currently: ^" + format(data.effect, 3)
+				Increases work finding and finishing speed.\n\
+				Currently: ×" + format(data.effect)
 			},
-			unl() { return player[this.layer].unl },
+			unlocked() { return hasMilestone("dynas_m",2) },
 			canAfford() {
-				return player.c.points.gte(tmp.buyables[this.layer][this.id].cost)
+				return player[this.layer].workDone.gte && player[this.layer].workDone.gte(tmp[this.layer].buyables[this.id].cost)
 			},
 			buy() {
-				cost = tmp.buyables[this.layer][this.id].cost
-				player.c.points = player.c.points.sub(cost)
+				cost = tmp[this.layer].buyables[this.id].cost
+				player[this.layer].workDone = player[this.layer].workDone.sub(cost)
 				player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
 			},
-		},*/
+		},
 	},
 
 	clickables: {
@@ -798,13 +804,17 @@ effect2(){
 					if (hasUpgrade("dynas_wf", 12)) eff = eff.mul(upgradeEffect("dynas_wf", 12));
 					if (hasUpgrade("dynas_wf", 13)) eff = eff.mul(upgradeEffect("dynas_wf", 13));
 					eff = eff.mul(buyableEffect("dynas_wf", 11));
+					eff = eff.mul(buyableEffect("dynas_wf", 23));
+
 					
 					eff = eff.mul(buyableEffect("dynas_bd", 11));
 		if(hasUpgrade("dynas_sp",15))eff = eff.mul(upgradeEffect("dynas_sp",15));
 		if (hasUpgrade("dynas_wf", 33)) eff = eff.mul(upgradeEffect("dynas_wf", 33));
+		if(hasChallenge("dynas_t",12))eff = eff.mul(challengeEffect("dynas_t",12));
 		if (hasUpgrade("dynas_wf", 35)) eff = eff.mul(1.1);
 		if (hasUpgrade("dynas_wf", 35)) eff = eff.max(eff.mul(1.1).mul(layers.dynas_wf.effect()).sqrt());
-		
+
+		if (player.dynas_b.banking == 15) eff = player.modpoints[9].pow(0.2).sub(1)
 	return eff;
 },
 
@@ -963,8 +973,9 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 		return new Decimal(1)
 	},
 		doReset(l){
-			if(l=="dynas_c" || l=="dynas_wf"  || l=="dynas_b" || l=="dynas_sp" || !l.startsWith("dynas_")){return;}
-			layerDataReset("dynas_b",["upgrades","milestones","challenges"]);
+			if(l=="dynas_c" || l=="dynas_wf" || l=="dynas_b" || l=="dynas_sp" || !l.startsWith("dynas_")){return;}
+			if(hasMilestone("dynas_m",2))layerDataReset("dynas_b",["upgrades","buyables","milestones","challenges"]);
+			else layerDataReset("dynas_b",["upgrades","milestones","challenges"]);
 			return;
 		},
 	buyables: {
@@ -979,7 +990,7 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 				var eff = player[this.layer].buyables[this.id].add(1).pow(0.15)
 				eff = eff.mul(buyableEffect("dynas_b",21))
 				eff = eff.mul(buyableEffect("dynas_b",22))
-				//if (tmp.buyables.b[23]) eff = eff.mul(tmp.buyables.b[23].effect)
+				eff = eff.mul(buyableEffect("dynas_b",23))
 				//if (tmp.buyables.b[31]) eff = eff.mul(tmp.buyables.b[31].effect)
 				//if (hasMilestone("m", 0) && hasMilestone("w", 9)) eff = eff.mul(25)
 				//if (hasUpg("w", 25)) eff = eff.pow(layers.w.upgrades[25].effect())
@@ -1017,7 +1028,7 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 				var eff = player[this.layer].buyables[this.id].add(1).pow(0.15)
 				eff = eff.mul(buyableEffect("dynas_b",21))
 				eff = eff.mul(buyableEffect("dynas_b",22))
-				//if (tmp.buyables.b[23]) eff = eff.mul(tmp.buyables.b[23].effect)
+				eff = eff.mul(buyableEffect("dynas_b",23))
 				//if (tmp.buyables.b[31]) eff = eff.mul(tmp.buyables.b[31].effect)
 				//if (hasMilestone("m", 0) && hasMilestone("w", 9)) eff = eff.mul(25)
 				//if (hasUpg("w", 25)) eff = eff.pow(layers.w.upgrades[25].effect())
@@ -1055,7 +1066,7 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 				var eff = player[this.layer].buyables[this.id].add(1).pow(0.15)
 				eff = eff.mul(buyableEffect("dynas_b",21))
 				eff = eff.mul(buyableEffect("dynas_b",22))
-				//if (tmp.buyables.b[23]) eff = eff.mul(tmp.buyables.b[23].effect)
+				eff = eff.mul(buyableEffect("dynas_b",23))
 				//if (tmp.buyables.b[31]) eff = eff.mul(tmp.buyables.b[31].effect)
 				//if (hasMilestone("m", 0) && hasMilestone("w", 9)) eff = eff.mul(25)
 				//if (hasUpg("w", 25)) eff = eff.pow(layers.w.upgrades[25].effect())
@@ -1092,7 +1103,7 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 			effect(x) {
 				var eff = player[this.layer].buyables[this.id].mul(2.5).add(1).pow(0.1)
 				eff = eff.mul(buyableEffect("dynas_b",22))
-				//if (tmp.buyables.b[23]) eff = eff.mul(tmp.buyables.b[23].effect)
+				eff = eff.mul(buyableEffect("dynas_b",23))
 				//if (tmp.buyables.b[31]) eff = eff.mul(tmp.buyables.b[31].effect)
 				var softcap = new Decimal(1e15)
 				//if (player.sp.buyables[30].gt(0)) softcap = softcap.mul(tmp.buyables.sp[30].effect)
@@ -1126,7 +1137,7 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 			},
 			effect(x) {
 				var eff = player[this.layer].buyables[this.id].mul(2.5).add(1).pow(0.05)
-				//if (tmp.buyables.b[23]) eff = eff.mul(tmp.buyables.b[23].effect)
+				eff = eff.mul(buyableEffect("dynas_b",23))
 				//if (tmp.buyables.b[31]) eff = eff.mul(tmp.buyables.b[31].effect)
 				var softcap = new Decimal(1e15)
 				//if (player.sp.buyables[30].gt(0)) softcap = softcap.mul(tmp.buyables.sp[30].effect)
@@ -1151,7 +1162,6 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 				doReset(this.layer, true)
 			},
 		},
-/*
 		23: {
 			title: () => "Work Banking",
 			cost(x) {
@@ -1159,32 +1169,33 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 			},
 			effect(x) {
 				var eff = player[this.layer].buyables[this.id].mul(2.5).add(1).pow(0.6)
-				if (tmp.buyables.b[31]) eff = eff.mul(tmp.buyables.b[31].effect)
+				//if (tmp.buyables.b[31]) eff = eff.mul(tmp.buyables.b[31].effect)
 				var softcap = new Decimal(1e15)
-				if (player.sp.buyables[30].gt(0)) softcap = softcap.mul(tmp.buyables.sp[30].effect)
+				//if (player.sp.buyables[30].gt(0)) softcap = softcap.mul(tmp.buyables.sp[30].effect)
 				if (eff.gte(softcap)) eff = eff.mul(softcap).sqrt()
-				if (player.sp.buyables[28].gt(0) && tmp.buyables.sp[28].effect.sqrt) eff = eff.mul(tmp.buyables.sp[28].effect.sqrt())
+				//if (player.sp.buyables[28].gt(0) && tmp.buyables.sp[28].effect.sqrt) eff = eff.mul(tmp.buyables.sp[28].effect.sqrt())
 				return eff
 			},
 			display() {
-				let data = tmp.buyables[this.layer][this.id]
+				let data = tmp[this.layer].buyables[this.id]
 				return data.canAfford
 					? "You have " + format(player[this.layer].buyables[this.id], 0) + " banked work, which are which are boosting all previous bankings' buffs by ×" + format(data.effect) + ".\n\n\
-						Banking is currently " + (player.b.banking == 15 ? "enabled.\n\
-						Click here to disable banking and gain " + format(Decimal.sub(player.wf.workDone, player.b.buyables[23]).max(0), 0) + " banked work." : "disabled.\n\
+						Banking is currently " + (player.dynas_b.banking == 15 ? "enabled.\n\
+						Click here to disable banking and gain " + format(Decimal.sub(player.dynas_wf.workDone, player.dynas_b.buyables[23]).max(0), 0) + " banked work." : "disabled.\n\
 						Click here to enable banking, which will activate all the previous bankings' debuffs at once. Your current finished and unfinished work are also resetted, and the finished work's speed is overriden and depends on your current point count ((points^0.2)-1). The thing you're banking here is your current finished work count.")
-					: (player.b.banking > 0 ? "Please disable the current active banking before you can activate another one." : "You need to build at least 19 banks before you can use this function.")
+					: (player.dynas_b.banking > 0 ? "Please disable the current active banking before you can activate another one." : "You need to build at least 19 banks before you can use this function.")
 			},
-			unl() { return hasMilestone("w", 10) },
-			canAfford() { return (player[this.layer].best.gte(19) || player.b.buyables[33].gt(0)) && (player.b.banking == 0 || player.b.banking == 15) },
+			unlocked() { return hasMilestone("dynas_t", 0) },
+			canAfford() { return (player[this.layer].best.gte(19) /*|| player.b.buyables[33].gt(0)*/) && (player[this.layer].banking == 0 || player[this.layer].banking == 15) },
 			buy() {
-				if (player.b.banking == 15) player.b.buyables[23] = player.b.buyables[23].max(player.wf.workDone)
-				player.b.banking = player.b.banking == 15 ? 0 : 15
-				player.wf.workDone = new Decimal(0)
-				player.wf.workUndone = new Decimal(0)
+				if (player.dynas_b.banking == 15) player[this.layer].buyables[23] = player[this.layer].buyables[23].max(player.dynas_wf.workDone)
+				player.dynas_b.banking = player.dynas_b.banking == 15 ? 0 : 15
+				player.dynas_wf.workDone = new Decimal(0)
+				player.dynas_wf.workUndone = new Decimal(0)
 				doReset(this.layer, true)
 			},
-		},	
+		},
+/*	
 		31: {	
 			title:() => "Speed Banking",	
 			cost(x) {	
@@ -1276,19 +1287,18 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 			player.b.speed = new Decimal(0)
 		}*/
 		
-		/*if (hasMilestone("m", 5)) {
-			let mults = [1e75, 1e50, 1e20, 1e8, 1e5, 5, 1]
+		if (hasMilestone("dynas_m", 2)) {
 			let curr = 11;
-			for (var a = 1; a <= mults.length; a++) {
+			for (var a = 1; a <= 6; a++) {
 				let layer = Math.floor(a / 3 + 1) * 10 + ((a % 3) + 1)
-				let realMult = tmp.buyables.b[33].effect.mul(mults[a-1])
-				if (player.sp.buyables[28].gt(0)) realMult = realMult.mul(tmp.buyables.sp[28].effect)
-				if (tmp.buyables.wi[12]) realMult = realMult.mul(tmp.buyables.wi[12].effect.pow(Math.pow(0.7, a-1)))
+				let realMult = new Decimal(10); // tmp.buyables.b[33].effect.mul(mults[a-1])
+				//if (player.sp.buyables[28].gt(0)) realMult = realMult.mul(tmp.buyables.sp[28].effect)
+				//if (tmp.buyables.wi[12]) realMult = realMult.mul(tmp.buyables.wi[12].effect.pow(Math.pow(0.7, a-1)))
 				
-				player.b.buyables[curr] = player.b.buyables[curr].add(Decimal.mul(player.b.buyables[layer], diff).mul(realMult))
+				player.dynas_b.buyables[curr] = player.dynas_b.buyables[curr].add(Decimal.mul(new Decimal(player.dynas_b.buyables[layer] || 0).add(1), diff).mul(realMult))
 				curr = layer
 			}
-		}*/
+		}
 		
 		//if (inChallenge("t", 31)) player.b.banking = 3
 		//if (inChallenge("t", 32)) player.b.banking = 4
@@ -1368,7 +1378,7 @@ addLayer("dynas_m", {
 		return new Decimal(1)
 	},
 		doReset(l){
-			if(l=="dynas_c" || l=="dynas_wf"  || l=="dynas_b" || l=="dynas_sp" || l=="dynas_w" || l=="dynas_m" || l=="dynas_bd" || !l.startsWith("dynas_")){return;}
+			if(l=="dynas_c" || l=="dynas_wf"  || l=="dynas_b" || l=="dynas_sp" || l=="dynas_w" || l=="dynas_m" || l=="dynas_bd" || l=="dynas_t" || !l.startsWith("dynas_")){return;}
 			layerDataReset("dynas_m",["upgrades","milestones","challenges"]);
 			return;
 		},
@@ -1382,6 +1392,11 @@ addLayer("dynas_m", {
 			requirementDescription: () => "10 Managers",
 			done() { return player[this.layer].best.gte(10) },
 			effectDescription: () => "Unfinished work won't have any negative effect now, and unfinished work gain x10"
+		},
+		2: {
+			requirementDescription: () => "11 Managers",
+			done() { return player[this.layer].best.gte(11) },
+			effectDescription: () => "Keep bankings in all resets. Also generate 10 each of first 6 banking per second, multiplied by (1 + banking above it). Workfinder buyables are cheaper and unlock a new workfinder buyable."
 		},
 	},
 	/*
@@ -1744,7 +1759,7 @@ addLayer("dynas_bd", {
 	layerShown() { return player.tm.buyables[9].gte(10) && player.tm.currentTree==9; },
 
 		doReset(l){
-			if(l=="dynas_c" || l=="dynas_wf"  || l=="dynas_b" || l=="dynas_sp" || l=="dynas_w" || l=="dynas_m" || l=="dynas_bd" || !l.startsWith("dynas_")){return;}
+			if(l=="dynas_c" || l=="dynas_wf"  || l=="dynas_b" || l=="dynas_sp" || l=="dynas_w" || l=="dynas_m" || l=="dynas_bd" || l=="dynas_t" || !l.startsWith("dynas_")){return;}
 			layerDataReset("dynas_bd",["upgrades","milestones","challenges"]);
 			return;
 		},
@@ -1763,6 +1778,8 @@ addLayer("dynas_bd", {
 	effect() {
 		let ret = Decimal.pow(player.dynas_bd.points, 2).mul(player.dynas_c.points.add(1).log(100).add(1)).div(5);
 		if(hasUpgrade("dynas_sp",14))ret=ret.mul(upgradeEffect("dynas_sp",14));
+		if(player.dynas_t.challenges[11]>=1)ret=ret.mul(challengeEffect("dynas_t",11));
+		ret=ret.mul(buyableEffect("dynas_bd",22));
 		return ret;
 	},
 
@@ -1782,6 +1799,15 @@ addLayer("dynas_bd", {
 		return new Decimal(1)
 	},
 	
+	milestones: {
+		0: {
+			requirementDescription: () => "5 Builders",
+			done() { return player[this.layer].best.gte(5) && player.tm.buyables[9].gte(15) },
+			unlocked() { return player.tm.buyables[9].gte(15) },
+			effectDescription: () => "Reduce costs of first 3 buildings. Also reduce SP requirement."
+		},
+	},
+
 	buyables: {
 		rows: 3,
 		cols: 3,
@@ -1790,6 +1816,7 @@ addLayer("dynas_bd", {
 			cost(x=player.dynas_bd.buyables[11]) {
 				if (x.gte(25)) x = x.pow(2).div(25)
 				if (x.gte(15)) x = x.pow(2).div(15)
+				if(hasMilestone("dynas_bd", 0))return Decimal.pow(2, x);
 				return Decimal.pow(2, x).mul(1000)
 			},
 			effect(x=player.dynas_bd.buyables[11]) {
@@ -1818,6 +1845,7 @@ addLayer("dynas_bd", {
 			cost(x=player.dynas_bd.buyables[12]) {
 				if (x.gte(25)) x = x.pow(2).div(25)
 				if (x.gte(15)) x = x.pow(2).div(15)
+				if(hasMilestone("dynas_bd", 0))return Decimal.pow(1.5, x);
 				return Decimal.pow(1.5, x).mul(800)
 			},
 			effect(x=player.dynas_bd.buyables[12]) {
@@ -1846,6 +1874,7 @@ addLayer("dynas_bd", {
 			cost(x=player.dynas_bd.buyables[13]) {
 				if (x.gte(8)) x = x.pow(2).div(8)
 				if (x.gte(5)) x = x.pow(2).div(5)
+				if(hasMilestone("dynas_bd", 0))return Decimal.pow(3.5, x);
 				return Decimal.pow(3.5, x).mul(8000)
 			},
 			effect(x=player.dynas_bd.buyables[13]) {
@@ -1868,65 +1897,64 @@ addLayer("dynas_bd", {
 			buy() {
 				player.dynas_bd.building = (player.dynas_bd.building == 13 ? 0 : 13)
 			},
-		},/*
+		},
 		21: {
 			title: () => "Road",
-			cost(x) {
+			cost(x=player.dynas_bd.buyables[21]) {
 				if (x.gte(8)) x = x.pow(2).div(8)
 				if (x.gte(5)) x = x.pow(2).div(5)
 				return Decimal.pow(3.5, x).mul(60000)
 			},
-			effect(x) {
+			effect(x=player.dynas_bd.buyables[21]) {
 				return Decimal.pow(1.25, x)
 			},
 			display() { // Everything else displayed in the buyable button after the title
-				let data = tmp.buyables[this.layer][this.id]
+				let data = tmp[this.layer].buyables[this.id]
 				return data.canAfford
-					? "You have " + format(player[this.layer].buyables[this.id], 0) + " roads." + (player[this.layer].buyables[this.id].gte(1) ? (player[this.layer].buyables[this.id].gte(6) ? " Building more will make your obstacle rewards stronger." : " Building more will give you an another obstacle to be completed.") : " Building one will unlock another prestige layer.") + 
-						(player.bd.building == 21 ? "\n\n\
-						Progress: " + format(player.bd.progress, 0) + " / " + format(data.cost, 0) + " (" + format(Decimal.div(player.bd.progress, data.cost).mul(100)) + "%) \n\
-						ETA: " + (Decimal.lte(tmp.layerEffs.bd.speed, 0) ? "never" : formatTime(data.cost.sub(player.bd.progress).div(tmp.layerEffs.bd.speed))) + "\n\
+					? "You have " + format(player[this.layer].buyables[this.id], 0) + " roads. Building more will make your obstacle rewards stronger." + 
+						(player.dynas_bd.building == 21 ? "\n\n\
+						Progress: " + format(player.dynas_bd.progress, 0) + " / " + format(data.cost, 0) + " (" + format(Decimal.div(player.dynas_bd.progress, data.cost).mul(100)) + "%) \n\
+						ETA: " + (Decimal.lte(tmp.dynas_bd.effect, 0) ? "never" : formatTime(data.cost.sub(player.dynas_bd.progress).div(tmp.dynas_bd.effect))) + "\n\
 						Click here to stop building and discard the building progress." : "\n\n\
 						Progress needed: " + format(data.cost, 0) + "\n\
 						Click here to start building.")
 					: "You can not build more than one structure at once."
 			},
-			unl() { return player.bd.points.gte(1) && hasMilestone("m", 3) },
-			canAfford() { return (player.bd.building == 0 || player.bd.building == 21) },
+			unlocked() { return player.tm.buyables[9].gte(15) },
+			canAfford() { return (player.dynas_bd.building == 0 || player.dynas_bd.building == 21) },
 			buy() {
-				player.bd.building = (player.bd.building == 21 ? 0 : 21)
-				if (player.bd.building != 0) doReset("bd", true)
+				player.dynas_bd.building = (player.dynas_bd.building == 21 ? 0 : 21)
 			},
+
 		},
 		22: {
 			title: () => "Construction Site",
-			cost(x) {
+			cost(x=player.dynas_bd.buyables[22]) {
 				if (x.gte(25)) x = x.pow(2).div(25)
 				if (x.gte(15)) x = x.pow(2).div(15)
 				return Decimal.pow(1.6, x).mul(120000)
 			},
-			effect(x) {
+			effect(x=player.dynas_bd.buyables[22]) {
 				return Decimal.pow(1.2, x)
 			},
 			display() { // Everything else displayed in the buyable button after the title
-				let data = tmp.buyables[this.layer][this.id]
+				let data = tmp[this.layer].buyables[this.id]
 				return data.canAfford
 					? "You have " + format(player[this.layer].buyables[this.id], 0) + " construction sites, which are making your builders build " + format(data.effect) + "× faster." + 
-						(player.bd.building == 22 ? "\n\n\
-						Progress: " + format(player.bd.progress, 0) + " / " + format(data.cost, 0) + " (" + format(Decimal.div(player.bd.progress, data.cost).mul(100)) + "%) \n\
-						ETA: " + (Decimal.lte(tmp.layerEffs.bd.speed, 0) ? "never" : formatTime(data.cost.sub(player.bd.progress).div(tmp.layerEffs.bd.speed))) + "\n\
+						(player.dynas_bd.building == 22 ? "\n\n\
+						Progress: " + format(player.dynas_bd.progress, 0) + " / " + format(data.cost, 0) + " (" + format(Decimal.div(player.dynas_bd.progress, data.cost).mul(100)) + "%) \n\
+						ETA: " + (Decimal.lte(tmp.dynas_bd.effect, 0) ? "never" : formatTime(data.cost.sub(player.dynas_bd.progress).div(tmp.dynas_bd.effect))) + "\n\
 						Click here to stop building and discard the building progress." : "\n\n\
 						Progress needed: " + format(data.cost, 0) + "\n\
 						Click here to start building.")
 					: "You can not build more than one structure at once."
 			},
-			unl() { return player.bd.points.gte(1) && hasMilestone("m", 4) },
-			canAfford() { return (player.bd.building == 0 || player.bd.building == 22) },
+			unlocked() { return player.tm.buyables[9].gte(15) },
+			canAfford() { return (player.dynas_bd.building == 0 || player.dynas_bd.building == 22) },
 			buy() {
-				player.bd.building = (player.bd.building == 22 ? 0 : 22)
-				if (player.bd.building != 0) doReset("bd", true)
+				player.dynas_bd.building = (player.dynas_bd.building == 22 ? 0 : 22)
 			},
-		},
+		},/*
 		23: {
 			title: () => "Military Base",
 			cost(x) {
@@ -2011,7 +2039,7 @@ addLayer("dynas_bd", {
 			player.dynas_bd.progress = player.dynas_bd.progress.sub(tmp.dynas_bd.buyables[player.dynas_bd.building].cost)
 			player.dynas_bd.buyables[player.dynas_bd.building] = player.dynas_bd.buyables[player.dynas_bd.building].add(1)
 		}
-		if(hasUpgrade("dynas_sp",14))player.dynas_bd.progress = player.dynas_bd.progress.max(upgradeEffect("dynas_sp",14).add(1e8));
+		if(hasUpgrade("dynas_sp",14))player.dynas_bd.progress = player.dynas_bd.progress.max(upgradeEffect("dynas_sp",14)[hasMilestone("dynas_t",0)?"mul":"add"](1e8));
 	},   
 
 
@@ -2019,8 +2047,9 @@ addLayer("dynas_bd", {
 		["main-display",
 			["prestige-button", function () { return "Hire " }],
 			["blank", "5px"],
-			["display-text",
-				function () { return "You have at best " + format(player.dynas_bd.best, 0) + " " + " builders." }],
+			"resource-display",
+			["blank", "5px"],
+			"milestones",
 			["blank", "5px"],
 			["display-text",
 				function () { return player.dynas_bd.points.gte(1) ? "<h3>Structures</h3>" : "" }],
@@ -2059,7 +2088,10 @@ addLayer("dynas_sp", {
 	baseResource: "dynas points",
 	baseAmount() { return player.modpoints[9] },
 
-	requires: () => new Decimal("1e6300"),
+	requires(){
+		if(hasMilestone("dynas_bd", 0))return new Decimal("1e5000");
+		return new Decimal("1e6300");
+	},
 
 
 	type: "normal",
@@ -2171,7 +2203,7 @@ addLayer("dynas_sp", {
 			14: {
 				title: "Dynas Spell 14",
                 description() {
-					return "Your building progress won't lower than "+format(this.effect().add(1e8))+", also builder speed x"+format(this.effect());
+					return "Your building progress won't lower than "+format(this.effect()[hasMilestone("dynas_t",0)?"mul":"add"](1e8))+", also builder speed x"+format(this.effect());
 				},
                 cost: new Decimal(1e8),
                 unlocked() { return true; }, // The upgrade is only visible when this is true
@@ -2198,4 +2230,104 @@ addLayer("dynas_sp", {
 		player.dynas_sp.magic = Decimal.add(player.dynas_sp.magic, Decimal.mul(buyableEffect("dynas_sp", 11), diff))
 		
 	},   
+});
+
+
+addLayer("dynas_t", {
+	startData() {
+		return {
+			unl: false,
+			points: new Decimal(0),
+			best: new Decimal(0),
+			total: new Decimal(0),
+			elo: new Decimal(1000),
+		}
+	},
+
+	layerShown() { return player.tm.buyables[9].gte(15) && player.tm.currentTree==9;},
+
+	color: () => "#77FFAA",
+	resource: "territories",
+	row: 3,
+
+	baseResource: "coins",
+	baseAmount() { return player.dynas_c.points },
+	branches: [["dynas_w", 2], ["dynas_c", 2]],
+
+	requires: () => new Decimal("1e5000"),
+	
+
+	type: "static",
+	base: new Decimal("1e300"),
+	exponent: 1.5,
+	symbol: "T",
+
+
+	gainMult() {
+		return new Decimal(1)
+	},
+	gainExp() {
+		return new Decimal(1)
+	},
+	
+		doReset(l){
+			if(l=="dynas_c" || l=="dynas_wf"  || l=="dynas_b" || l=="dynas_sp" || l=="dynas_w" || l=="dynas_m" || l=="dynas_bd" || l=="dynas_t" || !l.startsWith("dynas_")){return;}
+			layerDataReset("dynas_t",["upgrades","milestones","challenges"]);
+			return;
+		},
+	milestones: {
+		0: {
+			requirementDescription: () => "1 Territory",
+			done() { return player[this.layer].best.gte(1) },
+			effectDescription: () => "Unlock an obstacle and a banking. Also Dynas Spell 14 first effect is better."
+		},
+		1: {
+			requirementDescription: () => "2 Territories",
+			done() { return player[this.layer].best.gte(2) },
+			effectDescription: () => "Unlock an obstacle."
+		},
+	},
+			challenges: {
+        rows: 3,
+        cols: 2,
+        11: {
+            name:() => "The First Obstacle",
+			challengeDescription:() => "Coin gain and dynas point generation is square rooted.",
+			rewardDescription:() => "Builders build faster based on dynas points.",
+			rewardEffect() {
+				var eff = player.modpoints[9].add(1).log("1e30000").mul(player.dynas_bd.buyables[21].add(1)).add(1)
+				//if (hasChall("t", 22)) eff = eff.mul(tmp.challs.t[22].effect)
+				//if (hasChall("t", 32)) eff = eff.mul(tmp.challs.t[32].effect)
+				return eff
+			},
+			rewardDisplay(){return "×" + format(challengeEffect("dynas_t",11))},
+			goal:() => new Decimal("e320"),
+			currencyDisplayName: "dynas points",
+                        currencyLayer: "modpoints",
+                        currencyInternalName: "9",
+			unlocked(){
+                                return hasMilestone("dynas_t",0)
+                        },
+        },
+        12: {
+            name:() => "Unemployed Workfinders",
+			challengeDescription:() => "You can not gain workfinders.",
+			rewardDescription:() => "Find and finish work faster based on points.",
+			rewardEffect() {
+				var eff = player.modpoints[9].add(1).log("1e1000").mul(player.dynas_bd.buyables[21].add(1)).add(1)
+				//if (hasChall("t", 22)) eff = eff.mul(tmp.challs.t[22].effect)
+				//if (hasChall("t", 32)) eff = eff.mul(tmp.challs.t[32].effect)
+				return eff
+			},
+			rewardDisplay(){return "×" + format(challengeEffect("dynas_t",12))},
+			goal:() => new Decimal("e8e3"),
+			currencyDisplayName: "dynas points",
+                        currencyLayer: "modpoints",
+                        currencyInternalName: "9",
+			unlocked(){
+                                return hasMilestone("dynas_t",1)
+                        },
+        },
+},
+
 });

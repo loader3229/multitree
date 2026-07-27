@@ -86,6 +86,7 @@ addLayer("burning_a", {
 					if(hasUpgrade("burning_a",23))ret=ret.pow(3);
 					if(hasUpgrade("burning_c",11))ret=ret.pow(upgradeEffect("burning_c",11));
 					if(hasUpgrade("burning_e",13))ret=ret.pow(layers.burning_e.allocatedEffects()[3]);
+					ret = ret.min("e5e13");
 					return ret;
                 },
 				effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect

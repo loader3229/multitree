@@ -174,6 +174,7 @@ addLayer("gd_u", {
 					if(hasUpgrade("gd_u",55))ret=ret.pow(10);
 					if(hasUpgrade("gd_l",25))ret=ret.pow(4);
 					if(hasUpgrade("gd_g",31))ret=ret.pow(tmp.gd_f.buyables[15].effect2);
+					ret = ret.min("e5e13");
                     return ret;
 				},
                 effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
@@ -1554,10 +1555,12 @@ addLayer("gd_s", {
 		if(hasMilestone("gd_d",4))ret--;
 		if(player.milestone_m.points.gte(66))ret--;
         if(hasUpgrade("gd_u",72))ret--;
+if(player.tm.buyables[8].gte(27))ret--;
 		return ret;
 	},
     exponent(){
 		ret = new Decimal(1.25)
+		if(player.tm.buyables[8].gte(27))ret = new Decimal(1.24)
 		return ret
 	}, // Prestige currency exponent
     resetDescription: "Apply to another college for ",

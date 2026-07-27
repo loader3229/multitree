@@ -59,6 +59,7 @@ addLayer("tptc_p", {
 				effect() { // Calculate bonuses from the upgrade. Can return a single value or an object with multiple values
                     let base=3;
                     if(hasUpgrade("tptc_p",61))base += 4;
+                    if(hasUpgrade("tptc_p",62))base += 3;
                     let exp = 0.9;
                     if(hasUpgrade("tptc_sp",33))exp += 0.01;
                     let ret = Decimal.pow(base,Decimal.log10(player.tptc_p.points.mul(2).add(3)).pow(exp));
@@ -85,6 +86,7 @@ addLayer("tptc_p", {
                 cost: new Decimal("e1e6"),
                 unlocked() { return hasUpgrade("tm",15); },
 				effect() { // Calculate bonuses from the upgrade. Can return a single value or an object with multiple values
+					if(hasUpgrade("tptc_sp",41))return (1+(player.tm.upgrades.length||0)*((player.tptc_p.upgrades.length||0)*(player.tptc_sp.upgrades.length||0)*0.00003+0.05))**2;
 					if(hasUpgrade("tptc_p",63))return (1+(player.tm.upgrades.length||0)*((player.tptc_p.upgrades.length||0)*0.00032+0.05))**2;
 					if(hasUpgrade("tptc_p",31))return (1+(player.tm.upgrades.length||0)*0.05)**2;
 					return 1+(player.tm.upgrades.length||0)*0.05;
@@ -326,13 +328,25 @@ addLayer("tptc_p", {
 			62: {
 				title: "Prestige Upgrade 62",
                 description: "Prestige Upgrade 32 is unaffected by TPTR-exclusive softcap and boost rewritten points.",
-                cost: new Decimal("e2.333333e14"),
+                cost: Decimal.pow(10,7e14/3),
                 unlocked() { return hasUpgrade("tm",64); }, // The upgrade is only visible when this is true
             },
 			63: {
 				title: "Prestige Upgrade 63",
                 description: "Prestige Upgrade 15's effect is boosted by Prestige Upgrades bought.",
                 cost: new Decimal("e2.74e14"),
+                unlocked() { return hasUpgrade("tm",64); }, // The upgrade is only visible when this is true
+            },
+			64: {
+				title: "Prestige Upgrade 64",
+                description: "Prestige Upgrade 12 is better.",
+                cost: Decimal.pow(10,1e15/3),
+                unlocked() { return hasUpgrade("tm",64); }, // The upgrade is only visible when this is true
+            },
+			65: {
+				title: "Prestige Upgrade 65",
+                description: "Unlock more Super-Prestige upgrades.",
+                cost: new Decimal("e3.63e14"),
                 unlocked() { return hasUpgrade("tm",64); }, // The upgrade is only visible when this is true
             },
 
@@ -818,7 +832,7 @@ addLayer("tptc_t", {
 			onPress(){if (player.tm.currentTree==1 && canReset(this.layer)) doReset(this.layer)}, unlocked(){return player.tm.currentTree==1}}
      ],
 	 upgrades: {
-            rows: 1,
+            rows: 2,
             cols: 5,
 			11: {
 				title: "Time Upgrade 11",
@@ -848,6 +862,12 @@ addLayer("tptc_t", {
 				title: "Time Upgrade 15",
                 description: "Gain Free Extra Time Capsules based on Time Capsules and Extra Time Capsules.",
                 cost: new Decimal(1e6),
+                unlocked() { return hasUpgrade("tm",35); }, // The upgrade is only visible when this is true
+            },
+			21: {
+				title: "Time Upgrade 21",
+                description: "The second effect of Time Capsules in TPTR is better.",
+                cost: new Decimal(111e5),
                 unlocked() { return hasUpgrade("tm",35); }, // The upgrade is only visible when this is true
             },
 	 }
@@ -894,10 +914,11 @@ addLayer("tptc_e", {
 					if(hasUpgrade("tptc_e",13))eff[0] = x.pow(1.1);
 					if(hasUpgrade("tptc_e",15))eff[0] = x.pow(1.11);
 					if(hasUpgrade("tptc_e",12))eff[0] = eff[0].max(1);
-					eff[0]=eff[0].pow(tmp.tptr_e.effect);
 					eff[1]=Decimal.pow(10,x.pow(0.9));
 					if(hasUpgrade("tptc_e",11))eff[1] = Decimal.pow(10, x.mul(10));
 					if(hasUpgrade("tptc_e",14))eff[1] = Decimal.pow(10, x.mul(15));
+					if(hasUpgrade("tptc_e",21))eff[1] = Decimal.pow(10, x.mul(20));
+					eff[0]=eff[0].pow(tmp.tptr_e.effect);
 					eff[1]=eff[1].pow(tmp.tptr_e.effect);
 					if(inChallenge("tptr_h",31))return [new Decimal(1),new Decimal(1)];
 					return eff;
@@ -940,7 +961,7 @@ addLayer("tptc_e", {
 			onPress(){if (player.tm.currentTree==1 && canReset(this.layer)) doReset(this.layer)}, unlocked(){return player.tm.currentTree==1}}
      ],
 	 upgrades: {
-            rows: 1,
+            rows: 2,
             cols: 5,
 			11: {
 				title: "Enhance Upgrade 11",
@@ -972,6 +993,19 @@ addLayer("tptc_e", {
                 cost: new Decimal("e116e10"),
                 unlocked() { return hasUpgrade("tm",35); }, // The upgrade is only visible when this is true
             },
+			21: {
+				title: "Enhance Upgrade 21",
+                description: "Second Enhancer effect is better.",
+                cost: new Decimal("e495e11"),
+                unlocked() { return hasUpgrade("tm",35); }, // The upgrade is only visible when this is true
+            },
+			22: {
+				title: "Enhance Upgrade 22",
+                description: "2nd effect of Boosters/Generators in TPTR are better.",
+                cost: new Decimal("e57e12"),
+                unlocked() { return hasUpgrade("tm",35); }, // The upgrade is only visible when this is true
+            },
+
 	 }
 });
 
@@ -1128,6 +1162,7 @@ addLayer("tptc_s", {
 					eff=eff.pow(tmp.tptr_s.effect);
 					if(hasUpgrade("tptc_s",11))eff=eff.pow(1.1);
 					if(hasUpgrade("tptc_s",12))eff=eff.pow(10/1.1);
+					if(hasUpgrade("tptc_s",21))eff=eff.pow(10);
 					return eff;
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -1301,6 +1336,7 @@ addLayer("tptc_s", {
 					eff=eff.mul(tmp.tptc_ss.ssEff);
 					eff=eff.mul(tmp.tptc_hs.buyables[18].effect);
 					eff=eff.mul(tmp.tptc_i.buyables[11].effect[this.id]);
+					if(hasUpgrade("tptc_s",22))eff = eff.mul(tmp.tptr_s.effect);
 					return eff;
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -1333,6 +1369,7 @@ addLayer("tptc_s", {
 					if(hasUpgrade("tptc_hs",22))eff = eff.add(x.div(1000));
 					if(hasUpgrade("tptc_hs",23))eff = eff.max(x.div(100).add(1));
 					if(hasUpgrade("tptc_hs",24))eff = eff.mul(tmp.tptc_ss.ssEff);
+					if(hasUpgrade("tptc_s",22))eff = eff.mul(tmp.tptr_s.effect);
 					eff = softcap(eff,new Decimal(100/9),new Decimal(0.1));
 					return eff;
                 },
@@ -1365,6 +1402,7 @@ addLayer("tptc_s", {
 					let eff = x.div(3).add(10).log10();
 					if(hasUpgrade("tptc_hs",25))eff = eff.mul(tmp.tptc_ss.ssEff);
 					if(hasUpgrade("tptc_i",14))eff=eff.mul(tmp.tptc_i.buyables[11].effect[18]);
+					if(hasUpgrade("tptc_s",22))eff = eff.mul(tmp.tptr_s.effect);
 					return eff;
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -1476,7 +1514,7 @@ addLayer("tptc_s", {
 			onPress(){if (player.tm.currentTree==1 && canReset(this.layer)) doReset(this.layer)}, unlocked(){return player.tm.currentTree==1}}
      ],
 	 upgrades: {
-            rows: 1,
+            rows: 2,
             cols: 5,
 			11: {
 				title: "Space Upgrade 11",
@@ -1508,6 +1546,23 @@ addLayer("tptc_s", {
                 cost: new Decimal(1600000),
                 unlocked() { return hasUpgrade("tm",35); }, // The upgrade is only visible when this is true
             },
+			21: {
+				title: "Space Upgrade 21",
+                description: "Space Building 3's effect is better.",
+                cost: new Decimal(11111111),
+                unlocked() { return hasUpgrade("tm",35); }, // The upgrade is only visible when this is true
+            },
+			22: {
+				title: "Space Upgrade 22",
+                description: "The Space Energy effect in TPTR multiplies Space Building 8-10 effect.",
+                cost: new Decimal(11160000),
+                unlocked() { return hasUpgrade("tm",35); }, // The upgrade is only visible when this is true
+				effect() { // Calculate bonuses from the upgrade. Can return a single value or an object with multiple values
+                    return (tmp.tptr_s.effect || new Decimal(1));
+                },
+                effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
+            },
+
 	 }
 });
 
@@ -2591,7 +2646,7 @@ addLayer("tptc_sp", {
             },
 	},
 		upgrades: {
-            rows: 3,
+            rows: 4,
             cols: 5,
 			11: {
 				title: "Super-Prestige Upgrade 11",
@@ -2721,6 +2776,12 @@ addLayer("tptc_sp", {
                 description: "The base effect of Prestige Upgrade 32 ^1.25",
                 cost: new Decimal("e75e10"),
                 unlocked() { return hasUpgrade("tptr_hn", 31); },
+            },
+			41: {
+				title: "Super-Prestige Upgrade 41",
+                description: "Prestige Upgrade 63's effect is boosted by Super-Prestige upgrades bought.",
+                cost: new Decimal(1),
+                unlocked() { return hasUpgrade("tptc_p", 65); },
             },
 		},
 	 passiveGeneration(){

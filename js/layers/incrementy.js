@@ -124,6 +124,7 @@ addLayer("incrementy_i", {
 					if(hasUpgrade("milestone_p",34))ret = player.modpoints[5].add(1).pow(1.8);
 					if(hasUpgrade("milestone_p",35))ret = player.modpoints[5].add(1).pow(2);
 					if(player.tm.buyables[8].gte(24))ret = player.modpoints[5].add(1).pow(2.01);
+					ret = ret.min("e5e13");
                     return ret;
 				},
                 effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
@@ -3883,7 +3884,8 @@ addLayer("incrementy_o", {
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
 		if(hasUpgrade("incrementy_o",11))mult=mult.mul(Decimal.pow(2,player.incrementy_o.upgrades.length));
-		if(player.milestone_m.points.gte(69))mult=mult.mul(1.5)
+		if(player.milestone_m.points.gte(76))mult=mult.mul(player.milestone_m.points.div(20))
+		else if(player.milestone_m.points.gte(69))mult=mult.mul(1.5)
 		if(player.milestone_pm.best.gte(1))mult = mult.mul(tmp.milestone_pm.milestone1Effect);
         return mult
     },

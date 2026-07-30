@@ -740,6 +740,7 @@ addLayer("tptc_t", {
 				if(player.milestone_m.points.gte(72))power+=(Math.pow(time,0.6)/1000);
 				else power+=(Math.pow(time,0.55)/1000);
 			}
+			if(hasUpgrade("tptc_t",22))mult+=0.5;
 			ret = ret.add(player.tptc_t.points.pow(1/power).add(player.tptc_t.buyables[11].pow(1/power)).pow(power).mul(mult));
 		}
 		return ret;
@@ -868,6 +869,12 @@ addLayer("tptc_t", {
 				title: "Time Upgrade 21",
                 description: "The second effect of Time Capsules in TPTR is better.",
                 cost: new Decimal(111e5),
+                unlocked() { return hasUpgrade("tm",35); }, // The upgrade is only visible when this is true
+            },
+			22: {
+				title: "Time Upgrade 22",
+                description: "Time Upgrade 15 is better.",
+                cost: new Decimal(1225e4),
                 unlocked() { return hasUpgrade("tm",35); }, // The upgrade is only visible when this is true
             },
 	 }

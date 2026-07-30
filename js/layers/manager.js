@@ -309,7 +309,7 @@
 					x=new Decimal(x);
 					if(x.lt(0.5))return new Decimal(0);
 					if(x.lt(15.5))return Decimal.pow(10,x.pow(4).mul(5e8).add(x.mul(5e8)));
-					if(x.lt(26.5))return Decimal.pow(10,x.mul(1.25).pow(5).mul(14687500));
+					if(x.lt(27.5))return Decimal.pow(10,x.mul(1.25).pow(5).mul(14687500));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -767,6 +767,14 @@
 				title: "Multitree Upgrade 64",
                 description: "Prestige Points effect in TPTR ^10, also unlock more Prestige Upgrades in TPTC.",
                 cost: new Decimal("e279e12"),
+                unlocked() { return hasUpgrade(this.layer,51); }, // The upgrade is only visible when this is true
+				currencyDisplayName: "points",
+				currencyInternalName: "points",
+            },
+		65: {
+				title: "Multitree Upgrade 65",
+                description: "In Game Dev Tree, enrollments are cheaper, and unlock more enrollment upgrades.",
+                cost: new Decimal("e59e13"),
                 unlocked() { return hasUpgrade(this.layer,51); }, // The upgrade is only visible when this is true
 				currencyDisplayName: "points",
 				currencyInternalName: "points",

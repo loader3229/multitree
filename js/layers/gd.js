@@ -1556,6 +1556,7 @@ addLayer("gd_s", {
 		if(player.milestone_m.points.gte(66))ret--;
         if(hasUpgrade("gd_u",72))ret--;
 if(player.tm.buyables[8].gte(27))ret--;
+        if(hasUpgrade("tm",65))ret--;
 		return ret;
 	},
     exponent(){
@@ -1704,7 +1705,7 @@ if(player.tm.buyables[8].gte(27))ret--;
                 style: {'height':'222px'},
 				free(){
 					let ret=layers.gd_d.effect();
-					if(hasUpgrade("gd_s",11))ret=ret.add(10);
+					if(hasUpgrade("gd_s",11) && !hasUpgrade("gd_s",21))ret=ret.add(10);
 					return ret;
 				},
             },
@@ -1745,11 +1746,11 @@ if(player.tm.buyables[8].gte(27))ret--;
 		 return hasMilestone("gd_d",0);
 	 },
 		upgrades: {
-            rows: 1,
+            rows: 2,
             cols: 5,
 			11: {
 				title: "Enrollment Upgrade 11",
-                description: "Add 10 free levels to 'CS 3354 Software Engineering'.",
+                description(){ if(hasUpgrade("gd_s",21))return "Add 1000 to diploma effect."; return "Add 10 free levels to 'CS 3354 Software Engineering'."},
                 cost: new Decimal(28),
                 unlocked() { return player.tm.buyables[6].gte(9); }, // The upgrade is only visible when this is true
             },
@@ -1776,6 +1777,12 @@ if(player.tm.buyables[8].gte(27))ret--;
                 description: "Effect of 'CS 2305 Discrete Math' is squared.",
                 cost: new Decimal(36),
                 unlocked() { return player.tm.buyables[6].gte(9); }, // The upgrade is only visible when this is true
+            },
+			21: {
+				title: "Enrollment Upgrade 21",
+                description: "Enrollment Upgrade 11 is better.",
+                cost: new Decimal(3650),
+                unlocked() { return hasUpgrade("tm",65); }, // The upgrade is only visible when this is true
             },
 		},
 	 update(diff){
@@ -2455,6 +2462,7 @@ addLayer("gd_d", {
 	},
         effect(){
                 let ret = player.gd_d.points.mul(player.gd_d.points.div(2).add(3)).floor();
+			if(hasUpgrade("gd_s",21))ret = ret.add(1000);
 				return ret;
         },
         effectDescription(){

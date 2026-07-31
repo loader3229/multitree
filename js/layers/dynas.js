@@ -333,7 +333,7 @@ addLayer("dynas_wf", {
 	base: 5000,
     exponent: 0.6, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
-	if(inChallenge("dynas_t",12) || inChallenge("dynas_t",21))return Decimal.dInf;
+	if(inChallenge("dynas_t",12) || inChallenge("dynas_t",21) || inChallenge("dynas_t",22))return Decimal.dInf;
         mult = new Decimal(1)
 		return mult
     },
@@ -391,6 +391,15 @@ addLayer("dynas_wf", {
 			let w=layers.dynas_w.effect2().mul(diff).min(player.dynas_wf.workUndone);
 			player.dynas_wf.workDone = player.dynas_wf.workDone.add(w);
 			player.dynas_wf.workUndone = player.dynas_wf.workUndone.sub(w);
+			if(player.tm.buyables[9].gte(16)){
+				if(player.dynas_wf.workDone.gte(layers.dynas_wf.buyables[11].cost()))player.dynas_wf.buyables[11]=player.dynas_wf.buyables[11].add(1);
+				if(player.dynas_wf.workDone.gte(layers.dynas_wf.buyables[12].cost()))player.dynas_wf.buyables[12]=player.dynas_wf.buyables[12].add(1);
+				if(player.dynas_wf.workDone.gte(layers.dynas_wf.buyables[13].cost()))player.dynas_wf.buyables[13]=player.dynas_wf.buyables[13].add(1);
+				if(player.dynas_wf.points.gte(layers.dynas_wf.buyables[21].cost()))player.dynas_wf.buyables[21]=player.dynas_wf.buyables[21].add(1);
+				if(player.dynas_wf.workDone.gte(layers.dynas_wf.buyables[22].cost()))player.dynas_wf.buyables[22]=player.dynas_wf.buyables[22].add(1);
+				if(player.dynas_wf.workDone.gte(layers.dynas_wf.buyables[23].cost()))player.dynas_wf.buyables[23]=player.dynas_wf.buyables[23].add(1);
+
+			}
 		},
 	
 	
@@ -399,6 +408,11 @@ addLayer("dynas_wf", {
 			requirementDescription: () => "1 Workfinder",
 			done() { return player.dynas_wf.best.gte(1) },
 			effectDescription: () => "Gain 1000% of coin gain per second."
+		},
+		1: {
+			requirementDescription: () => "TDT Level 16",
+			done() { return player.tm.buyables[9].gte(16) },
+			effectDescription: () => "Workfinder buyables are cheaper, and autobuy them."
 		},
 	},
 	
@@ -544,7 +558,7 @@ addLayer("dynas_wf", {
 		11: {
 			title: () => "Increase workers' strength",
 			cost(x=player.dynas_wf.buyables[11]) {
-				if (x.gte(10)) x = x.pow(x.div(10))
+				if (x.gte(10)) x = x.pow(x.div(hasMilestone("dynas_wf",1)?11:10).max(1))
 				let cost = Decimal.pow(10, x).mul(hasMilestone("dynas_m",2)?1:1000)
 				return cost.floor()
 			},
@@ -579,7 +593,7 @@ addLayer("dynas_wf", {
 		12: {
 			title: () => "Increase workers' dexterity",
 			cost(x=player.dynas_wf.buyables[12]) {
-				if (x.gte(10)) x = x.pow(x.div(10))
+				if (x.gte(10)) x = x.pow(x.div(hasMilestone("dynas_wf",1)?11:10).max(1))
 				let cost = Decimal.pow(10, x).mul(hasMilestone("dynas_m",2)?1:2000)
 				return cost.floor()
 			},
@@ -607,8 +621,8 @@ addLayer("dynas_wf", {
 		13: {
 			title: () => "Increase workers' collaborativeness",
 			cost(x=player.dynas_wf.buyables[13]) {
-				if (x.gte(10)) x = x.pow(x.div(10))
-				let cost = Decimal.pow(20, x).mul(hasMilestone("dynas_m",2)?1:5000)
+				if (x.gte(10)) x = x.pow(x.div(hasMilestone("dynas_wf",1)?11:10).max(1))
+				let cost = Decimal.pow(hasMilestone("dynas_wf",1)?10:20, x).mul(hasMilestone("dynas_m",2)?1:5000)
 				return cost.floor()
 			},
 			effect(x=player.dynas_wf.buyables[13]) { // Effects of owning x of the items, x is a decimal
@@ -637,6 +651,7 @@ addLayer("dynas_wf", {
 			cost(x=player.dynas_wf.buyables[21]) {
 				let cost = Decimal.pow(x.add(hasMilestone("dynas_m",2)?50:hasUpgrade("dynas_wf",34)?61:100), x.sqrt()).mul(hasMilestone("dynas_m",2)?1:hasUpgrade("dynas_wf",34)?7:10)
 				if(hasMilestone("dynas_t",2))cost = Decimal.pow(32, x.sqrt());
+				if(hasMilestone("dynas_wf",1))cost = Decimal.pow(16, x.sqrt());
 				return cost.floor()
 			},
 			effect(x=player.dynas_wf.buyables[21]) { // Effects of owning x of the items, x is a decimal
@@ -663,8 +678,8 @@ addLayer("dynas_wf", {
 		22: {
 			title: () => "Increase work quality",
 			cost(x=player.dynas_wf.buyables[22]) {
-				if (x.gte(10)) x = x.pow(x.div(10))
-				let cost = Decimal.pow(10, x).mul(hasMilestone("dynas_m",2)?1e9:1e12)
+				if (x.gte(10)) x = x.pow(x.div(hasMilestone("dynas_wf",1)?11:10).max(1))
+				let cost = Decimal.pow(10, x).mul(hasMilestone("dynas_wf",1)?1:hasMilestone("dynas_m",2)?1e9:1e12)
 				return cost.floor()
 			},
 			effect(x=player.dynas_wf.buyables[22]) { // Effects of owning x of the items, x is a decimal
@@ -691,8 +706,8 @@ addLayer("dynas_wf", {
 		23: {
 			title: () => "Increase worker-workfinder synergy",
 			cost(x) {
-				if (x.gte(10)) x = x.pow(x.div(10))
-				let cost = Decimal.pow(10, x).mul(1e15)
+				if (x.gte(10)) x = x.pow(x.div(hasMilestone("dynas_wf",1)?11:10).max(1))
+				let cost = Decimal.pow(10, x).mul(hasMilestone("dynas_wf",1)?1:1e15)
 				return cost.floor()
 			},
 			effect(x) { // Effects of owning x of the items, x is a decimal
@@ -777,6 +792,7 @@ addLayer("dynas_w", {
 	base: 15000,
     exponent: 1.35, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
+	if(inChallenge("dynas_t",22))return Decimal.dInf;
         mult = new Decimal(1)
 		return mult
     },
@@ -961,7 +977,7 @@ resetsNothing: () => (hasMilestone("dynas_w",5) && player.dynas_b.banking==0),
 autoPrestige: () => hasMilestone("dynas_w",5),
 
 	effect() {
-		if(inChallenge("dynas_t",21))return new Decimal(1);
+		if(inChallenge("dynas_t",21) || inChallenge("dynas_t",22))return new Decimal(1);
 		var eff = Decimal.pow(16, player.dynas_b.points)
 		if (player.dynas_b.banking & 1) eff = eff.pow(0.5)
 		return eff
@@ -972,7 +988,7 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 	},
 
 	gainMult() {
-	if(inChallenge("dynas_t",21))return Decimal.dInf;
+	if(inChallenge("dynas_t",21) || inChallenge("dynas_t",22))return Decimal.dInf;
 		return new Decimal(1)
 	},
 	gainExp() {
@@ -993,7 +1009,7 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 				return new Decimal(0)
 			},
 			effect(x) {
-				if(inChallenge("dynas_t",21))return new Decimal(1);
+				if(inChallenge("dynas_t",21) || inChallenge("dynas_t",22))return new Decimal(1);
 				var eff = player[this.layer].buyables[this.id].add(1).pow(0.15)
 				eff = eff.mul(buyableEffect("dynas_b",21))
 				eff = eff.mul(buyableEffect("dynas_b",22))
@@ -1032,7 +1048,7 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 				return new Decimal(0)
 			},
 			effect(x) {
-				if(inChallenge("dynas_t",21))return new Decimal(1);
+				if(inChallenge("dynas_t",21) || inChallenge("dynas_t",22))return new Decimal(1);
 				var eff = player[this.layer].buyables[this.id].add(1).pow(0.15)
 				eff = eff.mul(buyableEffect("dynas_b",21))
 				eff = eff.mul(buyableEffect("dynas_b",22))
@@ -1071,7 +1087,7 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 				return new Decimal(0)
 			},
 			effect(x) {
-				if(inChallenge("dynas_t",21))return new Decimal(1);
+				if(inChallenge("dynas_t",21) || inChallenge("dynas_t",22))return new Decimal(1);
 				var eff = player[this.layer].buyables[this.id].add(1).pow(0.15)
 				eff = eff.mul(buyableEffect("dynas_b",21))
 				eff = eff.mul(buyableEffect("dynas_b",22))
@@ -1110,7 +1126,7 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 				return new Decimal(0)
 			},
 			effect(x) {
-				if(inChallenge("dynas_t",21))return new Decimal(1);
+				if(inChallenge("dynas_t",21) || inChallenge("dynas_t",22))return new Decimal(1);
 				var eff = player[this.layer].buyables[this.id].mul(2.5).add(1).pow(0.1)
 				eff = eff.mul(buyableEffect("dynas_b",22))
 				eff = eff.mul(buyableEffect("dynas_b",23))
@@ -1146,7 +1162,7 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 				return new Decimal(0)
 			},
 			effect(x) {
-				if(inChallenge("dynas_t",21))return new Decimal(1);
+				if(inChallenge("dynas_t",21) || inChallenge("dynas_t",22))return new Decimal(1);
 				var eff = player[this.layer].buyables[this.id].mul(2.5).add(1).pow(0.05)
 				eff = eff.mul(buyableEffect("dynas_b",23))
 				eff = eff.mul(buyableEffect("dynas_b",31))
@@ -1179,7 +1195,7 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 				return new Decimal(0)
 			},
 			effect(x) {
-				if(inChallenge("dynas_t",21))return new Decimal(1);
+				if(inChallenge("dynas_t",21) || inChallenge("dynas_t",22))return new Decimal(1);
 				var eff = player[this.layer].buyables[this.id].mul(2.5).add(1).pow(0.6)
 				eff = eff.mul(buyableEffect("dynas_b",31))
 				var softcap = new Decimal(1e15)
@@ -1213,7 +1229,7 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 				return new Decimal(0)	
 			},	
 			effect(x) { 	
-				if(inChallenge("dynas_t",21))return new Decimal(1);
+				if(inChallenge("dynas_t",21) || inChallenge("dynas_t",22))return new Decimal(1);
 				var eff = player[this.layer].buyables[this.id].add(1).pow(0.6)	
 				//if (player.sp.buyables[28].gt(0) && tmp.buyables.sp[28].effect.sqrt) eff = eff.mul(tmp.buyables.sp[28].effect.sqrt())
 				return eff	
@@ -2061,7 +2077,7 @@ addLayer("dynas_bd", {
 			"buyables",
 			["blank", "5px"],
 			["display-text",
-				function () { if(player.dynas_bd.points.lt(1))return "";if(player.tm.buyables[9].lt(11))return "More Structures at The Dynas Tree Level 11";if(player.tm.buyables[9].lt(14))return "More Structures at The Dynas Tree Level 14"; }],
+				function () { if(player.dynas_bd.points.lt(1))return "";if(player.tm.buyables[9].lt(11))return "More Structures at The Dynas Tree Level 11";if(player.tm.buyables[9].lt(14))return "More Structures at The Dynas Tree Level 14";if(player.tm.buyables[9].lt(15))return "More Structures at The Dynas Tree Level 15"; }],
 			["blank", "5px"], 
 			"upgrades"],
 
@@ -2097,7 +2113,10 @@ addLayer("dynas_sp", {
 		if(hasMilestone("dynas_bd", 0))return new Decimal("1e5000");
 		return new Decimal("1e6300");
 	},
-
+	gainMult(){	
+		if(inChallenge("dynas_t",22))return new Decimal(0);
+		return new Decimal(1);
+	},
 
 	type: "normal",
 	exponent: 0.01,
@@ -2165,7 +2184,7 @@ addLayer("dynas_sp", {
 		12: {
 			title: () => "Use spiritual power to enchant basic spells",
 			cost(x) {
-				let cost = Decimal.pow(1e48, Decimal.pow(1.25, x))
+				let cost = Decimal.pow(hasMilestone("dynas_t",4)?1e15:1e48, Decimal.pow(1.25, x))
 				return cost.floor()
 			},
 			effect(x) { 
@@ -2326,6 +2345,16 @@ addLayer("dynas_t", {
 			done() { return player[this.layer].best.gte(3) },
 			effectDescription: () => "Unlock an obstacle. Workfinder Upgrade 11 and 21 are better. Also unlock a SP buyable."
 		},
+		3: {
+			requirementDescription: () => "TDT Level 16",
+			done() { return player.tm.buyables[9].gte(16) },
+			effectDescription: () => "Unlock an obstacle."
+		},
+		4: {
+			requirementDescription: () => "4 Territories",
+			done() { return player[this.layer].best.gte(4) },
+			effectDescription: () => "2nd SP buyable is cheaper."
+		},
 	},
 			challenges: {
         rows: 3,
@@ -2336,8 +2365,8 @@ addLayer("dynas_t", {
 			rewardDescription:() => "Builders build faster based on dynas points.",
 			rewardEffect() {
 				var eff = player.modpoints[9].add(1).log("1e30000").mul(player.dynas_bd.buyables[21].add(1)).add(1)
-				//if (hasChall("t", 22)) eff = eff.mul(tmp.challs.t[22].effect)
-				//if (hasChall("t", 32)) eff = eff.mul(tmp.challs.t[32].effect)
+				if (player.dynas_t.challenges[22]>=1) eff = eff.mul(challengeEffect("dynas_t",22))
+				if (player.dynas_t.challenges[32]>=1) eff = eff.mul(challengeEffect("dynas_t",32))
 				return eff
 			},
 			rewardDisplay(){return "×" + format(challengeEffect("dynas_t",11))},
@@ -2352,11 +2381,11 @@ addLayer("dynas_t", {
         12: {
             name:() => "Unemployed Workfinders",
 			challengeDescription:() => "You can not gain workfinders.",
-			rewardDescription:() => "Find and finish work faster based on points.",
+			rewardDescription:() => "Find and finish work faster based on dynas points.",
 			rewardEffect() {
 				var eff = player.modpoints[9].add(1).log("1e1000").mul(player.dynas_bd.buyables[21].add(1)).add(1)
-				//if (hasChall("t", 22)) eff = eff.mul(tmp.challs.t[22].effect)
-				//if (hasChall("t", 32)) eff = eff.mul(tmp.challs.t[32].effect)
+				if (player.dynas_t.challenges[22]>=1) eff = eff.mul(challengeEffect("dynas_t",22))
+				if (player.dynas_t.challenges[32]>=1) eff = eff.mul(challengeEffect("dynas_t",32))
 				return eff
 			},
 			rewardDisplay(){return "×" + format(challengeEffect("dynas_t",12))},
@@ -2379,6 +2408,22 @@ addLayer("dynas_t", {
 			unlocked(){
                                 return hasMilestone("dynas_t",2)
                         },
+        },
+        22: {
+            name:() => "From Square One",
+			challengeDescription:() => "You can not gain workers, workfinders, spiritual power and banks, bankings has no effect.",
+			rewardDescription:() => "Boost the first two obstacles' buffs based on your total territory count.",
+			rewardEffect:() => player.dynas_t.best.add(1).sqrt(),
+			rewardDisplay(){return "×" + format(challengeEffect("dynas_t",22))},
+			countsAs: [12, 21],
+			goal:() => new Decimal("e1000"),
+			currencyDisplayName: "dynas points",
+                        currencyLayer: "modpoints",
+                        currencyInternalName: "9",
+			unlocked(){
+                                return hasMilestone("dynas_t",3)
+                        },
+
         },
 },
 

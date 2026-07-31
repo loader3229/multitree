@@ -124,6 +124,7 @@ addLayer("gd_u", {
                     let ret = new Decimal(3).add(player.gd_u.points.pow(2).mul(4));
 					if(hasUpgrade("gd_a",13)&&hasUpgrade("gd_r",33))ret=player.gd_u.points.add(1).pow(10);
 					if(hasUpgrade("gd_a",13)&&hasUpgrade("gd_r",32))ret=ret.pow(100);
+					if(hasUpgrade("gd_u",75))ret=ret.pow(10);
 					return ret;
 				},
                 effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
@@ -154,6 +155,7 @@ addLayer("gd_u", {
                     let ret = new Decimal(3).add(player.gd_u.points.mul(2));
 					if(hasUpgrade("gd_a",11)&&hasUpgrade("gd_r",15))ret=ret.pow(2);
 					if(hasUpgrade("gd_u",34))ret=ret.pow(2);
+					if(hasUpgrade("gd_u",75))ret=player.gd_u.points.add(1).pow(1e4);
 					return ret;
 				},
                 effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
@@ -379,6 +381,12 @@ addLayer("gd_u", {
 				},
                 effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
 			},
+			75: {
+				title: "Update Upgrade 75",
+                description: "Update Upgrade 13 and 15 are better.",
+                cost: new Decimal(1e152),
+                unlocked() { return hasUpgrade("gd_r",44); },
+			},
 	 },
 	 update(diff){
 		if(hasUpgrade("gd_u",11)){
@@ -423,6 +431,7 @@ addLayer("gd_u", {
 	 },resetsNothing(){
 		 return hasUpgrade("gd_c",12);
 	 },passiveGeneration(){
+		if(hasUpgrade("gd_u",41) && hasUpgrade("gd_g",13) && hasUpgrade("gd_g",42))return 100+upgradeEffect("gd_g",13);
 		 if(hasUpgrade("gd_u",42))return 100;
 		 if(hasUpgrade("gd_u",41))return 1;
 		 return 0;
@@ -2063,6 +2072,15 @@ addLayer("gd_g", {
 				currencyLayer: "gd_g",
                 unlocked() { return player[this.layer].best.gte(34) && hasUpgrade("tm",52); }, // The upgrade is only visible when this is true
             },
+			42: {
+				title: "Good Will Upgrade 42",
+                description: "Good Will Upgrade 13 affects Updates.",
+                cost: new Decimal(4),
+				currencyDisplayName: "unused good will",
+				currencyInternalName: "unused",
+				currencyLayer: "gd_g",
+                unlocked() { return player[this.layer].best.gte(38) && hasUpgrade("tm",52); }, // The upgrade is only visible when this is true
+            },
 
 		},
 	milestones: {
@@ -2565,6 +2583,7 @@ addLayer("gd_t", {
 		if(player.milestone_m.best.gte(30))mult = mult.mul(tmp.milestone_m.milestone29Effect);
 		if(hasUpgrade("gd_u", 74))mult = mult.mul(upgradeEffect("gd_u",74));
 		if(hasUpgrade("gd_t", 12))mult = mult.mul(upgradeEffect("gd_t",12));
+		if(hasUpgrade("gd_t", 15))mult = mult.mul(upgradeEffect("gd_t",15));
 		if(hasUpgrade("gd_u",45) && hasUpgrade("gd_g",41))mult = mult.mul(upgradeEffect("gd_u",45));
 		return mult
     },
@@ -2610,7 +2629,9 @@ addLayer("gd_t", {
         return player[this.layer].shards.add(1);
     },
 	ringEffectBase(){
-		return new Decimal(2);
+		let a=new Decimal(2);
+		if(hasUpgrade("gd_t",14))a = a.add(1);
+		return a;
 	},
     buyables: {
         rows: 9,
@@ -2845,6 +2866,21 @@ addLayer("gd_t", {
             effectDisplay() { return `${format(this.effect())}x` },
             unlocked() { return hasUpgrade("gd_r", 45) },
         },
+        14: {
+            title: "Time Flux Upgrade 14",
+            cost: new Decimal(1e134),
+            description() { return "Ring Base +1." },
+            unlocked() { return hasUpgrade("gd_r", 45) },
+        },
+        15: {
+            title: "Time Flux Upgrade 15",
+            cost: new Decimal(1e137),
+            description() { return "Lectures boost Time Flux." },
+            effect() { return player.gd_l.points.pow(0.025) },
+            effectDisplay() { return `${format(this.effect())}x` },
+            unlocked() { return hasUpgrade("gd_r", 45) },
+        },
+
 }
 });
 

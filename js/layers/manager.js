@@ -232,7 +232,7 @@
 					if(x.lt(0.5))return new Decimal(0);
 					if(x.lt(10.5))return Decimal.pow(10,x.pow(2).mul(1e4).add(1e5));
 					if(x.lt(30.5))return Decimal.pow(10,x.pow(6));
-					if(x.lt(45.5))return Decimal.pow(10,x.pow(x.div(5)));
+					if(x.lt(46.5))return Decimal.pow(10,x.pow(x.div(5)));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -284,7 +284,7 @@
 					if(x.lt(20.5))return Decimal.pow(10,x.pow(3).mul(1e5));
 					if(x.lt(31.5))return Decimal.pow(10,x.pow(x.div(4)).mul(300));
 					if(x.lt(34.5))return Decimal.pow(10,x.pow(6).mul(168600));
-					if(x.lt(36.5))return Decimal.pow(10,x.pow(7).mul(10000));
+					if(x.lt(38.5))return Decimal.pow(10,x.pow(7).mul(10000));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -309,7 +309,7 @@
 					x=new Decimal(x);
 					if(x.lt(0.5))return new Decimal(0);
 					if(x.lt(15.5))return Decimal.pow(10,x.pow(4).mul(5e8).add(x.mul(5e8)));
-					if(x.lt(28.5))return Decimal.pow(10,x.mul(1.25).pow(5).mul(14687500));
+					if(x.lt(29.5))return Decimal.pow(10,x.mul(1.25).pow(5).mul(14687500));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -335,7 +335,7 @@
 					if(x.lt(0.5))return new Decimal(0);
 					if(x.lt(7.5))return Decimal.pow(10,x.add(1).pow(2).mul(1e11).add(2e12));
 					if(x.lt(9.5))return Decimal.pow(10,x.add(1).pow(2).mul(2e11));
-					if(x.lt(15.5))return Decimal.pow(10,x.pow(x.div(5)).mul(3e11));
+					if(x.lt(16.5))return Decimal.pow(10,x.pow(x.div(5)).mul(3e11));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -733,6 +733,7 @@
             if(player.tm.buyables[8].gte(24))ret = ret.pow(1.25);
             if(player.tm.buyables[8].gte(26))ret = ret.pow(1.6);
             if(player.tm.buyables[8].gte(27))ret = ret.pow(2);
+            if(player.tm.buyables[8].gte(29))ret = ret.pow(1.1);
 					ret = ret.min("e5e13");
 					return ret;
 				},

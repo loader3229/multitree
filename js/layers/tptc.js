@@ -736,8 +736,10 @@ addLayer("tptc_t", {
 			let power=1;
 			let mult=0.5;
 			if(hasUpgrade("tm",61)){
-				let time = Math.min(player.timePlayed+d,86400*9);
-				if(player.milestone_m.points.gte(72))power+=(Math.pow(time,0.6)/1000);
+				let time = Math.min(player.timePlayed+d,86400*10);
+				
+				if(player.tm.buyables[8].gte(30))power+=(Math.pow(time,0.625)/1000);
+				else if(player.milestone_m.points.gte(72))power+=(Math.pow(time,0.6)/1000);
 				else power+=(Math.pow(time,0.55)/1000);
 			}
 			if(hasUpgrade("tptc_t",22))mult+=0.5;
@@ -2799,6 +2801,12 @@ addLayer("tptc_sp", {
 				title: "Super-Prestige Upgrade 42",
                 description: "Super-Prestige Upgrade 12's effect is better",
                 cost: new Decimal("e798e10"),
+                unlocked() { return hasUpgrade("tptc_p", 65); },
+            },
+			43: {
+				title: "Super-Prestige Upgrade 43",
+                description: "The 1 Imperium Brick milestone in TPTR is better.",
+                cost: new Decimal("e108e11"),
                 unlocked() { return hasUpgrade("tptc_p", 65); },
             },
 		},

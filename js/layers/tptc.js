@@ -1754,7 +1754,7 @@ addLayer("tptc_sg", {
 			onPress(){if (player.tm.currentTree==1 && canReset(this.layer)) doReset(this.layer)}, unlocked(){return player.tm.currentTree==1}}
      ],
 	 upgrades: {
-            rows: 1,
+            rows: 2,
             cols: 5,
 			11: {
 				title: "Super-Generator Upgrade 11",
@@ -1784,6 +1784,12 @@ addLayer("tptc_sg", {
 				title: "Super-Generator Upgrade 15",
                 description: "Hyperspace Upgrade 12 is better.",
                 cost: new Decimal(81),
+                unlocked() { return hasUpgrade("tm",56); }, // The upgrade is only visible when this is true
+            },
+			21: {
+				title: "Super-Generator Upgrade 21",
+                description: "Second Super-Generator effect in TPTR ^2",
+                cost: new Decimal(89),
                 unlocked() { return hasUpgrade("tm",56); }, // The upgrade is only visible when this is true
             },
 	 }
@@ -2677,8 +2683,7 @@ addLayer("tptc_sp", {
                 unlocked() { return true; }, // The upgrade is only visible when this is true
 				effect() { // Calculate bonuses from the upgrade. Can return a single value or an object with multiple values
 					let base=1e10;
-                    let ret = Decimal.pow(base,Decimal.log10(player.tptc_sp.points.mul(2).add(3)).pow(hasUpgrade("tptc_sp",32)?0.91:0.9));
-                    //if (ret.gte("1e20000000")) ret = ret.sqrt().times("1e10000000")
+                    let ret = Decimal.pow(base,Decimal.log10(player.tptc_sp.points.mul(2).add(3)).pow(hasUpgrade("tptc_sp",42)?0.92:hasUpgrade("tptc_sp",32)?0.91:0.9));
                     return ret;
                 },
                 effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
@@ -2788,6 +2793,12 @@ addLayer("tptc_sp", {
 				title: "Super-Prestige Upgrade 41",
                 description: "Prestige Upgrade 63's effect is boosted by Super-Prestige upgrades bought.",
                 cost: new Decimal(1),
+                unlocked() { return hasUpgrade("tptc_p", 65); },
+            },
+			42: {
+				title: "Super-Prestige Upgrade 42",
+                description: "Super-Prestige Upgrade 12's effect is better",
+                cost: new Decimal("e798e10"),
                 unlocked() { return hasUpgrade("tptc_p", 65); },
             },
 		},

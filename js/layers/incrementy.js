@@ -542,8 +542,9 @@ addLayer("incrementy_am", {
 		},
         effect(){
 			if (inChallenge("incrementy_m", 12)) return new Decimal(1)
-                let ret = player.incrementy_am.points.plus(1).pow(1.5);
-			if(hasMilestone("incrementy_o",1))ret = player.incrementy_am.points.plus(1);
+                let ret = player.incrementy_am.points.plus(1).pow(1.5).min("e1.2e9");
+			if(hasMilestone("incrementy_o",1))ret = player.incrementy_am.points.plus(1).min("e1.2e9");
+			if(hasUpgrade("incrementy_o",24))ret = Decimal.pow(10,player.incrementy_am.points.plus(10).log10().pow(0.923));
                 return ret
         },
         effectDescription(){
@@ -968,7 +969,7 @@ addLayer("incrementy_m", {
 		else if(!(hasMilestone("incrementy_o",0)) && ret.gte("e4e7"))ret = Decimal.pow(10, ret.log10().div(4).log10().div(7).mul(4e7));
 		else if(!(hasMilestone("incrementy_o",2)) && ret.gte("e1e8"))ret = Decimal.pow(10, ret.log10().root(8).mul(1e7));
 		else if(!(hasUpgrade("tm",63)) && ret.gte("e1e8"))ret = Decimal.pow(10, ret.log10().root(4).mul(1e6));
-		else if(ret.gte("e125e6"))ret = Decimal.pow(10, ret.log10().root(3).mul(25e4));
+		else if(!(hasUpgrade("incrementy_o",24)) && ret.gte("e125e6"))ret = Decimal.pow(10, ret.log10().root(3).mul(25e4));
 		ret = ret.times(tmp[this.layer].gainMult);
 		return ret;
 	},
@@ -3884,7 +3885,8 @@ addLayer("incrementy_o", {
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
 		if(hasUpgrade("incrementy_o",11))mult=mult.mul(Decimal.pow(2,player.incrementy_o.upgrades.length));
-		if(player.milestone_m.points.gte(76))mult=mult.mul(player.milestone_m.points.div(20))
+		if(player.tm.buyables[8].gte(29))mult=mult.mul(player.milestone_m.points)
+		else if(player.milestone_m.points.gte(76))mult=mult.mul(player.milestone_m.points.div(20))
 		else if(player.milestone_m.points.gte(69))mult=mult.mul(1.5)
 		if(player.milestone_pm.best.gte(1))mult = mult.mul(tmp.milestone_pm.milestone1Effect);
         return mult
@@ -4464,6 +4466,13 @@ addLayer("incrementy_o", {
                         description: "Unlock 3rd Origin Buyable",
                         cost: new Decimal(1e8),
                         unlocked(){return player.tm.buyables[5].gte(45)}
+                },
+                24: {
+                        title: "Origin Upgrade 24",
+                        description: "Force origin reset, reduce antimatter effect but matter gain softcap starts later.",
+                        cost: new Decimal(1e9),
+                        unlocked(){return player.tm.buyables[5].gte(46)},
+			onPurchase(){doReset("incrementy_o",true);}
                 },/*
                 13: {
                         title: "Grothendieck",

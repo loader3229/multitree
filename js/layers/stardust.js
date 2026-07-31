@@ -954,7 +954,8 @@ addLayer("stardust_c", {
 					if(player.stardust_c.points.gte(250))ret=player.stardust_c.points.div(2);
 					if(player.stardust_c.points.gte(760))ret=new Decimal(380);
 					if(player.stardust_c.points.gte(950))ret=player.stardust_c.points.div(2.5);
-					if(player.stardust_c.points.gte(1250))ret=new Decimal(500);
+					if(player.stardust_c.points.gte(1116))ret=new Decimal(446.4);
+					if(player.stardust_c.points.gte(1200))ret=new Decimal(450);
 
 					return ret;
                 },

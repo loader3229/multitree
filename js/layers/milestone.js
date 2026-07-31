@@ -16,7 +16,7 @@ addLayer("milestone_um", {
 	tabFormat: ["main-display"],
 	branches: ["milestone_m"],
 	update(){
-		player.milestone_um.points=new Decimal([0,0,2,5,9,14,16,18,21,24,28,30,34,39,40,42,45,47,48,48,50,52,54,55,57,59,62,66][player.tm.buyables[8].toNumber()]);
+		player.milestone_um.points=new Decimal([0,0,2,5,9,14,16,18,21,24,28,30,34,39,40,42,45,47,48,48,50,52,54,55,57,59,62,66,68,70][player.tm.buyables[8].toNumber()]);
 	}
 })
 
@@ -30,7 +30,7 @@ addLayer("milestone_m", {
     }},
     color: "#793784",
     requires(){
-		if(player.milestone_m.points.gte([0,5,10,16,20,25,25,29,32,35,38,40,43,45,48,50,55,60,65,68,70,70,70,70,71,73,75,77][player.tm.buyables[8].toNumber()]))return new Decimal(Infinity);
+		if(player.milestone_m.points.gte([0,5,10,16,20,25,25,29,32,35,38,40,43,45,48,50,55,60,65,68,70,70,70,70,71,73,75,77,78,78][player.tm.buyables[8].toNumber()]))return new Decimal(Infinity);
 		if(player.milestone_m.points.gte(55))return new Decimal(1);
 		return new Decimal("e2e8");
 	},
@@ -1129,7 +1129,14 @@ addLayer("milestone_m", {
             unlocked() {return player[this.layer].best.gte(66)},
             done() {return player[this.layer].best.gte(67)}, // Used to determine when to give the milestone
             effectDescription:  function(){
-				return "Endpoints in The Game Dev Tree are cheaper.";
+				let ret="Endpoints in The Game Dev Tree are cheaper.";				if(player.tm.buyables[8].gte(28))ret="Row 4 static layers in The Game Dev Tree are cheaper. (Upgraded)";
+				return ret;
+			},
+			style() {
+				if(player.tm.buyables[8].gte(28)&&player[this.layer].best.gte(67)){
+					return {backgroundColor: "#cccc00"};
+				}
+				return {};
 			},
         },
 		{
@@ -1137,7 +1144,15 @@ addLayer("milestone_m", {
             unlocked() {return player[this.layer].best.gte(67)},
             done() {return player[this.layer].best.gte(68)}, // Used to determine when to give the milestone
             effectDescription:  function(){
-				return "4th Milestone is better.";
+				let ret="4th Milestone is better.";
+			if(player.tm.buyables[8].gte(28))ret+=" (Upgraded)";
+				return ret;
+			},
+			style() {
+				if(player.tm.buyables[8].gte(28)&&player[this.layer].best.gte(68)){
+					return {backgroundColor: "#cccc00"};
+				}
+				return {};
 			},
         },
 		{
@@ -1145,8 +1160,15 @@ addLayer("milestone_m", {
             unlocked() {return player[this.layer].best.gte(68)},
             done() {return player[this.layer].best.gte(69)}, // Used to determine when to give the milestone
             effectDescription:  function(){
+				if(player.tm.buyables[8].gte(29))return format(player[this.layer].best)+"x Origin gain in The Incrementreeverse (Upgraded)";
 				if(player[this.layer].best.gte(76))return format(player[this.layer].best.div(20))+"x Origin gain in The Incrementreeverse";
 				return "1.5x Origin gain in The Incrementreeverse";
+			},
+			style() {
+				if(player.tm.buyables[8].gte(29)&&player[this.layer].best.gte(69)){
+					return {backgroundColor: "#cccc00"};
+				}
+				return {};
 			},
         },
 		{
@@ -1154,8 +1176,18 @@ addLayer("milestone_m", {
             unlocked() {return player[this.layer].best.gte(69)},
             done() {return player[this.layer].best.gte(70)}, // Used to determine when to give the milestone
             effectDescription:  function(){
-				return "Multitree Upgrade 55 is better.";
+				let ret="Multitree Upgrade 55 is better.";
+			if(player.tm.buyables[8].gte(29))ret+=" (Upgraded)";
+				return ret;
+
 			},
+			style() {
+				if(player.tm.buyables[8].gte(29)&&player[this.layer].best.gte(70)){
+					return {backgroundColor: "#cccc00"};
+				}
+				return {};
+			},
+
         },
 		{
 			requirementDescription: "71st MT-Milestone",
@@ -1220,6 +1252,22 @@ addLayer("milestone_m", {
 				return {};
 			},
         },
+		{
+			requirementDescription: "78th MT-Milestone",
+            unlocked() {return player[this.layer].best.gte(77)},
+            done() {return player[this.layer].best.gte(78)}, // Used to determine when to give the milestone
+            effectDescription:  function(){
+				//if(player.tm.buyables[8].gte(13))return "Gain 10000% of Hyper-Prestige Points per second. (Upgraded)";
+				return "Gain 100% of Hyper-Prestige Points per second.";
+			},
+			style() {
+				//if(player.tm.buyables[8].gte(13)&&player[this.layer].best.gte(36)){
+				//	return {backgroundColor: "#cccc00"};
+				//}
+				return {};
+			},
+        },
+
 
 	],
 	milestone1Effect(){
@@ -1317,6 +1365,7 @@ addLayer("milestone_m", {
 		return Decimal.pow(b,m);
 	},
 	milestone4EffectExponent(){
+		if(player.tm.buyables[8].gte(28))return 0.58;
 		if(player.tm.buyables[8].gte(27))return 0.57;
 		if(player.milestone_m.best.gte(73))return 0.565;
 		if(player.tm.buyables[8].gte(25))return 0.56;
@@ -2184,6 +2233,11 @@ branches: ["milestone_sp"],
             },
             effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
         },
+	},
+	passiveGeneration(){
+		//if(player.tm.buyables[8].gte(5))return 100;
+		if(player.milestone_m.best.gte(78))return 1;
+		return 0;
 	},
 });
 

@@ -1815,6 +1815,7 @@ addLayer("gd_g", {
 	base: 1.5,
     exponent(){
 		ret = new Decimal(1.25)
+		if(player.tm.buyables[8].gte(28))ret = ret.sub(0.01)
 		return ret
 	}, // Prestige currency exponent
 	roundUpCost: true,
@@ -2403,7 +2404,8 @@ addLayer("gd_d", {
     baseResource: "enrollments", // Name of resource prestige is based on
     baseAmount() {return player.gd_s.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-	base: 1.2,
+	base(){
+if(player.tm.buyables[8].gte(28))return 1.17;return 1.2;},
     exponent(){
 		ret = new Decimal(1.1)
 		return ret

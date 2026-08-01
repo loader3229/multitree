@@ -1554,7 +1554,8 @@ addLayer("gd_s", {
 		points: new Decimal(0),
     }},
     color: "#917567",
-    requires: new Decimal(1e9), // Can be a function that takes requirement increases into account
+    requires(){
+		if(hasUpgrade("gd_t",21))return new Decimal(1e-8);return new Decimal(1e9)}, // Can be a function that takes requirement increases into account
     resource: "enrollments", // Name of prestige currency
     baseResource: "experience", // Name of resource prestige is based on
     baseAmount() {return player.gd_e.points}, // Get the current amount of baseResource
@@ -1566,6 +1567,8 @@ addLayer("gd_s", {
         if(hasUpgrade("gd_u",72))ret--;
 if(player.tm.buyables[8].gte(27))ret--;
         if(hasUpgrade("tm",65))ret--;
+        if(hasUpgrade("gd_s",22))ret--;
+        if(hasUpgrade("gd_t",21))ret--;
 		return ret;
 	},
     exponent(){
@@ -1723,6 +1726,7 @@ if(player.tm.buyables[8].gte(27))ret--;
                 cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
 					let cost=Decimal.pow(1e4,x.pow(1.5)).mul(1e40);
 					if(hasUpgrade("gd_s",13))cost=Decimal.pow(100,x.pow(1.2)).mul(1e20);
+					if(hasUpgrade("gd_s",23))cost=Decimal.pow(2,x.pow(1.2));
                     return cost
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -1793,6 +1797,18 @@ if(player.tm.buyables[8].gte(27))ret--;
                 cost: new Decimal(3650),
                 unlocked() { return hasUpgrade("tm",65); }, // The upgrade is only visible when this is true
             },
+			22: {
+				title: "Enrollment Upgrade 22",
+                description: "Enrollment is cheaper.",
+                cost: new Decimal(3925),
+                unlocked() { return hasUpgrade("tm",65); }, // The upgrade is only visible when this is true
+            },
+			23: {
+				title: "Enrollment Upgrade 23",
+                description: "'CS 4352 Human Computer Interactions' is cheaper.",
+                cost: new Decimal(5365),
+                unlocked() { return hasUpgrade("tm",65); }, // The upgrade is only visible when this is true
+            },
 		},
 	 update(diff){
 		if(player.gd_d.points.gte(2)){
@@ -1801,6 +1817,7 @@ if(player.tm.buyables[8].gte(27))ret--;
 			player.gd_s.buyables[21]=player.gd_s.buyables[21].max(player.gd_c.points.div(1e15).add(1).log(10).pow(1/1.2).add(1).floor());
 			player.gd_s.buyables[22]=player.gd_s.buyables[22].max(player.gd_c.points.div(1e40).add(1).log(1e4).pow(1/1.5).add(1).floor());
 			if(hasUpgrade("gd_s",13))player.gd_s.buyables[22]=player.gd_s.buyables[22].max(player.gd_c.points.div(1e20).add(1).log(100).pow(1/1.2).add(1).floor());
+			if(hasUpgrade("gd_s",23))player.gd_s.buyables[22]=player.gd_s.buyables[22].max(player.gd_c.points.add(1).log(2).pow(1/1.2).add(1).floor());
 		}
 	},
 });
@@ -2840,7 +2857,7 @@ addLayer("gd_t", {
 		return ret;
 	},
     upgrades: {
-        rows: 1,
+        rows: 2,
         cols: 5,
         11: {
             title: "Time Flux Upgrade 11",
@@ -2878,6 +2895,12 @@ addLayer("gd_t", {
             description() { return "Lectures boost Time Flux." },
             effect() { return player.gd_l.points.pow(0.025) },
             effectDisplay() { return `${format(this.effect())}x` },
+            unlocked() { return hasUpgrade("gd_r", 45) },
+        },
+        21: {
+            title: "Time Flux Upgrade 21",
+            cost: new Decimal(1e143),
+            description() { return "Enrollments are cheaper." },
             unlocked() { return hasUpgrade("gd_r", 45) },
         },
 

@@ -1644,7 +1644,7 @@ addLayer("tptc_sb", {
             cols: 5,
 			11: {
 				title: "Super-Booster Upgrade 11",
-                description(){return "The second Super-Booster effect in TPTR ^"+(hasUpgrade("tptc_sb",21)?3.2:hasUpgrade("tptc_sb",14)?2:1.15)},
+                description(){return "The second Super-Booster effect in TPTR ^"+(hasUpgrade("tptc_sb",22)?4:hasUpgrade("tptc_sb",21)?3.2:hasUpgrade("tptc_sb",14)?2:1.15)},
                 cost: new Decimal(29),
                 unlocked() { return hasUpgrade("tm",31); }, // The upgrade is only visible when this is true
             },
@@ -1676,6 +1676,12 @@ addLayer("tptc_sb", {
 				title: "Super-Booster Upgrade 21",
                 description: "Super-Booster upgrade 11 is better.",
                 cost: new Decimal(88),
+                unlocked() { return hasUpgrade("tm",56); }, // The upgrade is only visible when this is true
+            },
+			22: {
+				title: "Super-Booster Upgrade 22",
+                description: "Super-Booster upgrade 11 is better.",
+                cost: new Decimal(90),
                 unlocked() { return hasUpgrade("tm",56); }, // The upgrade is only visible when this is true
             },
 	 }

@@ -961,10 +961,10 @@ addLayer("tptr_t", {
 				title: "Extra Time Capsules",
 				costExp() {
 					let exp = new Decimal(1.2);
+					if (hasUpgrade("tptr_t", 31) && player.tptr_i.buyables[12].gte(4))exp = exp.sub(0.2);
 					return exp;
 				},
 				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
-                    if (x.gte(25) && tmp[this.layer].buyables[this.id].costScalingEnabled) x = x.pow(2).div(25)
                     let cost = x.times(0.4).pow(tmp[this.layer].buyables[this.id].costExp).add(1).times(10)
                     return cost.floor()
                 },
@@ -987,7 +987,6 @@ addLayer("tptr_t", {
 					let b = player.tptr_b.points.plus(1);
 					//if ((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes(this.layer):false) b = b.root(.9);
 					let tempBuy = b.div(10).sub(1).max(0).root(tmp[this.layer].buyables[this.id].costExp).div(0.4);
-					if (tempBuy.gte(25) && tmp[this.layer].buyables[this.id].costScalingEnabled) tempBuy = tempBuy.times(25).sqrt();
 					let target = tempBuy.plus(1).floor();
 					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
 				},
@@ -1075,6 +1074,72 @@ addLayer("tptr_t", {
 				effect() { return player.tptr_t.energy.plus(1).log10().div(1.2); },
 				effectDisplay() { return "+"+format(tmp.tptr_t.upgrades[25].effect) },
 			},
+			31: {
+				title: "Cheap Time",
+				description: "Extra Time Capsule cost exponent is decreased by 0.2.",
+				cost() { return new Decimal(1107) },
+				unlocked() { return player.tptr_i.buyables[12].gte(4) },
+			},/*
+
+			
+			32: {
+				title: "The Hypertime Continuum",
+				description: "Hyperspace cost scales 33.33% slower.",
+				cost() { return new Decimal(((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes(this.layer):false)?"1e39000":"e4240000") },
+				currencyDisplayName: "time energy",
+				currencyInternalName: "energy",
+				currencyLayer: "t",
+				pseudoUnl() { return player.i.buyables[12].gte(4)&&player.t.upgrades.length>=9 },
+				pseudoReq: "Req: 1e31 Hyperspace Energy",
+				pseudoCan() { return player.hs.points.gte(1e31) },
+				unlocked() { return player[this.layer].pseudoUpgs.includes(Number(this.id)) },
+			},
+			33: {
+				title: "Virtually Limitless",
+				description: "Time Energy boosts the Time Energy limit base.",
+				cost() { return new Decimal(((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes(this.layer):false)?759:750) },
+				pseudoUnl() { return player.i.buyables[12].gte(4)&&player.t.upgrades.length>=9 },
+				pseudoReq: "Req: 30 Phantom Souls",
+				pseudoCan() { return player.ps.points.gte(30) },
+				unlocked() { return player[this.layer].pseudoUpgs.includes(Number(this.id)) },
+				effect() { return player.t.energy.plus(1).log10().plus(1).pow(3.5) },
+				effectDisplay() { return format(tmp.t.upgrades[33].effect)+"x" },
+				formula: "(log(x+1)+1)^3.5",
+			},
+			34: {
+				title: "Scalings Galore",
+				description: "Post-1,225 Booster & Generator cost scalings start at 1,400 instead.",
+				cost() { return new Decimal(((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes(this.layer):false)?"1e39000":"e4240000") },
+				currencyDisplayName: "time energy",
+				currencyInternalName: "energy",
+				currencyLayer: "t",
+				pseudoUnl() { return player.i.buyables[12].gte(4)&&player.t.upgrades.length>=9 },
+				pseudoReq: 'Req: Reach e124,000,000 Prestige Points while in the "Productionless" Hindrance and without any Hyper Buildings.',
+				pseudoCan() { return player.p.points.gte("e1.24e8") && inChallenge("h", 42) && player.hs.spentHS.eq(0) },
+				unlocked() { return player[this.layer].pseudoUpgs.includes(Number(this.id)) },
+			},
+			35: {
+				title: "Don't Kill Time",
+				description: "Time Energy's second effect exponent is increased (0.556 -> 0.565)",
+				cost() { return new Decimal(((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes(this.layer):false)?"1e38000":"e3600000") },
+				currencyDisplayName: "time energy",
+				currencyInternalName: "energy",
+				currencyLayer: "t",
+				pseudoUnl() { return player.i.buyables[12].gte(4)&&player.t.upgrades.length>=9 },
+				pseudoReq: "Req: 1e13 Purple Dust",
+				pseudoCan() { return player.n.purpleDust.gte(1e13) },
+				unlocked() { return player[this.layer].pseudoUpgs.includes(Number(this.id)) },
+			},
+			41: {
+				title: "Subtemporal Power",
+				description: "Raise the Subspace base to the power of 1.5, and gain 2,500x more Hyperspace Energy.",
+				cost: new Decimal(1050),
+				pseudoUnl() { return player.i.buyables[12].gte(4)&&player.t.upgrades.length>=9 },
+				pseudoReq: "Req: 1e60 Honour & 1e575 Phantom Power",
+				pseudoCan() { return player.hn.points.gte(1e60) && player.ps.power.gte("1e575") },
+				unlocked() { return player[this.layer].pseudoUpgs.includes(Number(this.id)) },
+			},
+*/
 		},
 		freeExtraTimeCapsules() {
 			let free = new Decimal(0);
@@ -1169,7 +1234,7 @@ addLayer("tptr_e", {
                 },
 				power() {
 					let pow = new Decimal(1);
-					//if (hasUpgrade("tptr_e", 33) && player.i.buyables[12].gte(3)) pow = pow.times(1.2);
+					if (hasUpgrade("tptr_e", 33) && player.tptr_i.buyables[12].gte(3)) pow = pow.times(1.2);
 					return pow;
 				},
 				effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
@@ -1310,17 +1375,13 @@ addLayer("tptr_e", {
 				effect() { return softcap("e32", player.hn.best.plus(1).log10().pow(3.25)).floor() },
 				effectDisplay() { return "+"+format(tmp[this.layer].upgrades[this.id].effect) },
 				formula: "log(x+1)^3.25",
-			},
+			},*/
 			33: {
 				title: "Augmentation",
 				description: "Both Enhancer effect exponents are 20% higher.",
-				cost() { return new Decimal(((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes(this.layer):false)?"e3460000":"e4500000") },
-				pseudoUnl() { return player.i.buyables[12].gte(3)&&player.e.upgrades.length>=7 },
-				pseudoReq: "Req: 60,600 Bought Enhancers.",
-				pseudoCan() { return player.e.buyables[11].gte(60600) },
-				unlocked() { return player[this.layer].pseudoUpgs.includes(Number(this.id)) },
+				cost() { return new Decimal("e14e6") },
+				unlocked() { return player.tptr_i.buyables[12].gte(3) },
 			},
-*/
 			34: {
 				title: "Intensification",
 				description: "Enhancer cost scaling is disabled.",
@@ -1458,6 +1519,7 @@ addLayer("tptr_s", {
 			if (player.tptr_ss.unlocked) pow = pow.plus(layers.tptr_ss.eff2());
 			if (hasUpgrade("tptr_ss", 42)) pow = pow.plus(1);
 			if (hasUpgrade("tptr_ba", 12)) pow = pow.plus(upgradeEffect("tptr_ba", 12));
+			if (player.tm.buyables[7].gte(39)) pow = pow.plus(buyableEffect("tptr_o", 23));
 			
 			pow = pow.plus(tmp.tptc_s.buyables[19].effect.sub(1));
 			return pow;
@@ -2890,6 +2952,9 @@ addLayer("tptr_o", {
 		 if(player.tm.buyables[7].gte(38)){
 			 player.tptr_o.buyables[22]=player.tptr_o.buyables[22].add(layers.tptr_o.buyables[22].gain().mul(diff));
 		 }
+		 if(player.tm.buyables[7].gte(39)){
+			 player.tptr_o.buyables[23]=player.tptr_o.buyables[23].add(layers.tptr_o.buyables[23].gain().mul(diff));
+		 }
 		},
 		solEnEff2() { return player.tptr_o.energy.plus(1).pow(2) },
 		tabFormat: ["main-display",
@@ -2913,6 +2978,7 @@ addLayer("tptr_o", {
 			if (hasUpgrade("tptr_ss", 33)) pow = pow.plus(upgradeEffect("tptr_ss", 33));
 			if (hasUpgrade("tptr_ss", 41)) pow = pow.plus(buyableEffect("tptr_o", 21));
 			if (hasUpgrade("tptr_ba", 11)) pow = pow.plus(upgradeEffect("tptr_ba", 11));
+			if (hasUpgrade("tptr_hn", 55)) pow = pow.plus(upgradeEffect("tptr_hn", 55));
 			if (tmp.tptr_ps.impr[11].unlocked) pow = pow.times(tmp.tptr_ps.impr[11].effect);
 			if(pow.gte(32))return pow.div(32).cbrt().mul(32);
 			return pow;
@@ -3045,6 +3111,27 @@ addLayer("tptr_o", {
                 },
                 style: {'height':'140px', 'width':'140px', 'font-size':'9px'},
 			},
+			23: {
+				title: "Nuclear Forges",
+				gain() { return player.tptr_o.buyables[11].div(1e175).times(player.tptr_o.energy.div("1e2500").root(10)).pow(tmp.tptr_o.buyableGainExp).floor() },
+				effect() { 
+					let eff = player[this.layer].buyables[this.id].times(tmp.tptr_o.multiplyBuyables).plus(1).pow(tmp.tptr_o.solPow).log10().plus(1).log10().root(2.5);
+					return eff;
+				},
+				display() { // Everything else displayed in the buyable button after the title
+                    let data = tmp[this.layer].buyables[this.id]
+                    let display = ("Gaining "+formatWhole(tmp[this.layer].buyables[this.id].gain)+" Noval Remnants per second, based on Solar Cores and Solar Energy.\n"+
+					"Amount: " + formatWhole(player[this.layer].buyables[this.id])+((tmp.tptr_o.multiplyBuyables||new Decimal(1)).eq(1)?"":(" x "+format(tmp.tptr_o.multiplyBuyables))))+"\n"+
+					(("Effect: Space Buildings are "+format(data.effect.times(100))+"% stronger"))
+					return display;
+                },
+                unlocked() { return player.tm.buyables[7].gte(39) }, 
+                canAfford() { return true; },
+                buy() { 
+                },
+                style: {'height':'140px', 'width':'140px', 'font-size':'9px'},
+			},
+
 		},
 		milestones: {
 			0: {
@@ -4371,26 +4458,16 @@ addLayer("tptr_hn", {
 				effect() { return player.tptr_hs.total.pow(2).plus(1).log10().plus(1).log10().plus(1).log10().times(4).plus(1) },
 				effectDisplay() { return format(tmp.tptr_hn.upgrades[54].effect.sub(1).times(100))+"% stronger" },
 				formula: "log(log(log(x^2+1)+1)+1)*400",
-			},/*
+			},
 			55: {
 				title: "Beneath The Sun",
 				description: "Orange & Purple Dust boost Solar Power.",
-				multiRes: [
-					{
-						cost: new Decimal(2.5e14),
-					},
-					{
-						currencyDisplayName: "prestige points",
-						currencyInternalName: "points",
-						currencyLayer: "p",
-						cost: new Decimal("1e45000000"),
-					},
-				],
-				unlocked() { return hasUpgrade("tptr_hn", 53) && hasUpgrade("tptr_hn", 54) && player.tptr_n.unlocked },
+				cost() { return new Decimal(1e68) },
+				unlocked() { return player.tm.buyables[7].gte(39) },
 				effect() { return player.tptr_n.orangeDust.times(player.tptr_n.purpleDust).plus(1).log10() },
-				effectDisplay() { return "+"+format(tmp.hn.upgrades[55].effect.times(100))+"%" },
+				effectDisplay() { return "+"+format(tmp.tptr_hn.upgrades[55].effect.times(100))+"%" },
 				formula: "log(O*P+1)*100",
-			},*/
+			},
 		},
 	 passiveGeneration(){
 		 if(player.tm.buyables[7].gte(32))return 1;
@@ -4417,7 +4494,7 @@ addLayer("tptr_hs", {
 		roundUpCost: true,
         color: "#dfdfff",
         requires() { 
-		if(player.tm.buyables[7].gte(39))return new Decimal(500);
+		if(player.tm.buyables[7].gte(39))return new Decimal(480);
 		if(player.tm.buyables[7].gte(38))return new Decimal(600);
 		if(player.tm.buyables[7].gte(37))return new Decimal(650);
 		if(player.tm.buyables[7].gte(36))return new Decimal(700);

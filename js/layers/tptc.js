@@ -2815,6 +2815,12 @@ addLayer("tptc_sp", {
                 cost: new Decimal("e108e11"),
                 unlocked() { return hasUpgrade("tptc_p", 65); },
             },
+			44: {
+				title: "Super-Prestige Upgrade 44",
+                description: "Unlock new upgrades in The Prestige Forest.",
+                cost: new Decimal("e149e11"),
+                unlocked() { return hasUpgrade("tptc_p", 65); },
+            },
 		},
 	 passiveGeneration(){
 		 if(hasUpgrade("tptc_sp",21))return 1;

@@ -66,6 +66,7 @@ addLayer("forest_p", {
 					if(hasUpgrade("forest_p",22))ret=ret.mul(upgradeEffect("forest_p",22));
 					if(hasUpgrade("forest_A",11))ret=ret.mul(upgradeEffect("forest_A",11));
 					if(hasUpgrade("forest_p",41))ret=ret.mul(upgradeEffect("forest_p",41));
+		if(hasUpgrade("forest_A",24))ret=ret.mul(upgradeEffect("tptc_p",22).pow(0.5));
                     return ret;
                 },
             },
@@ -541,6 +542,18 @@ addLayer("forest_A", {
                 cost: new Decimal(28),
                 unlocked() { return player[this.layer].best.gte(3) && player.tm.buyables[3].gte(9); }, // The upgrade is only visible when this is true
             },
+			24: {
+				title: "Atom Upgrade 24",
+                description: "Prestige Upgrade 22 also boost energy in this tree at 50% power.",
+                cost: new Decimal(14200000),
+                unlocked() { return player[this.layer].best.gte(3) && player.tm.buyables[3].gte(9); }, // The upgrade is only visible when this is true
+            },
+			25: {
+				title: "Atom Upgrade 25",
+                description: "The layer C cost uses a better formula.",
+                cost: new Decimal(21955000),
+                unlocked() { return player[this.layer].best.gte(3) && player.tm.buyables[3].gte(9); }, // The upgrade is only visible when this is true
+            },
 		},
 		
 		canBuyMax() {return player.forest_c.best.gte(1)},
@@ -566,8 +579,19 @@ addLayer("forest_c", {
     baseResource: "atoms", // Name of resource prestige is based on
     baseAmount() {return player.forest_A.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-	getResetGain: function() {return new Decimal(1)},
-    getNextAt() {
+	base(){
+	return new Decimal(1.398).pow((hasUpgrade("forest_p",53)?upgradeEffect("forest_p",53):1)||1);
+},exponent(){
+	return new Decimal(1).div((hasUpgrade("forest_p",53)?upgradeEffect("forest_p",53):1)||1);
+},
+	getResetGain: function() {if(hasUpgrade("forest_A",25))return getResetGain("forest_c","static");return new Decimal(1)},
+    getNextAt(canMax) {
+		if(hasUpgrade("forest_A",25)){
+			let amt = player[this.layer].points.plus((canMax && tmp[this.layer].baseAmount.gte(tmp[this.layer].nextAt))?tmp[this.layer].resetGain:0);
+			let extraCost = Decimal.pow(tmp[this.layer].base, amt.pow(tmp[this.layer].exponent).div(tmp[this.layer].gainExp)).times(tmp[this.layer].gainMult)
+			let cost = extraCost.times(tmp[this.layer].requires).max(tmp[this.layer].requires)
+			return cost;
+		}
 		let scaling=new Decimal(2);
 		if(hasUpgrade("forest_p",53))scaling=scaling.div(upgradeEffect("forest_p",53));
 		if(!hasUpgrade("tm",53)){
@@ -575,6 +599,7 @@ addLayer("forest_c", {
 		}else{
 			if(player.forest_c.points.gte(15))scaling=scaling.mul(player.forest_c.points.sub(15).pow(player.forest_c.points.div(7).div(upgradeEffect("forest_p",53))).mul(0.1).div(upgradeEffect("forest_p",53)).add(1));
 		}
+		if(player.forest_c.points.gte(40))return Decimal.dInf;
 		let ret=new Decimal(11).add(player.forest_c.points.times(Decimal.max(10,player.forest_c.points.mul(scaling))));
 		ret=ret.ceil();
 		return ret;
@@ -620,5 +645,9 @@ addLayer("forest_c", {
             },
 	},resetsNothing(){
 		 return player.forest_c.best.gte(15);
-	 },
+	 },canBuyMax(){
+		 return hasUpgrade("forest_A",25);
+	 },autoPrestige(){
+		 return hasUpgrade("forest_A",25);
+	 }
 });

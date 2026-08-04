@@ -2955,6 +2955,9 @@ addLayer("tptr_o", {
 		 if(player.tm.buyables[7].gte(39)){
 			 player.tptr_o.buyables[23]=player.tptr_o.buyables[23].add(layers.tptr_o.buyables[23].gain().mul(diff));
 		 }
+		 if(player.tm.buyables[7].gte(40)){
+			 player.tptr_o.buyables[31]=player.tptr_o.buyables[31].add(layers.tptr_o.buyables[31].gain().mul(diff));
+		 }
 		},
 		solEnEff2() { return player.tptr_o.energy.plus(1).pow(2) },
 		tabFormat: ["main-display",
@@ -3131,6 +3134,78 @@ addLayer("tptr_o", {
                 },
                 style: {'height':'140px', 'width':'140px', 'font-size':'9px'},
 			},
+			31: {
+				title: "Blueshifted Flares",
+				gain() { return player.tptr_o.points.div("1e400").pow(10).pow(tmp.tptr_o.buyableGainExp).floor() },
+				effect() {
+					return player[this.layer].buyables[this.id].times(tmp.tptr_o.multiplyBuyables).plus(1).pow(tmp.tptr_o.solPow).log10().plus(1).log10().root(5).div(10)
+				},
+				display() {
+					let data = tmp[this.layer].buyables[this.id]
+					return ("Gaining "+formatWhole(data.gain)+" Blueshifted Flares per second, based on Solarity.\n"+
+					"Amount: "+formatWhole(player[this.layer].buyables[this.id])+((tmp.tptr_o.multiplyBuyables||new Decimal(1)).eq(1)?"":(" x "+format(tmp.tptr_o.multiplyBuyables)))+"\n"+
+					(("Effect: Spells are "+format(data.effect.times(100))+"% stronger")))
+				},
+                unlocked() { return player.tm.buyables[7].gte(40) }, 
+                canAfford() { return true; },
+                buy() { 
+                },
+                style: {'height':'140px', 'width':'140px', 'font-size':'9px'},
+			},
+/*
+
+			32: {
+				title: "Combustion Gas",
+				gain() { return player.o.energy.div("1e200000").root(100).pow(tmp.o.buyableGainExp).floor() },
+				effect() {
+					return player[this.layer].buyables[this.id].times(tmp.o.multiplyBuyables).plus(1).pow(tmp.o.solPow).log10().plus(1).log10().plus(1).log10().div(1.6).times(((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes(this.layer):false)?1.9:1).plus(1)
+				},
+				display() {
+					let data = tmp[this.layer].buyables[this.id]
+					return ("Sacrifice all of your Solar Energy for "+formatWhole(data.gain)+" Combustion Gas\n"+
+					"Req: e200,000 Solar Energy\n"+
+					"Amount: "+formatWhole(player[this.layer].buyables[this.id])+((tmp.o.multiplyBuyables||new Decimal(1)).eq(1)?"":(" x "+format(tmp.o.multiplyBuyables)))+"\n"+
+					(tmp.nerdMode?("Formula: log(log(log(x+1)+1)+1)/1.6+1"):("Effect: Multiply the Solarity gain exponent by "+format(data.effect)+".")))
+				},
+				unlocked() { return player.n.buyables[11].gte(4) },
+				canAfford() { return player.o.energy.gte("1e200000") },
+				buy() {
+					player.o.energy = new Decimal(0);
+					player.o.buyables[this.id] = player.o.buyables[this.id].plus(tmp[this.layer].buyables[this.id].gain);
+				},
+				 buyMax() {
+					// I'll do this later ehehe
+				},
+                style: {'height':'140px', 'width':'140px', 'font-size':'9px'},
+				autoed() { return hasMilestone("m", 0) },
+			},
+			33: {
+				title: "Thermonuclear Reactants",
+				gain() { return player.o.points.div("1e500").pow(10).pow(tmp.o.buyableGainExp).floor() },
+				effect() {
+					return player[this.layer].buyables[this.id].times(tmp.o.multiplyBuyables).plus(1).pow(tmp.o.solPow).log10().plus(1).log10().plus(1).log10().div(3).times(((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes(this.layer):false)?1.9:1);
+				},
+				display() {
+					let data = tmp[this.layer].buyables[this.id]
+					return ("Sacrifice all of your Solarity for "+formatWhole(data.gain)+" Thermonuclear Reactants\n"+
+					"Req: 1e750 Solarity\n"+
+					"Amount: "+formatWhole(player[this.layer].buyables[this.id])+((tmp.o.multiplyBuyables||new Decimal(1)).eq(1)?"":(" x "+format(tmp.o.multiplyBuyables)))+"\n"+
+					(tmp.nerdMode?("Formula: log(log(log(x+1)+1)+1)/3"):("Effect: Add "+format(data.effect.times(100))+"% to Solar Power, Space Building Power, & Hyper Building Power.")))
+				},
+				unlocked() { return player.n.buyables[11].gte(5) },
+				canAfford() { return player.o.points.gte("1e750") },
+				buy() {
+					player.o.points = new Decimal(0);
+					player.o.buyables[this.id] = player.o.buyables[this.id].plus(tmp[this.layer].buyables[this.id].gain);
+				},
+				 buyMax() {
+					// I'll do this later ehehe
+				},
+                style: {'height':'140px', 'width':'140px', 'font-size':'9px'},
+				autoed() { return hasMilestone("m", 0) },
+			},
+
+*/
 
 		},
 		milestones: {
@@ -3157,14 +3232,20 @@ addLayer("tptr_o", {
 			},
 			4: {
 				requirementDescription: "TPTR Level 38",
-				unlocked() { return player.tm.buyables[7].gte(35) },
+				unlocked() { return player.tm.buyables[7].gte(25) },
 				done() { return player.tm.buyables[7].gte(38) },
 				effectDescription: "Unlock a new Solarity buyable.",
 			},
 			5: {
 				requirementDescription: "TPTR Level 39",
-				unlocked() { return player.tm.buyables[7].gte(35) },
+				unlocked() { return player.tm.buyables[7].gte(25) },
 				done() { return player.tm.buyables[7].gte(39) },
+				effectDescription: "Unlock a new Solarity buyable.",
+			},
+			6: {
+				requirementDescription: "TPTR Level 40",
+				unlocked() { return player.tm.buyables[7].gte(25) },
+				done() { return player.tm.buyables[7].gte(40) },
 				effectDescription: "Unlock a new Solarity buyable.",
 			},
 		},
@@ -3437,7 +3518,7 @@ gainMult() { // Calculate the multiplier for main currency from bonuses
 			if (!player[this.layer].unlocked) return new Decimal(0);
 			let power = new Decimal(1);
 			if (tmp.tptr_ps.impr[21].unlocked) power = power.plus(tmp.tptr_ps.impr[21].effect.sub(1));
-			//if (player.tptr_n.buyables[11].gte(3)) power = power.plus(buyableEffect("o", 31));
+			if (player.tm.buyables[7].gte(40)) power = power.plus(buyableEffect("tptr_o", 31));
 			//if ((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes(this.layer):false) power = power.plus(.5);
 			return power;
 		},
@@ -5102,7 +5183,7 @@ addLayer("tptr_i", {
 			first: 0,
         }},
         color: "#e5dab7",
-        requires() { if(player.tptr_i.points.gte(3))return  new Decimal("1e12000"); return new Decimal("1e10000") }, // Can be a function that takes requirement increases into account
+        requires() { if(player.tptr_i.points.gte(3) && player.tm.buyables[7].lt(40))return  new Decimal("1e12000"); return new Decimal("1e10000") }, // Can be a function that takes requirement increases into account
         resource: "imperium bricks", // Name of prestige currency
         baseResource: "subspace", // Name of resource prestige is based on
         baseAmount() {return player.tptr_ss.subspace}, // Get the current amount of baseResource

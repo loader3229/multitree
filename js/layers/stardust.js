@@ -102,6 +102,7 @@ addLayer("stardust_s", {
                     let ret = Decimal.pow(base,Decimal.log10(player.points.add(1)).pow(0.5));
 					if(hasUpgrade("stardust_s",33))ret=ret.pow(2);
 					if(hasUpgrade("stardust_c",35))ret=ret.pow(upgradeEffect("stardust_c",35));
+					ret = ret.min("e5e8");
                     return ret;
                 },
                 effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect

@@ -1243,6 +1243,25 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 			buy() { 	
 			},	
 		},
+		32: {	
+			title:() => "Production Banking",	
+			cost(x) {	
+				return new Decimal(0)	
+			},	
+			effect(x) { 	
+				var eff = player[this.layer].buyables[this.id].add(1).pow(0.5).mul(10)	
+				return eff	
+			},	
+			display() { 	
+				let data = tmp[this.layer].buyables[this.id]	
+				return  "You have " + format(player[this.layer].buyables[this.id], 0) + " banked production, which are boosting previous bankings' generation speed by ×" + format(data.effect) + ".\nThis banking can only gained passively.";	
+			},	
+			unlocked() { return hasMilestone("dynas_m", 3); }, 	
+			canAfford() { return false },	
+			buy() { 	
+			},	
+		},
+
 /*	
 		32: {	
 			title:() => "Production Banking",	
@@ -1312,7 +1331,8 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 			let curr = 11;
 			for (var a = 1; a <= 6 + player.dynas_t.challenges[21]; a++) {
 				let layer = Math.floor(a / 3 + 1) * 10 + ((a % 3) + 1)
-				let realMult = new Decimal(10); // tmp.buyables.b[33].effect.mul(mults[a-1])
+				let realMult = new Decimal(10);
+				if(hasMilestone("dynas_m",3) && a <= 7) realMult = realMult.mul(buyableEffect("dynas_b",32));
 				//if (player.sp.buyables[28].gt(0)) realMult = realMult.mul(tmp.buyables.sp[28].effect)
 				//if (tmp.buyables.wi[12]) realMult = realMult.mul(tmp.buyables.wi[12].effect.pow(Math.pow(0.7, a-1)))
 				
@@ -1320,6 +1340,7 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 				curr = layer
 			}
 		}
+		if(hasMilestone("dynas_m",3))player.dynas_b.buyables[32]=player.dynas_b.buyables[32].max(100);
 		
 		//if (inChallenge("t", 31)) player.b.banking = 3
 		//if (inChallenge("t", 32)) player.b.banking = 4
@@ -1418,6 +1439,11 @@ addLayer("dynas_m", {
 			requirementDescription: () => "11 Managers",
 			done() { return player[this.layer].best.gte(11) },
 			effectDescription: () => "Keep bankings in all resets. Also generate 10 each of first 6 banking per second, multiplied by (1 + banking above it). Workfinder buyables are cheaper and unlock a new workfinder buyable."
+		},
+		3: {
+			requirementDescription: () => "12 Managers",
+			done() { return player[this.layer].best.gte(12) },
+			effectDescription: () => "Gain 100% of SP gain per second. SP requirement is reduced. Unlock a new banking."
 		},
 	},
 	/*
@@ -2110,6 +2136,7 @@ addLayer("dynas_sp", {
 	baseAmount() { return player.modpoints[9] },
 
 	requires(){
+		if(hasMilestone("dynas_m",3))return new Decimal("1e4000");
 		if(hasMilestone("dynas_bd", 0))return new Decimal("1e5000");
 		return new Decimal("1e6300");
 	},
@@ -2283,7 +2310,11 @@ addLayer("dynas_sp", {
 	update(diff) {
 		player.dynas_sp.magic = Decimal.add(player.dynas_sp.magic, Decimal.mul(buyableEffect("dynas_sp", 11), diff))
 		
-	},   
+	},  
+	passiveGeneration(){
+		if(hasMilestone("dynas_m",3))return 1;
+		return 0;
+	}
 });
 
 

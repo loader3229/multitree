@@ -1800,6 +1800,12 @@ addLayer("tptc_sg", {
                 cost: new Decimal(89),
                 unlocked() { return hasUpgrade("tm",56); }, // The upgrade is only visible when this is true
             },
+			22: {
+				title: "Super-Generator Upgrade 22",
+                description: "Second Super-Generator effect in TPTR ^2",
+                cost: new Decimal(91),
+                unlocked() { return hasUpgrade("tm",56); }, // The upgrade is only visible when this is true
+            },
 	 }
 });
 

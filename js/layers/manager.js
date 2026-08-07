@@ -284,7 +284,7 @@
 					if(x.lt(20.5))return Decimal.pow(10,x.pow(3).mul(1e5));
 					if(x.lt(31.5))return Decimal.pow(10,x.pow(x.div(4)).mul(300));
 					if(x.lt(34.5))return Decimal.pow(10,x.pow(6).mul(168600));
-					if(x.lt(39.5))return Decimal.pow(10,x.pow(7).mul(10000));
+					if(x.lt(40.5))return Decimal.pow(10,x.pow(7).mul(10000));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title

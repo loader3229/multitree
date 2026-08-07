@@ -1221,7 +1221,7 @@ addLayer("gd_f", {
 		
 		fansGain(){
 			let ret=new Decimal(1.02).pow(player.gd_f.best);
-			ret=ret.pow(tmp.gd_f.buyables[11].effect);
+			if(!hasUpgrade("gd_t",22))ret=ret.pow(tmp.gd_f.buyables[11].effect);
 			ret=ret.pow(layers.gd_g.effect()[0]);
 			return ret;
 		},
@@ -1242,6 +1242,11 @@ addLayer("gd_f", {
                 },
                 display() { // Everything else displayed in the buyable button after the title
                     let data = tmp[this.layer].buyables[this.id]
+					if(hasUpgrade("gd_t",22))
+                    return "Fans boost Time Flux and Lectures.\n\
+					Accounts: "+formatWhole(player[this.layer].buyables[this.id])+"\n\
+					Cost: "+formatWhole(data.cost)+" fame\n\
+					Effect: " + format(data.effect) + "x Time Flux and Lectures gain";
                     return "Fans boost its gain speed.\n\
 					Accounts: "+formatWhole(player[this.layer].buyables[this.id])+"\n\
 					Cost: "+formatWhole(data.cost)+" fame\n\
@@ -1256,7 +1261,7 @@ addLayer("gd_f", {
                     player.gd_f.points = player.gd_f.points.sub(cost)	
                     player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
                 },
-				effect(){
+				effect(){if(hasUpgrade("gd_t",22))return upgradeEffect("gd_t",22);
 					return player.gd_f.fans.add(9).log10().pow(player[this.layer].buyables[this.id].sqrt().mul(0.1)).pow(layers.gd_g.effect()[1]).pow(hasUpgrade("gd_g",23)?0.2:1);
 				},
                 buyMax() {}, // You'll have to handle this yourself if you want
@@ -1632,6 +1637,7 @@ if(player.tm.buyables[8].gte(27))ret--;
                 title: "CS 1337 Computer Science", // Optional, displayed at the top in a larger font
                 cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
 					let cost=Decimal.pow(2,x.pow(1.2)).mul(1e8);
+					if(hasUpgrade("gd_s",25))cost=Decimal.pow(2,x.pow(1.2));
                     return cost
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -1660,6 +1666,7 @@ if(player.tm.buyables[8].gte(27))ret--;
                 title: "CS 2305 Discrete Math", // Optional, displayed at the top in a larger font
                 cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
 					let cost=Decimal.pow(5,x.pow(1.2)).mul(1e8);
+					if(hasUpgrade("gd_s",25))cost=Decimal.pow(2,x.pow(1.2));
                     return cost
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -1690,6 +1697,7 @@ if(player.tm.buyables[8].gte(27))ret--;
                 title: "CS 3354 Software Engineering", // Optional, displayed at the top in a larger font
                 cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
 					let cost=Decimal.pow(10,x.pow(1.2)).mul(1e15);
+					if(hasUpgrade("gd_s",24))cost=Decimal.pow(2,x.pow(1.2));
                     return cost
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -1710,7 +1718,8 @@ if(player.tm.buyables[8].gte(27))ret--;
                 },
 				effect(){
 					let ret=Decimal.pow(1.5,player.gd_s.buyables[21].add(layers.gd_s.buyables[21].free()).mul(player.gd_s.points.mul(0.1).add(1)));
-					if(ret.gte(1e200))ret=ret.log10().div(2).pow(100);
+					if(ret.gte(1e200) && !hasUpgrade("gd_s",24))ret=ret.log10().div(2).pow(100);
+					if(ret.gte("1e1024"))ret=Decimal.pow(10,ret.log10().root(10).mul(512));
 					return ret;
 				},
                 buyMax() {}, // You'll have to handle this yourself if you want
@@ -1746,7 +1755,7 @@ if(player.tm.buyables[8].gte(27))ret--;
                     player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
                 },
 				effect(){
-					return player.gd_s.buyables[22].add(layers.gd_d.effect()).mul(player.gd_s.points.mul(0.1).add(1)).pow(0.5).mul(0.05).add(1);
+					return player.gd_s.buyables[22].add(layers.gd_d.effect()).mul(player.gd_s.points.mul(0.1).add(1)).pow(0.5).mul(hasUpgrade("gd_s",25)?0.1:0.05).add(1);
 				},
                 buyMax() {}, // You'll have to handle this yourself if you want
                 style: {'height':'222px'},
@@ -1809,6 +1818,18 @@ if(player.tm.buyables[8].gte(27))ret--;
                 cost: new Decimal(5365),
                 unlocked() { return hasUpgrade("tm",65); }, // The upgrade is only visible when this is true
             },
+			24: {
+				title: "Enrollment Upgrade 24",
+                description: "'CS 3354 Software Engineering' is cheaper, effect is better.",
+                cost: new Decimal(5425),
+                unlocked() { return hasUpgrade("tm",65); }, // The upgrade is only visible when this is true
+            },
+			25: {
+				title: "Enrollment Upgrade 25",
+                description: "First row classes are cheaper. 'CS 4352 Human Computer Interactions' is better.",
+                cost: new Decimal(6435),
+                unlocked() { return hasUpgrade("tm",65); }, // The upgrade is only visible when this is true
+            },
 		},
 	 update(diff){
 		if(player.gd_d.points.gte(2)){
@@ -1818,6 +1839,9 @@ if(player.tm.buyables[8].gte(27))ret--;
 			player.gd_s.buyables[22]=player.gd_s.buyables[22].max(player.gd_c.points.div(1e40).add(1).log(1e4).pow(1/1.5).add(1).floor());
 			if(hasUpgrade("gd_s",13))player.gd_s.buyables[22]=player.gd_s.buyables[22].max(player.gd_c.points.div(1e20).add(1).log(100).pow(1/1.2).add(1).floor());
 			if(hasUpgrade("gd_s",23))player.gd_s.buyables[22]=player.gd_s.buyables[22].max(player.gd_c.points.add(1).log(2).pow(1/1.2).add(1).floor());
+			if(hasUpgrade("gd_s",24))player.gd_s.buyables[21]=player.gd_s.buyables[21].max(player.gd_c.points.add(1).log(2).pow(1/1.2).add(1).floor());
+			if(hasUpgrade("gd_s",25))player.gd_s.buyables[12]=player.gd_s.buyables[12].max(player.gd_c.points.add(1).log(2).pow(1/1.2).add(1).floor());
+			if(hasUpgrade("gd_s",25))player.gd_s.buyables[11]=player.gd_s.buyables[11].max(player.gd_c.points.add(1).log(2).pow(1/1.2).add(1).floor());
 		}
 	},
 });
@@ -2601,6 +2625,7 @@ addLayer("gd_t", {
 		if(hasUpgrade("gd_u", 74))mult = mult.mul(upgradeEffect("gd_u",74));
 		if(hasUpgrade("gd_t", 12))mult = mult.mul(upgradeEffect("gd_t",12));
 		if(hasUpgrade("gd_t", 15))mult = mult.mul(upgradeEffect("gd_t",15));
+		if(hasUpgrade("gd_t", 22))mult = mult.mul(upgradeEffect("gd_t",22));
 		if(hasUpgrade("gd_u",45) && hasUpgrade("gd_g",41))mult = mult.mul(upgradeEffect("gd_u",45));
 		return mult
     },
@@ -2903,6 +2928,18 @@ addLayer("gd_t", {
             description() { return "Enrollments are cheaper." },
             unlocked() { return hasUpgrade("gd_r", 45) },
         },
+        22: {
+            title: "Time Flux Upgrade 22",
+            cost: new Decimal(1e147),
+            description() { return "Fame Buyable 'Discord' will instead boost Time Flux and Lectures." },
+            unlocked() { return hasUpgrade("gd_r", 45) },
+		effect() {
+                    let ret=player.gd_f.fans.add(1e10).log10().add(1e10).log10().mul(player.gd_f.buyables[11].add(1)).pow(0.1).pow(layers.gd_g.effect()[1]);
+					return ret;
+				},
+                effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
+
+        },
 
 }
 });
@@ -2956,6 +2993,7 @@ addLayer("gd_l", {
 		if(hasUpgrade("gd_u", 74))mult = mult.mul(upgradeEffect("gd_u",74));
 		if(hasUpgrade("gd_t", 12))mult = mult.mul(upgradeEffect("gd_t",12));
 		if(hasUpgrade("gd_t", 13))mult = mult.mul(upgradeEffect("gd_t",13));
+		if(hasUpgrade("gd_t", 22))mult = mult.mul(upgradeEffect("gd_t",22));
 		if(hasUpgrade("gd_u",45) && hasUpgrade("gd_g",41))mult = mult.mul(upgradeEffect("gd_u",45));
 
         return mult

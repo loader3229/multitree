@@ -1441,7 +1441,7 @@ addLayer("tptr_s", {
 		},
 		buildingBaseRoot() {
 			let root = new Decimal(1);
-			if (hasUpgrade("tptr_s", 34) && player.i.buyables[12].gte(5)) root = root.times(upgradeEffect("tptr_s", 34));
+			if (hasUpgrade("tptr_s", 34) && player.tptr_i.buyables[12].gte(5)) root = root.times(upgradeEffect("tptr_s", 34));
 			return root;
 		},
 		effectDescription() {
@@ -1500,6 +1500,7 @@ addLayer("tptr_s", {
 			if (hasUpgrade("tptr_ss", 42)) pow = pow.plus(1);
 			if (hasUpgrade("tptr_ba", 12)) pow = pow.plus(upgradeEffect("tptr_ba", 12));
 			if (player.tm.buyables[7].gte(39)) pow = pow.plus(buyableEffect("tptr_o", 23));
+			if (player.tm.buyables[7].gte(42)) pow = pow.plus(buyableEffect("tptr_o", 33));
 			
 			pow = pow.plus(tmp.tptc_s.buyables[19].effect.sub(1));
 			return pow;
@@ -1560,7 +1561,7 @@ addLayer("tptr_s", {
                 },
 				freeLevels() {
 					let levels = tmp.tptr_s.freeSpaceBuildings.plus(tmp.tptr_s.freeSpaceBuildings1to4);
-					//if (hasUpgrade("s", 32) && player.i.buyables[12].gte(5)) levels = levels.plus(player.tptr_s.buyables[11+1]||0);
+					if (hasUpgrade("tptr_s", 32) && player.tptr_i.buyables[12].gte(5)) levels = levels.plus(player.tptr_s.buyables[11+1]||0);
 					return levels;
 				},
 				effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
@@ -1605,7 +1606,7 @@ addLayer("tptr_s", {
                 },
 				freeLevels() {
 					let levels = tmp.tptr_s.freeSpaceBuildings.plus(tmp.tptr_s.freeSpaceBuildings1to4);
-					//if (hasUpgrade("s", 32) && player.i.buyables[12].gte(5)) levels = levels.plus(player.tptr_s.buyables[12+1]||0);
+					if (hasUpgrade("tptr_s", 32) && player.tptr_i.buyables[12].gte(5)) levels = levels.plus(player.tptr_s.buyables[12+1]||0);
 					return levels;
 				},
 				effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
@@ -1650,7 +1651,7 @@ addLayer("tptr_s", {
                 },
 				freeLevels() {
 					let levels = tmp.tptr_s.freeSpaceBuildings.plus(tmp.tptr_s.freeSpaceBuildings1to4);
-					//if (hasUpgrade("s", 32) && player.i.buyables[12].gte(5)) levels = levels.plus(player.s.buyables[13+1]||0);
+					if (hasUpgrade("tptr_s", 32) && player.tptr_i.buyables[12].gte(5)) levels = levels.plus(player.tptr_s.buyables[13+1]||0);
 					return levels;
 				},
 				effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
@@ -1701,7 +1702,7 @@ addLayer("tptr_s", {
                 },
 				freeLevels() {
 					let levels = tmp.tptr_s.freeSpaceBuildings.plus(tmp.tptr_s.freeSpaceBuildings1to4);
-					//if (hasUpgrade("s", 32) && player.i.buyables[12].gte(5)) levels = levels.plus(player.s.buyables[14+1]||0);
+					if (hasUpgrade("tptr_s", 32) && player.tptr_i.buyables[12].gte(5)) levels = levels.plus(player.tptr_s.buyables[14+1]||0);
 					return levels;
 				},
 				effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
@@ -1744,7 +1745,7 @@ addLayer("tptr_s", {
                 },
 				freeLevels() {
 					let levels = tmp.tptr_s.freeSpaceBuildings;
-					//if (hasUpgrade("s", 32) && player.i.buyables[12].gte(5)) levels = levels.plus(player.s.buyables[15+1]||0);
+					if (hasUpgrade("tptr_s", 32) && player.tptr_i.buyables[12].gte(5)) levels = levels.plus(player.tptr_s.buyables[15+1]||0);
 					return levels;
 				},
 				effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
@@ -1788,7 +1789,7 @@ addLayer("tptr_s", {
                 },
 				freeLevels() {
 					let levels = new Decimal(0);
-					//if (hasUpgrade("s", 32) && player.i.buyables[12].gte(5)) levels = levels.plus(player.s.buyables[16+1]||0);
+					if (hasUpgrade("tptr_s", 32) && player.tptr_i.buyables[12].gte(5)) levels = levels.plus(player.tptr_s.buyables[16+1]||0);
 					return levels;
 				},
 				effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
@@ -1831,7 +1832,7 @@ addLayer("tptr_s", {
                 },
 				freeLevels() {
 					let levels = new Decimal(0);
-					//if (hasUpgrade("s", 32) && player.i.buyables[12].gte(5)) levels = levels.plus(player.s.buyables[17+1]||0);
+					if (hasUpgrade("tptr_s", 32) && player.tptr_i.buyables[12].gte(5)) levels = levels.plus(player.tptr_s.buyables[17+1]||0);
 					return levels;
 				},
 				effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
@@ -1874,7 +1875,7 @@ addLayer("tptr_s", {
                 },
 				freeLevels() {
 					let levels = new Decimal(0);
-					//if (hasUpgrade("s", 32) && player.i.buyables[12].gte(5)) levels = levels.plus(player.s.buyables[18+1]||0);
+					if (hasUpgrade("tptr_s", 32) && player.tptr_i.buyables[12].gte(5)) levels = levels.plus(player.tptr_s.buyables[18+1]||0);
 					return levels;
 				},
 				effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
@@ -2044,6 +2045,62 @@ addLayer("tptr_s", {
 				cost() { return new Decimal(54) },
 				unlocked() { return player.tm.buyables[7].gte(13) },
 			},
+/*
+
+			31: {
+				title: "Useful Dimensionality",
+				description: "The first four Space Buildings' cost exponents are decreased by 0.04*(5-n), where n is the Space Building number.",
+				cost() { return new Decimal(((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes(this.layer):false)?815:1225) },
+				pseudoUnl() { return player.i.buyables[12].gte(5)&&player.s.upgrades.length>=9 },
+				pseudoReq: "Req: 1,200% Space Building Power",
+				pseudoCan() { return tmp.s.buildingPower.gte(12) },
+				unlocked() { return player[this.layer].pseudoUpgs.includes(Number(this.id)) },
+				style: {"font-size": "9px"},
+			},*/
+			32: {
+				title: "Poincaré Recurrence",
+				description: "Each Space Building's bought Level adds to the previous building's Extra Level.",
+				cost() { return new Decimal(1141) },
+				unlocked() { return player.tptr_i.buyables[12].gte(5) },
+			},/*
+			33: {
+				title: "Noncontinuous Spectrum",
+				description: "<b>Contiguous Dimension</b> multiplies Nebula Energy & Hyperspace Energy gain at a reduced rate.",
+				cost() { return new Decimal(((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes(this.layer):false)?"e1e6":"e2.75e8") },
+				currencyDisplayName: "generator power",
+				currencyInternalName: "power",
+				currencyLayer: "g",
+				pseudoUnl() { return player.i.buyables[12].gte(5)&&player.s.upgrades.length>=9 },
+				pseudoReq: "Req: Have at least 13 Space Upgrades, 39 Achievements, and the upgrade <b>Contiguous Dimension</b>.",
+				pseudoCan() { return player.a.achievements.length>=39 && player.s.upgrades.length>=13 && hasUpgrade("s", 35) },
+				unlocked() { return player[this.layer].pseudoUpgs.includes(Number(this.id)) },
+				effect() { return upgradeEffect("s", 35).sqrt() },
+				effectDisplay() { return format(upgradeEffect("s", 33))+"x" },
+				formula: "sqrt(x)",
+				style: {"font-size": "8px"},
+			},*/
+			34: {
+				title: "Energetic Reduction",
+				description: "The Space Buildings' cost bases are reduced based on your Space Energy.",
+				cost() { return new Decimal(1133) },
+				unlocked() { return player.tptr_i.buyables[12].gte(5) },
+				effect() { return player.tptr_s.points.plus(1).log10().plus(1).log10().plus(1) },
+				effectDisplay() { return "brought to the "+format(tmp.tptr_s.upgrades[this.id].effect)+"th root" },
+				style: {"font-size": "9px"},
+			},/*
+			35: {
+				title: "Contiguous Dimension",
+				description: "Unspent Space multiplies Honour gain.",
+				cost() { return new Decimal(((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes(this.layer):false)?825:1255) },
+				pseudoUnl() { return player.i.buyables[12].gte(5)&&player.s.upgrades.length>=9 },
+				pseudoReq: "Req: 9e16 Space",
+				pseudoCan() { return tmp.s.space.gte(9e16) },
+				unlocked() { return player[this.layer].pseudoUpgs.includes(Number(this.id)) },
+				effect() { return tmp.s.space.plus(1) },
+				effectDisplay() { return format(tmp.s.upgrades[this.id].effect)+"x" },
+				formula: "x+1",
+			},
+*/
 		},
 });
 
@@ -2989,6 +3046,9 @@ addLayer("tptr_o", {
 		 if(player.tm.buyables[7].gte(41)){
 			 player.tptr_o.buyables[32]=player.tptr_o.buyables[32].add(layers.tptr_o.buyables[32].gain().mul(diff));
 		 }
+		 if(player.tm.buyables[7].gte(42)){
+			 player.tptr_o.buyables[33]=player.tptr_o.buyables[33].add(layers.tptr_o.buyables[33].gain().mul(diff));
+		 }
 		},
 		solEnEff2() { return player.tptr_o.energy.plus(1).pow(2) },
 		tabFormat: ["main-display",
@@ -3013,6 +3073,7 @@ addLayer("tptr_o", {
 			if (hasUpgrade("tptr_ss", 41)) pow = pow.plus(buyableEffect("tptr_o", 21));
 			if (hasUpgrade("tptr_ba", 11)) pow = pow.plus(upgradeEffect("tptr_ba", 11));
 			if (hasUpgrade("tptr_hn", 55)) pow = pow.plus(upgradeEffect("tptr_hn", 55));
+			if (player.tm.buyables[7].gte(42)) pow = pow.plus(buyableEffect("tptr_o", 33));
 			if (tmp.tptr_ps.impr[11].unlocked) pow = pow.times(tmp.tptr_ps.impr[11].effect);
 			if(pow.gte(32))return pow.div(32).cbrt().mul(32);
 			return pow;
@@ -3200,35 +3261,25 @@ addLayer("tptr_o", {
                 buy() { 
                 },
                 style: {'height':'140px', 'width':'140px', 'font-size':'9px'},
-			},/*
+			},
 			33: {
 				title: "Thermonuclear Reactants",
-				gain() { return player.o.points.div("1e500").pow(10).pow(tmp.o.buyableGainExp).floor() },
+				gain() { return player.tptr_o.points.div("1e500").pow(10).pow(tmp.tptr_o.buyableGainExp).floor() },
 				effect() {
-					return player[this.layer].buyables[this.id].times(tmp.o.multiplyBuyables).plus(1).pow(tmp.o.solPow).log10().plus(1).log10().plus(1).log10().div(3).times(((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes(this.layer):false)?1.9:1);
+					return player[this.layer].buyables[this.id].times(tmp.tptr_o.multiplyBuyables).plus(1).pow(tmp.tptr_o.solPow).log10().plus(1).log10().plus(1).log10().div(3);
 				},
 				display() {
 					let data = tmp[this.layer].buyables[this.id]
-					return ("Sacrifice all of your Solarity for "+formatWhole(data.gain)+" Thermonuclear Reactants\n"+
-					"Req: 1e750 Solarity\n"+
-					"Amount: "+formatWhole(player[this.layer].buyables[this.id])+((tmp.o.multiplyBuyables||new Decimal(1)).eq(1)?"":(" x "+format(tmp.o.multiplyBuyables)))+"\n"+
-					(tmp.nerdMode?("Formula: log(log(log(x+1)+1)+1)/3"):("Effect: Add "+format(data.effect.times(100))+"% to Solar Power, Space Building Power, & Hyper Building Power.")))
+					return ("Gaining "+formatWhole(data.gain)+" Thermonuclear Reactants per second, based on Solarity.\n"+
+					"Amount: "+formatWhole(player[this.layer].buyables[this.id])+((tmp.tptr_o.multiplyBuyables||new Decimal(1)).eq(1)?"":(" x "+format(tmp.tptr_o.multiplyBuyables)))+"\n"+
+					(("Effect: Add "+format(data.effect.times(100))+"% to Solar Power, Space Building Power, & Hyper Building Power.")))
 				},
-				unlocked() { return player.n.buyables[11].gte(5) },
-				canAfford() { return player.o.points.gte("1e750") },
-				buy() {
-					player.o.points = new Decimal(0);
-					player.o.buyables[this.id] = player.o.buyables[this.id].plus(tmp[this.layer].buyables[this.id].gain);
-				},
-				 buyMax() {
-					// I'll do this later ehehe
-				},
+                unlocked() { return player.tm.buyables[7].gte(42) }, 
+                canAfford() { return true; },
+                buy() { 
+                },
                 style: {'height':'140px', 'width':'140px', 'font-size':'9px'},
-				autoed() { return hasMilestone("m", 0) },
 			},
-
-*/
-
 		},
 		milestones: {
 			0: {
@@ -3274,6 +3325,12 @@ addLayer("tptr_o", {
 				requirementDescription: "TPTR Level 41",
 				unlocked() { return player.tm.buyables[7].gte(25) },
 				done() { return player.tm.buyables[7].gte(41) },
+				effectDescription: "Unlock a new Solarity buyable.",
+			},
+			8: {
+				requirementDescription: "TPTR Level 42",
+				unlocked() { return player.tm.buyables[7].gte(25) },
+				done() { return player.tm.buyables[7].gte(42) },
 				effectDescription: "Unlock a new Solarity buyable.",
 			},
 		},
@@ -4646,7 +4703,7 @@ addLayer("tptr_hs", {
 			return "which are adding hyper building limit progress in TPTC by "+format(tmp.tptr_hs.effect.sub(1).mul(100))+"%";
 		},
         row: 5, // Row the layer is in on the tree (0 is the first row)
-		passiveGeneration() { return 0 },
+		passiveGeneration() { return player.tm.buyables[7].gte(42)?1:0 },
         doReset(l){ 
 			if(l=="tptr_p" || l=="tptr_b" || l=="tptr_g" || l=="tptr_t" || l=="tptr_e" || l=="tptr_s" || l=="tptr_sb" || l=="tptr_sg" || l=="tptr_o" || l=="tptr_h" || l=="tptr_q" || l=="tptr_ss" || l=="tptr_m" || l=="tptr_ba" || l=="tptr_ps" || l=="tptr_hn" || l=="tptr_n" || l=="tptr_hs" || l=="tptr_i" || !l.startsWith("tptr_")){return;}
 			var b=new Decimal(player.tptr_hs.best);
@@ -4669,7 +4726,7 @@ addLayer("tptr_hs", {
 			"blank",
 			["display-text", function() { return "Hyper Building Limit: "+formatWhole(player.tptr_hs.buildLim)+"("+formatWhole(tmp.tptr_hs.buildLimit)+"), Progress to next limit upgrade: "+format(tmp.tptr_hs.realBuildLimit.sub(tmp.tptr_hs.buildLimit).mul(100))+"%" }], "blank",
             ["display-text",function(){return "Get more Super-Generators to increase the progress.";}],
-			["display-text",function(){return "You have "+formatWhole(player.tptr_hs.spentHS)+" used Hyperspace."}],
+			["display-text",function(){return "You have "+formatWhole(player.tptr_hs.spentHS)+" used Hyperspace."}],"milestones"
 		],
 		update(diff) {
 			player.tptr_hs.buildLim = player.tptr_hs.buildLim.max(tmp.tptr_hs.buildLimit);
@@ -4691,7 +4748,8 @@ return player.tptr_sg.points.sub(21).max(0).plus(1).sqrt().div(tmp.tptr_hs.build
 			if (!player[this.layer].unlocked) return new Decimal(0);
 			let pow = new Decimal(1)
 			if (hasUpgrade("tptr_hn", 54)) pow = pow.times(upgradeEffect("tptr_hn", 54));
-			/*if (player.tptr_n.buyables[11].gte(5)) pow = pow.plus(buyableEffect("o", 33));
+			if (player.tm.buyables[7].gte(42)) pow = pow.plus(buyableEffect("tptr_o", 33));
+			/*
 			if (player.i.buyables[11].gte(5)) pow = pow.plus(buyableEffect("s", 20));
 			if (player.ma.unlocked) pow = pow.plus(tmp.ma.effect.max(1).log10().div(40));
 			if (hasAchievement("a", 113)) pow = pow.plus(.1);
@@ -5042,6 +5100,14 @@ return player.tptr_sg.points.sub(21).max(0).plus(1).sqrt().div(tmp.tptr_hs.build
 				autoed() { return false },
 			},*/
 		},
+		milestones: {
+			0: {
+				requirementDescription: "TPTR Level 42",
+				done() { return player.tm.buyables[7].gte(42) },
+				effectDescription: "Gain 100% of Hyperspace Energy gain per second.",
+			},
+		},
+
 })
 
 

@@ -2386,74 +2386,104 @@ addLayer("dynas_t", {
 			done() { return player[this.layer].best.gte(4) },
 			effectDescription: () => "2nd SP buyable is cheaper."
 		},
+		5: {
+			requirementDescription: () => "5 Territories",
+			done() { return player[this.layer].best.gte(5) },
+			effectDescription: () => "Obstacles can be completed another time."
+		},
 	},
 			challenges: {
         rows: 3,
         cols: 2,
         11: {
             name:() => "The First Obstacle",
-			challengeDescription:() => "Coin gain and dynas point generation is square rooted.",
+			challengeDescription(){
+				return "Coin gain and dynas point generation is square rooted.<br>Completions: "+player.dynas_t.challenges[11]+"/"+this.completionLimit();
+			},
 			rewardDescription:() => "Builders build faster based on dynas points.",
 			rewardEffect() {
 				var eff = player.modpoints[9].add(1).log("1e30000").mul(player.dynas_bd.buyables[21].add(1)).add(1)
+				if(player.dynas_t.challenges[11]>=2)eff = player.modpoints[9].add(1).log("1e10000").mul(player.dynas_bd.buyables[21].add(1)).add(1)
 				if (player.dynas_t.challenges[22]>=1) eff = eff.mul(challengeEffect("dynas_t",22))
 				if (player.dynas_t.challenges[32]>=1) eff = eff.mul(challengeEffect("dynas_t",32))
 				return eff
 			},
 			rewardDisplay(){return "×" + format(challengeEffect("dynas_t",11))},
-			goal:() => new Decimal("e320"),
+			goal:() => new Decimal(["e320","e740","e1000000"][player.dynas_t.challenges[11]]),
 			currencyDisplayName: "dynas points",
                         currencyLayer: "modpoints",
                         currencyInternalName: "9",
 			unlocked(){
                                 return hasMilestone("dynas_t",0)
                         },
+			completionLimit(){
+				return hasMilestone("dynas_t",5) ? 2 : 1
+			}
         },
         12: {
             name:() => "Unemployed Workfinders",
-			challengeDescription:() => "You can not gain workfinders.",
+			challengeDescription(){
+				return "You can not gain workfinders.<br>Completions: "+player.dynas_t.challenges[12]+"/"+this.completionLimit();
+			},
 			rewardDescription:() => "Find and finish work faster based on dynas points.",
 			rewardEffect() {
 				var eff = player.modpoints[9].add(1).log("1e1000").mul(player.dynas_bd.buyables[21].add(1)).add(1)
+				if(player.dynas_t.challenges[12]>=2)eff = player.modpoints[9].add(1).log("1e100").mul(player.dynas_bd.buyables[21].add(1)).add(1)
 				if (player.dynas_t.challenges[22]>=1) eff = eff.mul(challengeEffect("dynas_t",22))
 				if (player.dynas_t.challenges[32]>=1) eff = eff.mul(challengeEffect("dynas_t",32))
 				return eff
 			},
 			rewardDisplay(){return "×" + format(challengeEffect("dynas_t",12))},
-			goal:() => new Decimal("e8e3"),
+			goal:() => new Decimal(["e8e3","e11400","e1000000"][player.dynas_t.challenges[12]]),
 			currencyDisplayName: "dynas points",
                         currencyLayer: "modpoints",
                         currencyInternalName: "9",
 			unlocked(){
                                 return hasMilestone("dynas_t",1)
                         },
+			completionLimit(){
+				return hasMilestone("dynas_t",5) ? 2 : 1
+			}
+
         },
         21: {
             name:() => "Market Crash",
-			challengeDescription:() => "You can not gain workfinders and banks, bankings has no effect.",
+			challengeDescription(){
+				return "You can not gain workfinders and banks, bankings has no effect.<br>Completions: "+player.dynas_t.challenges[21]+"/"+this.completionLimit();
+			},
 			rewardDescription:() => "Unlock a banking, and generate 10 of this banking per second.",
-			goal:() => new Decimal("e4800"),
+			goal:() => new Decimal(["e4800","e1000000","e1000000"][player.dynas_t.challenges[21]]),
 			currencyDisplayName: "dynas points",
                         currencyLayer: "modpoints",
                         currencyInternalName: "9",
 			unlocked(){
                                 return hasMilestone("dynas_t",2)
                         },
+			completionLimit(){
+				return hasMilestone("dynas_t",5) ? 2 : 1
+			}
+
         },
         22: {
             name:() => "From Square One",
-			challengeDescription:() => "You can not gain workers, workfinders, spiritual power and banks, bankings has no effect.",
+			challengeDescription(){
+				return "You can not gain workers, workfinders, spiritual power and banks, bankings has no effect.<br>Completions: "+player.dynas_t.challenges[22]+"/"+this.completionLimit();
+			},
 			rewardDescription:() => "Boost the first two obstacles' buffs based on your total territory count.",
 			rewardEffect:() => player.dynas_t.best.add(1).sqrt(),
 			rewardDisplay(){return "×" + format(challengeEffect("dynas_t",22))},
 			countsAs: [12, 21],
-			goal:() => new Decimal("e1000"),
+			goal:() => new Decimal(["e1000","e1000000","e1000000"][player.dynas_t.challenges[22]]),
 			currencyDisplayName: "dynas points",
                         currencyLayer: "modpoints",
                         currencyInternalName: "9",
 			unlocked(){
                                 return hasMilestone("dynas_t",3)
                         },
+			completionLimit(){
+				return hasMilestone("dynas_t",5) ? 2 : 1
+			}
+
 
         },
 },

@@ -1392,6 +1392,9 @@ addLayer("milestone_m", {
 		if(player.milestone_pm.points.gte(5)){
 			b=b.mul(player.milestone_pm.points.div(113).add(1));
 		}
+		if(player.milestone_pm.points.gte(10)){
+			b=b.mul(player.milestone_pm.points.div(100).add(1));
+		}
 		return Decimal.pow(b,m);
 	},
 	milestone4EffectExponent(){
@@ -1972,20 +1975,20 @@ addLayer("milestone_pb", {
 		if(hasUpgrade("milestone_pb",14)){
 			p+=0.005;
 			m+=0.001;
-		}/*
-		if(hasUpgrade("pb",21)){
+		}
+		if(hasUpgrade("milestone_pb",21)){
 			p+=0.005;
 		}
-		if(hasUpgrade("pb",22)){
+		if(hasUpgrade("milestone_pb",22)){
 			m+=0.00275;
 		}
-		if(hasUpgrade("pb",23)){
+		if(hasUpgrade("milestone_pb",23)){
 			p+=0.01;
 			m+=0.001004;
 		}
-		if(hasUpgrade("pb",24)){
+		if(hasUpgrade("milestone_pb",24)){
 			m+=0.00201;
-		}
+		}/*
 		if(hasUpgrade("pb",44)){
 			m+=0.000426;
 		}
@@ -2058,6 +2061,12 @@ addLayer("milestone_pb", {
 			title: "Prestige Boost Upgrade 15",
             description: "2nd milestone is better.",
             cost: new Decimal(28),
+            unlocked() { return true}, // The upgrade is only visible when this is true
+        },
+		21: {
+			title: "Prestige Boost Upgrade 21",
+            description: "Prestige Boost's effect is better.",
+            cost: new Decimal(32),
             unlocked() { return true}, // The upgrade is only visible when this is true
         },
 }
@@ -2233,7 +2242,23 @@ addLayer("milestone_pm", {
             unlocked() {return player[this.layer].best.gte(8)},
             done() {return player[this.layer].best.gte(9)}, // Used to determine when to give the milestone
             effectDescription: function(){
-				let ret="4th MT-Milestone's is better.";
+				let ret="4th MT-Milestone's effect is better.";
+                return ret;
+			},
+			style() {
+				/*if(player.tm.buyables[8].gte(2)&&player[this.layer].best.gte(1)){
+					return {backgroundColor: "#cccc00"};
+				}*/
+				return {};
+			},
+
+        },
+		{
+			requirementDescription: "10th Power Milestone",
+            unlocked() {return player[this.layer].best.gte(9)},
+            done() {return player[this.layer].best.gte(10)}, // Used to determine when to give the milestone
+            effectDescription: function(){
+				let ret="Third MT-Milestone's effect is better based on your power milestones.";
                 return ret;
 			},
 			style() {

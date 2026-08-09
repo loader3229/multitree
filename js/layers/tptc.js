@@ -408,6 +408,7 @@ addLayer("tptc_b", {
 		base = base.mul(tmp.tptc_sb.effect);
 		if(hasUpgrade("tptc_b",11))base = base.mul(upgradeEffect("tptc_b",11));
 		base = base.mul(tmp.tptr_b.effect[1]);
+		if(hasUpgrade("tptc_sg",23))base = base.mul(tmp.tptc_sg.getSGenPowerEff.pow(0.1));
 		ret = Decimal.pow(base,ret);
 		return ret;
 	},
@@ -549,7 +550,7 @@ addLayer("tptc_g", {
 		if(inChallenge("tptc_h",21)||inChallenge("tptr_h",41))return new Decimal(0);
 		let ret = player.tptc_g.points;
 		let base = new Decimal(2);
-		base = base.add(tmp.tptc_sg.getSGenPowerEff);
+		base = base[hasUpgrade("tptc_sg",23)?"mul":"add"](tmp.tptc_sg.getSGenPowerEff);
 		if(hasUpgrade("tptc_e",12))base = base.mul(tmp.tptc_e.buyables[11].effect[0]);else base = base.add(tmp.tptc_e.buyables[11].effect[0]);
 		base = base.mul(tmp.tptr_g.effect[1]);
 		if(hasUpgrade("tptc_g",14))base = base.mul(upgradeEffect("tptc_g",14));
@@ -1379,6 +1380,7 @@ addLayer("tptc_s", {
 					if(hasUpgrade("tptc_hs",23))eff = eff.max(x.div(100).add(1));
 					if(hasUpgrade("tptc_hs",24))eff = eff.mul(tmp.tptc_ss.ssEff);
 					if(hasUpgrade("tptc_s",22))eff = eff.mul(tmp.tptr_s.effect);
+					eff=eff.mul(tmp.tptc_hs.buyables[19].effect);
 					eff = softcap(eff,new Decimal(100/9),new Decimal(0.1));
 					return eff;
                 },
@@ -1412,6 +1414,7 @@ addLayer("tptc_s", {
 					if(hasUpgrade("tptc_hs",25))eff = eff.mul(tmp.tptc_ss.ssEff);
 					if(hasUpgrade("tptc_i",14))eff=eff.mul(tmp.tptc_i.buyables[11].effect[18]);
 					if(hasUpgrade("tptc_s",22))eff = eff.mul(tmp.tptr_s.effect);
+					eff=eff.mul(tmp.tptc_hs.buyables[20].effect);
 					return eff;
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -1804,6 +1807,12 @@ addLayer("tptc_sg", {
 				title: "Super-Generator Upgrade 22",
                 description: "Second Super-Generator effect in TPTR ^2",
                 cost: new Decimal(91),
+                unlocked() { return hasUpgrade("tm",56); }, // The upgrade is only visible when this is true
+            },
+			23: {
+				title: "Super-Generator Upgrade 23",
+                description: "Super-Generator power multiply generator base instead, it also multiply booster base at 10% power.",
+                cost: new Decimal(92),
                 unlocked() { return hasUpgrade("tm",56); }, // The upgrade is only visible when this is true
             },
 	 }
@@ -2827,6 +2836,12 @@ addLayer("tptc_sp", {
                 cost: new Decimal("e149e11"),
                 unlocked() { return hasUpgrade("tptc_p", 65); },
             },
+			45: {
+				title: "Super-Prestige Upgrade 45",
+                description: "Unlock Hyper Building 9 and 10. Hyperspace Energy requirement is 1.",
+                cost: new Decimal("e3e13"),
+                unlocked() { return hasUpgrade("tptc_p", 65); },
+            },
 		},
 	 passiveGeneration(){
 		 if(hasUpgrade("tptc_sp",21))return 1;
@@ -3288,6 +3303,7 @@ addLayer("tptc_hs", {
 	}},
 	color: "white",
     requires: function(){
+		if(hasUpgrade("tptc_sp",45))return new Decimal(1);
 		return new Decimal(27);
 	},
     resource: "hyperspace energy",
@@ -3320,7 +3336,7 @@ addLayer("tptc_hs", {
 	},
 		
     usedHS() {
-        return player[this.layer].buyables[11].add(player[this.layer].buyables[12]).add(player[this.layer].buyables[13]).add(player[this.layer].buyables[14]).add(player[this.layer].buyables[15]).add(player[this.layer].buyables[16]).add(player[this.layer].buyables[17]).add(player[this.layer].buyables[18]);
+        return player[this.layer].buyables[11].add(player[this.layer].buyables[12]).add(player[this.layer].buyables[13]).add(player[this.layer].buyables[14]).add(player[this.layer].buyables[15]).add(player[this.layer].buyables[16]).add(player[this.layer].buyables[17]).add(player[this.layer].buyables[18]).add(player[this.layer].buyables[19]).add(player[this.layer].buyables[20]);
     },
 	realBuildLimit(){
 		let ret=new Decimal(player.tm.buyables[1]).sqrt().mul(3).sub(5.6);
@@ -3350,7 +3366,7 @@ addLayer("tptc_hs", {
 				
 	buyables: {
             rows: 1,
-            cols: 8,
+            cols: 10,
             1: {
                 title: "Hyperspace", // Optional, displayed at the top in a larger font
                 cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
@@ -3394,6 +3410,8 @@ addLayer("tptc_hs", {
 						player[this.layer].buyables[16]=new Decimal(0);
 						player[this.layer].buyables[17]=new Decimal(0);
 						player[this.layer].buyables[18]=new Decimal(0);
+						player[this.layer].buyables[19]=new Decimal(0);
+						player[this.layer].buyables[20]=new Decimal(0);
 						doReset("tptc_hs",true);
 					}
                 },
@@ -3591,6 +3609,56 @@ addLayer("tptc_hs", {
 					let x=player[this.layer].buyables[this.id];
 					if(player.tptc_ge.challenges[32])x=x.mul(tmp.tptc_ge.challenges[32].rewardEffect);
 					return x.mul(0.2).add(1);
+				},
+                buy() { 
+                    cost = tmp[this.layer].buyables[this.id].cost
+					player[this.layer].points = player[this.layer].points.sub(cost)
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
+                },
+                buyMax() {}, // You'll have to handle this yourself if you want
+                style: {'height':'120px','width':'120px'},
+            },
+            19: {
+                display() { 
+                    let data = tmp[this.layer].buyables[this.id]
+                    return "Hyper Building 9<br>"+
+					"Level: "+format(player.tptc_hs.buyables[19])+"/"+format(tmp.tptc_hs.buildLimit)+"<br>"+
+					"Effect: Space Building 9's effect is multiplied by "+format(data.effect)+"<br>";
+                },
+                unlocked() { return player[this.layer].unlocked && hasUpgrade("tptc_sp",45) }, 
+                canAfford() {
+					return layers[this.layer].usedHS().lt(player.tptc_hs.buyables[1]) && player.tptc_hs.buyables[this.id].lt(tmp.tptc_hs.buildLimit);
+				},
+				effect(){
+					if(inChallenge("tptc_ge",32))return new Decimal(1);
+					let x=player[this.layer].buyables[this.id];
+					if(player.tptc_ge.challenges[32])x=x.mul(tmp.tptc_ge.challenges[32].rewardEffect);
+					return x.mul(0.01).add(1);
+				},
+                buy() { 
+                    cost = tmp[this.layer].buyables[this.id].cost
+					player[this.layer].points = player[this.layer].points.sub(cost)
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
+                },
+                buyMax() {}, // You'll have to handle this yourself if you want
+                style: {'height':'120px','width':'120px'},
+            },
+            20: {
+                display() { 
+                    let data = tmp[this.layer].buyables[this.id]
+                    return "Hyper Building 10<br>"+
+					"Level: "+format(player.tptc_hs.buyables[20])+"/"+format(tmp.tptc_hs.buildLimit)+"<br>"+
+					"Effect: Space Building 10's effect is multiplied by "+format(data.effect)+"<br>";
+                },
+                unlocked() { return player[this.layer].unlocked && hasUpgrade("tptc_sp",45) }, 
+                canAfford() {
+					return layers[this.layer].usedHS().lt(player.tptc_hs.buyables[1]) && player.tptc_hs.buyables[this.id].lt(tmp.tptc_hs.buildLimit);
+				},
+				effect(){
+					if(inChallenge("tptc_ge",32))return new Decimal(1);
+					let x=player[this.layer].buyables[this.id];
+					if(player.tptc_ge.challenges[32])x=x.mul(tmp.tptc_ge.challenges[32].rewardEffect);
+					return x.mul(0.01).add(1);
 				},
                 buy() { 
                     cost = tmp[this.layer].buyables[this.id].cost

@@ -63,6 +63,7 @@ addLayer("dynas_c", {
 					ret=ret.mul(tmp.dynas_w.effect);
 		ret=ret.mul(tmp.dynas_m.effect);
 		ret=ret.mul(tmp.dynas_sp.effect);
+		ret=ret.mul(tmp.dynas_so.effect);
 					ret=ret.mul(tmp.dynas_wf.effect2[0]);
 					ret = ret.mul(buyableEffect("dynas_b",11));
 					ret = ret.mul(buyableEffect("dynas_b",12));
@@ -1420,7 +1421,7 @@ addLayer("dynas_m", {
 		return new Decimal(1)
 	},
 		doReset(l){
-			if(l=="dynas_c" || l=="dynas_wf"  || l=="dynas_b" || l=="dynas_sp" || l=="dynas_w" || l=="dynas_m" || l=="dynas_bd" || l=="dynas_t" || !l.startsWith("dynas_")){return;}
+			if(l=="dynas_c" || l=="dynas_wf"  || l=="dynas_b" || l=="dynas_sp" || l=="dynas_w" || l=="dynas_m" || l=="dynas_bd" || l=="dynas_t" || l=="dynas_so" || !l.startsWith("dynas_")){return;}
 			layerDataReset("dynas_m",["upgrades","milestones","challenges"]);
 			return;
 		},
@@ -1806,7 +1807,7 @@ addLayer("dynas_bd", {
 	layerShown() { return player.tm.buyables[9].gte(10) && player.tm.currentTree==9; },
 
 		doReset(l){
-			if(l=="dynas_c" || l=="dynas_wf"  || l=="dynas_b" || l=="dynas_sp" || l=="dynas_w" || l=="dynas_m" || l=="dynas_bd" || l=="dynas_t" || !l.startsWith("dynas_")){return;}
+			if(l=="dynas_c" || l=="dynas_wf"  || l=="dynas_b" || l=="dynas_sp" || l=="dynas_w" || l=="dynas_m" || l=="dynas_bd" || l=="dynas_t" || l=="dynas_so" || !l.startsWith("dynas_")){return;}
 			layerDataReset("dynas_bd",["upgrades","milestones","challenges"]);
 			return;
 		},
@@ -2001,36 +2002,35 @@ addLayer("dynas_bd", {
 			buy() {
 				player.dynas_bd.building = (player.dynas_bd.building == 22 ? 0 : 22)
 			},
-		},/*
+		},
 		23: {
 			title: () => "Military Base",
-			cost(x) {
+			cost(x=player.dynas_bd.buyables[23]) {
 				if (x.gte(25)) x = x.pow(2).div(25)
 				if (x.gte(15)) x = x.pow(2).div(15)
 				return Decimal.pow(2, x).mul(250000000)
 			},
-			effect(x) {
+			effect(x=player.dynas_bd.buyables[23]) {
 				return Decimal.pow(1.2, x)
 			},
 			display() { // Everything else displayed in the buyable button after the title
-				let data = tmp.buyables[this.layer][this.id]
+				let data = tmp[this.layer].buyables[this.id]
 				return data.canAfford
-					? "You have " + format(player[this.layer].buyables[this.id], 0) + " military bases." + (player[this.layer].buyables[this.id].gte(1) ? "" : " Building one will unlock another prestige layer.") + 
-						(player.bd.building == 23 ? "\n\n\
-						Progress: " + format(player.bd.progress, 0) + " / " + format(data.cost, 0) + " (" + format(Decimal.div(player.bd.progress, data.cost).mul(100)) + "%) \n\
-						ETA: " + (Decimal.lte(tmp.layerEffs.bd.speed, 0) ? "never" : formatTime(data.cost.sub(player.bd.progress).div(tmp.layerEffs.bd.speed))) + "\n\
+					? "You have " + format(player[this.layer].buyables[this.id], 0) + " military bases." +  
+						(player.dynas_bd.building == 23 ? "\n\n\
+						Progress: " + format(player.dynas_bd.progress, 0) + " / " + format(data.cost, 0) + " (" + format(Decimal.div(player.dynas_bd.progress, data.cost).mul(100)) + "%) \n\
+						ETA: " + (Decimal.lte(tmp.dynas_bd.effect, 0) ? "never" : formatTime(data.cost.sub(player.dynas_bd.progress).div(tmp.dynas_bd.effect))) + "\n\
 						Click here to stop building and discard the building progress." : "\n\n\
 						Progress needed: " + format(data.cost, 0) + "\n\
 						Click here to start building.")
 					: "You can not build more than one structure at once."
 			},
-			unl() { return player.bd.points.gte(1) && hasMilestone("m", 6) },
-			canAfford() { return (player.bd.building == 0 || player.bd.building == 23) },
+			unlocked() { return player.tm.buyables[9].gte(17) },
+			canAfford() { return (player.dynas_bd.building == 0 || player.dynas_bd.building == 23) },
 			buy() {
-				player.bd.building = (player.bd.building == 23 ? 0 : 23)
-				if (player.bd.building != 0) doReset("bd", true)
+				player.dynas_bd.building = (player.dynas_bd.building == 23 ? 0 : 23)
 			},
-		},
+		},/*
 		31: {
 			title: () => "School",
 			cost(x) {
@@ -2103,7 +2103,7 @@ addLayer("dynas_bd", {
 			"buyables",
 			["blank", "5px"],
 			["display-text",
-				function () { if(player.dynas_bd.points.lt(1))return "";if(player.tm.buyables[9].lt(11))return "More Structures at The Dynas Tree Level 11";if(player.tm.buyables[9].lt(14))return "More Structures at The Dynas Tree Level 14";if(player.tm.buyables[9].lt(15))return "More Structures at The Dynas Tree Level 15"; }],
+				function () { if(player.dynas_bd.points.lt(1))return "";if(player.tm.buyables[9].lt(11))return "More Structures at The Dynas Tree Level 11";if(player.tm.buyables[9].lt(14))return "More Structures at The Dynas Tree Level 14";if(player.tm.buyables[9].lt(15))return "More Structures at The Dynas Tree Level 15";if(player.tm.buyables[9].lt(17))return "More Structures at The Dynas Tree Level 17"; }],
 			["blank", "5px"], 
 			"upgrades"],
 
@@ -2321,7 +2321,7 @@ addLayer("dynas_sp", {
 addLayer("dynas_t", {
 	startData() {
 		return {
-			unl: false,
+			unlocked: false,
 			points: new Decimal(0),
 			best: new Decimal(0),
 			total: new Decimal(0),
@@ -2356,7 +2356,7 @@ addLayer("dynas_t", {
 	},
 	
 		doReset(l){
-			if(l=="dynas_c" || l=="dynas_wf"  || l=="dynas_b" || l=="dynas_sp" || l=="dynas_w" || l=="dynas_m" || l=="dynas_bd" || l=="dynas_t" || !l.startsWith("dynas_")){return;}
+			if(l=="dynas_c" || l=="dynas_wf"  || l=="dynas_b" || l=="dynas_sp" || l=="dynas_w" || l=="dynas_m" || l=="dynas_bd" || l=="dynas_t" || l=="dynas_so" || !l.startsWith("dynas_")){return;}
 			layerDataReset("dynas_t",["upgrades","milestones","challenges"]);
 			return;
 		},
@@ -2489,3 +2489,243 @@ addLayer("dynas_t", {
 },
 
 });
+
+
+addLayer("dynas_so", {
+	startData() {
+		return {
+			unlocked: false,
+			points: new Decimal(0),
+			best: new Decimal(0),
+			total: new Decimal(0),
+			totalDmg: new Decimal(0),
+		}
+	},
+
+	layerShown() { return player.tm.buyables[9].gte(17) && player.tm.currentTree==9;},
+
+	color: () => "#009900",
+	resource: "soldiers",
+	row: 3,
+	symbol: "SO",
+
+	baseResource: "coins",
+	baseAmount() { return player.dynas_c.points },
+	branches: [["dynas_w", 1], ["dynas_c", 2]],
+
+	requires: () => new Decimal("1e7500"),
+
+	type: "static",
+	base: "1e30",
+	exponent: 0.9,
+	canBuyMax: () => true,
+	//resetsNothing: () => hasMilestone("t", 6),
+	
+	effect() {
+		let actualRat = Decimal.add(tmp.dynas_so.getRating, 1)
+		let eff = actualRat.pow(15).mul(actualRat.log(10).add(1).pow(5)).mul(player.dynas_so.totalDmg.add(1))
+		return eff
+	},
+
+	gainMult() {
+		return new Decimal(1)
+	},
+	gainExp() {
+		return new Decimal(1)
+	},
+	buyables: {
+		rows: 1,
+		cols: 3,
+		11: {
+			title: () => "Strength",
+			cost(x) {
+				if (x.gte(100)) x = x.pow(2).div(100)
+				if (x.gte(50)) x = x.pow(2).div(50)
+				if (x.gte(20)) x = x.pow(2).div(20)
+				if (x.gte(10)) x = x.pow(2).div(10)
+				let cost = Decimal.mul("e7510", Decimal.pow(1e30, x))
+				return cost.floor()
+			},
+			effect(x) { 
+				return x.add(5)
+			},
+			display() { // Everything else displayed in the buyable button after the title
+				let data = tmp[this.layer].buyables[this.id]
+				return "Base stat: " + format(data.effect) + "\n\
+				Cost: " + format(data.cost) + " coins\n\
+				Increase your soldiers' attack power."
+			},
+			unlocked() { return player.dynas_so.unlocked },
+			canAfford() {
+				return player.dynas_c.points.gte(tmp[this.layer].buyables[this.id].cost)
+			},
+			buy() {
+				cost = tmp[this.layer].buyables[this.id].cost
+				player.dynas_c.points = player.dynas_c.points.sub(cost)
+				player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
+			},
+			style() {
+				return {
+					"height": "200px"
+				}
+			}
+		},
+		12: {
+			title: () => "Endurance",
+			cost(x) {
+				if (x.gte(100)) x = x.pow(2).div(100)
+				if (x.gte(50)) x = x.pow(2).div(50)
+				if (x.gte(20)) x = x.pow(2).div(20)
+				if (x.gte(10)) x = x.pow(2).div(10)
+				let cost = Decimal.mul("e7550", Decimal.pow(1e50, x))
+				return cost.floor()
+			},
+			effect(x) { 
+				return x.add(5)
+			},
+			display() { // Everything else displayed in the buyable button after the title
+				let data = tmp[this.layer].buyables[this.id]
+				return "Base stat: " + format(data.effect) + "\n\
+				Cost: " + format(data.cost) + " coins\n\
+				Increase your soldiers' max hit points."
+			},
+			unlocked() { return player.dynas_so.unlocked },
+			canAfford() {
+				return player.dynas_c.points.gte(tmp[this.layer].buyables[this.id].cost)
+			},
+			buy() {
+				cost = tmp[this.layer].buyables[this.id].cost
+
+				player.dynas_c.points = player.dynas_c.points.sub(cost)
+				player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
+			},
+			style() {
+				return {
+					"height": "200px"
+				}
+			}
+
+		},
+		13: {
+			title: () => "Dexterity",
+			cost(x) {
+				if (x.gte(100)) x = x.pow(2).div(100)
+				if (x.gte(50)) x = x.pow(2).div(50)
+				if (x.gte(20)) x = x.pow(2).div(20)
+				if (x.gte(10)) x = x.pow(2).div(10)
+				let cost = Decimal.mul("e7600", Decimal.pow(1e80, x))
+				return cost.floor()
+			},
+			effect(x) { 
+				return x.add(5)
+			},
+			display() { // Everything else displayed in the buyable button after the title
+				let data = tmp[this.layer].buyables[this.id]
+				return "Base stat: " + format(data.effect) + "\n\
+				Cost: " + format(data.cost) + " coins\n\
+				Increase your soldiers' speeds."
+			},
+			unlocked() { return player.dynas_so.unlocked },
+			canAfford() {
+				return player.dynas_c.points.gte(tmp[this.layer].buyables[this.id].cost)
+			},
+			buy() {
+				cost = tmp[this.layer].buyables[this.id].cost
+
+				player.dynas_c.points = player.dynas_c.points.sub(cost)
+				player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
+			},
+			style() {
+				return {
+					"height": "200px"
+				}
+			}
+
+		},
+	},
+	getRating(){
+		let rat = player.dynas_so.points
+		for (let x = 10; x <= 10; x += 10) for (let y = x + 1; y <= x + 3; y++) {
+				rat = rat.mul(buyableEffect("dynas_so",y)).div(5)
+			}
+		return rat;
+	},
+	soldierPower(){
+		return player.dynas_so.points.mul(buyableEffect("dynas_so",11));
+	},
+	soldierHP(){
+		return player.dynas_so.points.mul(buyableEffect("dynas_so",12)).mul(5);
+	},
+	soldierSPD(){
+		return player.dynas_so.points.mul(buyableEffect("dynas_so",13)).div(5);
+	},
+	soldierDPS(){
+		let dps= player.dynas_so.points.pow(3.2).mul(buyableEffect("dynas_so",11)).mul(buyableEffect("dynas_so",12).pow(0.5)).mul(buyableEffect("dynas_so",13));
+		if(hasMilestone("dynas_so",1))dps = dps.mul(player.dynas_bd.buyables[23].add(1));
+		return dps;
+	},
+	tabFormat:{"Main Tab":
+		{"content":["main-display",
+			"prestige-button",
+			["blank", "5px"],
+			"resource-display",
+			["display-text",
+				function () { return "Your current military rating is " + format(tmp.dynas_so.getRating) + ", which is boosting your dynas point generation speed by ×" + format(layers.dynas_so.effect()) + "." }],
+			["blank", "5px"],
+			["display-text",
+				function () { return player.dynas_so.unlocked ? "<h3>Soldier Statistics</h3><br/><h5>Accounts for all soldiers</h5>" : "" }],
+			["blank", "5px"],
+			["row", [
+				["display-text",
+					function () { return (player.dynas_so.unlocked ?  
+						"Base Power: " + formatWhole(tmp.dynas_so.soldierPower).padEnd(15, '\u00A0')
+						: "") }],
+				["display-text",
+					function () { return (player.dynas_so.unlocked ?  
+						"Max Health: " + formatWhole(tmp.dynas_so.soldierHP).padEnd(15, '\u00A0')
+						: "") }],
+				["display-text",
+					function () { return (player.dynas_so.unlocked ?
+						"Attack Speed: " + formatWhole(tmp.dynas_so.soldierSPD).padEnd(15, '\u00A0')
+						: "") }],
+						
+			]],["display-text",
+					function () { return (player.dynas_so.unlocked ?  
+						"Damage Per Second: " + formatWhole(tmp.dynas_so.soldierDPS)
+						: "") }],
+			["blank", "5px"],
+			["display-text",
+				function () { return player.dynas_so.unlocked ? "<h3>Soldier Attributes</h3>" : "" }],
+			"buyables",
+			"milestones"]},
+	"The Guardian":{"content":["main-display",["display-text",function () { return "Damage Per Second: " + formatWhole(tmp.dynas_so.soldierDPS) }],
+		["display-text",function () { return "Your soldiers dealt " + formatWhole(player.dynas_so.totalDmg) + " damage to the guardian." }],
+		["display-text",function () { return "Boosting military rating effect by " + formatWhole(player.dynas_so.totalDmg.add(1)) + "x" }]
+],"unlocked":function(){return hasMilestone("dynas_so",0)}}
+},
+/*
+	hotkeys: [
+		{ key: "o", desc: "O: Recruit soldiers", onPress() { doReset(this.layer) } },
+	],*/
+
+		doReset(l){
+			if(l=="dynas_c" || l=="dynas_wf"  || l=="dynas_b" || l=="dynas_sp" || l=="dynas_w" || l=="dynas_m" || l=="dynas_bd" || l=="dynas_t" || l=="dynas_so" || !l.startsWith("dynas_")){return;}
+			layerDataReset("dynas_so",["upgrades","milestones","challenges"]);
+			return;
+		},
+	milestones: {
+		0: {
+			requirementDescription: () => "1 Soldier",
+			done() { return player[this.layer].best.gte(1) },
+			effectDescription: () => "Unlock the guardian of the Multitree."
+		},
+		1: {
+			requirementDescription: () => "2 Soldiers",
+			done() { return player[this.layer].best.gte(2) },
+			effectDescription: () => "Military Bases boost DPS."
+		},
+	},
+	update(diff){
+		player.dynas_so.totalDmg = player.dynas_so.totalDmg.add(tmp.dynas_so.soldierDPS.mul(diff)).min(Number.MAX_VALUE);
+	},
+})

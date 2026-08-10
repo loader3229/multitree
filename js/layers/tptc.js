@@ -1015,6 +1015,12 @@ addLayer("tptc_e", {
                 cost: new Decimal("e57e12"),
                 unlocked() { return hasUpgrade("tm",35); }, // The upgrade is only visible when this is true
             },
+			23: {
+				title: "Enhance Upgrade 23",
+                description: "2nd effect of Boosters/Generators in TPTR are better.",
+                cost: Decimal.pow(10, 8e14/3),
+                unlocked() { return hasUpgrade("tm",35); }, // The upgrade is only visible when this is true
+            },
 
 	 }
 });

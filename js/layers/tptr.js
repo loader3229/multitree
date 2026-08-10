@@ -373,6 +373,7 @@ addLayer("tptr_b", {
 		if (hasUpgrade("tptc_b", 24))eff2 = Decimal.pow(1.3,player.tptr_b.points.div(2));
 		if (hasUpgrade("tptc_b", 25))eff2 = Decimal.pow(1.51,player.tptr_b.points.div(2));
 		if (hasUpgrade("tptc_e", 22))eff2 = Decimal.pow(1.75,player.tptr_b.points.div(2));
+		if (hasUpgrade("tptc_e", 23))eff2 = Decimal.pow(1.5,player.tptr_b.points);
 		if (hasUpgrade("tptc_b", 13))eff2 = eff2.pow(2)
 		let ret = [Decimal.pow(tmp.tptr_b.effectBase, player.tptr_b.points).max(0).times(hasUpgrade("tptr_p", 43)?tmp.tptr_q.enEff:1), eff2];
 		return ret;
@@ -607,6 +608,7 @@ addLayer("tptr_g", {
 		if (hasUpgrade("tptc_g", 24))eff2 = Decimal.pow(1.3,player.tptr_g.points.div(2));
 		if (hasUpgrade("tptc_g", 25))eff2 = Decimal.pow(1.51,player.tptr_g.points.div(2));
 		if (hasUpgrade("tptc_e", 22))eff2 = Decimal.pow(1.75,player.tptr_g.points.div(2));
+		if (hasUpgrade("tptc_e", 23))eff2 = Decimal.pow(1.5,player.tptr_g.points);
 			if (hasUpgrade("tptc_g", 13))eff2 = eff2.pow(2)
 			
 			
@@ -1551,7 +1553,7 @@ addLayer("tptr_s", {
 				title: "Primary Space Building",
 				costExp() { 
 					let exp = 1.35;
-					//if (hasUpgrade("s", 31) && player.i.buyables[12].gte(5)) exp -= 0.04*(15-this.id);
+					if (hasUpgrade("tptr_s", 31) && player.tptr_i.buyables[12].gte(5)) exp -= 0.02*(15-this.id);
 					return exp;
 				},
 				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
@@ -1597,7 +1599,7 @@ addLayer("tptr_s", {
 				title: "Secondary Space Building",
 				costExp() { 
 					let exp = 1.35;
-					//if (hasUpgrade("s", 31) && player.i.buyables[12].gte(5)) exp -= 0.04*(15-this.id);
+					if (hasUpgrade("tptr_s", 31) && player.tptr_i.buyables[12].gte(5)) exp -= 0.02*(15-this.id);
 					return exp;
 				},
 				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
@@ -1642,7 +1644,7 @@ addLayer("tptr_s", {
 				title: "Tertiary Space Building",
 				costExp() { 
 					let exp = 1.35;
-					//if (hasUpgrade("s", 31) && player.i.buyables[12].gte(5)) exp -= 0.04*(15-this.id);
+					if (hasUpgrade("tptr_s", 31) && player.tptr_i.buyables[12].gte(5)) exp -= 0.02*(15-this.id);
 					return exp;
 				},
 				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
@@ -1691,7 +1693,7 @@ addLayer("tptr_s", {
 				title: "Quaternary Space Building",
 				costExp() { 
 					let exp = 1.35;
-					//if (hasUpgrade("s", 31) && player.i.buyables[12].gte(5)) exp -= 0.04*(15-this.id);
+					if (hasUpgrade("tptr_s", 31) && player.tptr_i.buyables[12].gte(5)) exp -= 0.02*(15-this.id);
 					return exp;
 				},
 				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
@@ -2087,18 +2089,13 @@ addLayer("tptr_s", {
 				cost() { return new Decimal(54) },
 				unlocked() { return player.tm.buyables[7].gte(13) },
 			},
-/*
-
 			31: {
 				title: "Useful Dimensionality",
-				description: "The first four Space Buildings' cost exponents are decreased by 0.04*(5-n), where n is the Space Building number.",
-				cost() { return new Decimal(((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes(this.layer):false)?815:1225) },
-				pseudoUnl() { return player.i.buyables[12].gte(5)&&player.s.upgrades.length>=9 },
-				pseudoReq: "Req: 1,200% Space Building Power",
-				pseudoCan() { return tmp.s.buildingPower.gte(12) },
-				unlocked() { return player[this.layer].pseudoUpgs.includes(Number(this.id)) },
+				description: "The first four Space Buildings' cost exponents are decreased by 0.02*(5-n), where n is the Space Building number.",
+				cost() { return new Decimal(1154) },
+				unlocked() { return player.tptr_i.buyables[12].gte(5) },
 				style: {"font-size": "9px"},
-			},*/
+			},
 			32: {
 				title: "Poincaré Recurrence",
 				description: "Each Space Building's bought Level adds to the previous building's Extra Level.",

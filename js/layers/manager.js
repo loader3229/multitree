@@ -232,7 +232,7 @@
 					if(x.lt(0.5))return new Decimal(0);
 					if(x.lt(10.5))return Decimal.pow(10,x.pow(2).mul(1e4).add(1e5));
 					if(x.lt(30.5))return Decimal.pow(10,x.pow(6));
-					if(x.lt(46.5))return Decimal.pow(10,x.pow(x.div(5)));
+					if(x.lt(47.5))return Decimal.pow(10,x.pow(x.div(5)));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -335,7 +335,7 @@
 					if(x.lt(0.5))return new Decimal(0);
 					if(x.lt(7.5))return Decimal.pow(10,x.add(1).pow(2).mul(1e11).add(2e12));
 					if(x.lt(9.5))return Decimal.pow(10,x.add(1).pow(2).mul(2e11));
-					if(x.lt(16.5))return Decimal.pow(10,x.pow(x.div(5)).mul(3e11));
+					if(x.lt(17.5))return Decimal.pow(10,x.pow(x.div(5)).mul(3e11));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title

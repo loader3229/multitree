@@ -1257,36 +1257,9 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 				let data = tmp[this.layer].buyables[this.id]	
 				return  "You have " + format(player[this.layer].buyables[this.id], 0) + " banked production, which are boosting previous bankings' generation speed by ×" + format(data.effect) + ".\nThis banking can only gained passively.";	
 			},	
-			unlocked() { return hasMilestone("dynas_m", 3); }, 	
+			unlocked() { return player.dynas_t.challenges[21]>=2 || hasMilestone("dynas_m", 3); }, 	
 			canAfford() { return false },	
 			buy() { 	
-			},	
-		},
-
-/*	
-		32: {	
-			title:() => "Production Banking",	
-			cost(x) {	
-				return new Decimal(0)	
-			},	
-			effect(x) { 	
-				return new Decimal(1)
-			},	
-			display() { 	
-				let data = tmp.buyables[this.layer][this.id]	
-				return data.canAfford 	
-					? "You have " + format(player[this.layer].buyables[this.id], 0) + " banked production.\n\n\
-						Banking is currently " + (player.b.banking == 19 ? "enabled.\n\
-						Click here to disable banking and gain " + format(Decimal.sub(player.b.speed, player.b.buyables[32]).max(0), 0) + " banked speed." : "disabled.\n\
-						Click here to enable banking, which will apply “Speed Banking” and “Time Banking” at once. This banking has no more purposes than just to produce banked speed.")	
-					: (player.b.banking > 0 ? "Please disable the current active banking before you can activate another one." : "You need to build at least 80 banks before you can use this function.")	
-			},	
-			unl() { return hasChall("t", 21) }, 	
-			canAfford() { return (player[this.layer].best.gte(80) || player.b.buyables[33].gt(0)) && (player.b.banking == 0 || player.b.banking == 19) },	
-			buy() { 	
-				if (player.b.banking == 19) player.b.buyables[32] = player.b.buyables[32].max(player.b.speed)	
-				player.b.banking = player.b.banking == 19 ? 0 : 19	
-                doReset(this.layer, true)	
 			},	
 		},
 		33: {	
@@ -1295,25 +1268,22 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 				return new Decimal(0)	
 			},	
 			effect(x) { 	
-				var eff = player[this.layer].buyables[this.id].add(1).pow(0.5)	
+				var eff = player[this.layer].buyables[this.id].add(1).pow(0.5).mul(10)	
 				return eff	
 			},	
 			display() { 	
-				let data = tmp.buyables[this.layer][this.id]	
-				return data.canAfford 	
-					? "You have " + format(player[this.layer].buyables[this.id], 0) + " banked generation, which are speeding the banking generation speed by ×" + format(data.effect) + ".\n\n\
-						This one isn't much of a banking. Instead, this “banking” allows you to reset your banks for a boost in banking generation. This will not reset your bankings and does not produce banked production. Click here to gain " + format(Decimal.sub(player.b.points, player.b.buyables[33]).max(0), 0) + " banked generation."	
-					: "You need to build at least 125 banks before you can use this function."
+				let data = tmp[this.layer].buyables[this.id]	
+				return  "You have " + format(player[this.layer].buyables[this.id], 0) + " banked generation, which are boosting previous bankings' generation speed by ×" + format(data.effect) + ".\nThis banking is set to your banks when clicked.";	
 			},	
-			unl() { return hasUpg("wi", 23) }, 	
-			canAfford() { return player[this.layer].best.gte(125) || player.b.buyables[33].gt(0) },	
-			buy() { 	
-				player.b.buyables[33] = player.b.buyables[33].max(player.b.points)	
-				player.b.points = new Decimal(0)
-                doReset(this.layer, true)	
+			unlocked() { return player.dynas_t.challenges[21]>=2 && hasMilestone("dynas_m", 3); }, 	
+			canAfford() { return player[this.layer].buyables[33].lt(player.dynas_b.points) },	
+			buy() { 
+				player[this.layer].buyables[33] = player[this.layer].buyables[33].max(player.dynas_b.points)
+				player.dynas_wf.workDone = new Decimal(0)
+				player.dynas_wf.workUndone = new Decimal(0)
+				doReset(this.layer, true)
 			},	
 		},
-*/
 	},
 	update(diff) {
 		if (player.dynas_b.banking == 0) player.dynas_b.bankTime = new Decimal(0)
@@ -1333,7 +1303,8 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 			for (var a = 1; a <= 6 + player.dynas_t.challenges[21]; a++) {
 				let layer = Math.floor(a / 3 + 1) * 10 + ((a % 3) + 1)
 				let realMult = new Decimal(10);
-				if(hasMilestone("dynas_m",3) && a <= 7) realMult = realMult.mul(buyableEffect("dynas_b",32));
+				if((player.dynas_t.challenges[21]>=2 || hasMilestone("dynas_m", 3)) && a <= 7) realMult = realMult.mul(buyableEffect("dynas_b",32));
+				if((player.dynas_t.challenges[21]>=2 && hasMilestone("dynas_m", 3)) && a <= 8) realMult = realMult.mul(buyableEffect("dynas_b",33));
 				//if (player.sp.buyables[28].gt(0)) realMult = realMult.mul(tmp.buyables.sp[28].effect)
 				//if (tmp.buyables.wi[12]) realMult = realMult.mul(tmp.buyables.wi[12].effect.pow(Math.pow(0.7, a-1)))
 				
@@ -2451,8 +2422,11 @@ addLayer("dynas_t", {
 			challengeDescription(){
 				return "You can not gain workfinders and banks, bankings has no effect.<br>Completions: "+player.dynas_t.challenges[21]+"/"+this.completionLimit();
 			},
-			rewardDescription:() => "Unlock a banking, and generate 10 of this banking per second.",
-			goal:() => new Decimal(["e4800","e1000000","e1000000"][player.dynas_t.challenges[21]]),
+			rewardDescription(){
+				if(player.dynas_t.challenges[21]>=2)return "Unlock 2 bankings.";
+				return "Unlock a banking, and generate 10 of this banking per second."
+			},
+			goal:() => new Decimal(["e4800","e7100","e1000000"][player.dynas_t.challenges[21]]),
 			currencyDisplayName: "dynas points",
                         currencyLayer: "modpoints",
                         currencyInternalName: "9",
@@ -2470,10 +2444,14 @@ addLayer("dynas_t", {
 				return "You can not gain workers, workfinders, spiritual power and banks, bankings has no effect.<br>Completions: "+player.dynas_t.challenges[22]+"/"+this.completionLimit();
 			},
 			rewardDescription:() => "Boost the first two obstacles' buffs based on your total territory count.",
-			rewardEffect:() => player.dynas_t.best.add(1).sqrt(),
+			rewardEffect() {
+				let eff = player.dynas_t.best.add(1).sqrt();
+				if(player.dynas_t.challenges[22]>=2)eff = player.dynas_t.best.add(1);
+				return eff
+			},
 			rewardDisplay(){return "×" + format(challengeEffect("dynas_t",22))},
 			countsAs: [12, 21],
-			goal:() => new Decimal(["e1000","e1000000","e1000000"][player.dynas_t.challenges[22]]),
+			goal:() => new Decimal(["e1000","e1340","e1000000"][player.dynas_t.challenges[22]]),
 			currencyDisplayName: "dynas points",
                         currencyLayer: "modpoints",
                         currencyInternalName: "9",
@@ -2660,7 +2638,7 @@ addLayer("dynas_so", {
 		return player.dynas_so.points.mul(buyableEffect("dynas_so",13)).div(5);
 	},
 	soldierDPS(){
-		let dps= player.dynas_so.points.pow(3.2).mul(buyableEffect("dynas_so",11)).mul(buyableEffect("dynas_so",12).pow(0.5)).mul(buyableEffect("dynas_so",13));
+		let dps= player.dynas_so.points.pow(hasMilestone("dynas_so",2) ? 4 : 3.2).mul(buyableEffect("dynas_so",11)).mul(buyableEffect("dynas_so",12).pow(0.5)).mul(buyableEffect("dynas_so",13));
 		if(hasMilestone("dynas_so",1))dps = dps.mul(player.dynas_bd.buyables[23].add(1));
 		return dps;
 	},
@@ -2723,6 +2701,11 @@ addLayer("dynas_so", {
 			requirementDescription: () => "2 Soldiers",
 			done() { return player[this.layer].best.gte(2) },
 			effectDescription: () => "Military Bases boost DPS."
+		},
+		2: {
+			requirementDescription: () => "30 Soldiers",
+			done() { return player[this.layer].best.gte(30) },
+			effectDescription: () => "Soldiers boost DPS at an increased rate."
 		},
 	},
 	update(diff){

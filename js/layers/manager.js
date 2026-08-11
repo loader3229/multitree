@@ -285,6 +285,7 @@
 					if(x.lt(31.5))return Decimal.pow(10,x.pow(x.div(4)).mul(300));
 					if(x.lt(34.5))return Decimal.pow(10,x.pow(6).mul(168600));
 					if(x.lt(41.5))return Decimal.pow(10,x.pow(7).mul(10000));
+					if(x.lt(42.5))return Decimal.pow(10,x.pow(9).mul(18));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -1181,6 +1182,28 @@
 					return ret;
 				}
             },
+		59: {
+				title: "Rewrite Mastery",
+				fullDisplay(){
+					return "<h2>Rewrite Mastery</h2><br>Unlock Mastery in The Prestige Tree Rewritten.<br>\
+					Costs: "+format(Decimal.pow(10,7e16/9))+" points<br>\
+					"+format(new Decimal(235))+" Mastery Bricks in The Prestige Tree Classic<br>\
+					"+format(Decimal.pow(10,25e6))+" hours of work in The Game Dev Tree"
+				},canAfford(){
+					return player.points.gte(Decimal.pow(10,7e16/9)) && 
+					player.tptc_mb.points.gte(235) && 
+					player.modpoints[6].gte(Decimal.pow(10,25e6));
+				},pay(){},
+                unlocked() { return player.tm.buyables[7].gte(43); }, // The upgrade is only visible when this is true
+				currencyDisplayName: "points",
+				currencyInternalName: "points",
+				style(){
+					let ret={"width":"200px","height":"200px"};
+					if(hasUpgrade("tm",this.id))ret.backgroundColor="#ff9f7f";
+					return ret;
+				}
+            },
+
 
 
 	}

@@ -2101,23 +2101,17 @@ addLayer("tptr_s", {
 				description: "Each Space Building's bought Level adds to the previous building's Extra Level.",
 				cost() { return new Decimal(1141) },
 				unlocked() { return player.tptr_i.buyables[12].gte(5) },
-			},/*
+			},
 			33: {
 				title: "Noncontinuous Spectrum",
 				description: "<b>Contiguous Dimension</b> multiplies Nebula Energy & Hyperspace Energy gain at a reduced rate.",
-				cost() { return new Decimal(((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes(this.layer):false)?"e1e6":"e2.75e8") },
-				currencyDisplayName: "generator power",
-				currencyInternalName: "power",
-				currencyLayer: "g",
-				pseudoUnl() { return player.i.buyables[12].gte(5)&&player.s.upgrades.length>=9 },
-				pseudoReq: "Req: Have at least 13 Space Upgrades, 39 Achievements, and the upgrade <b>Contiguous Dimension</b>.",
-				pseudoCan() { return player.a.achievements.length>=39 && player.s.upgrades.length>=13 && hasUpgrade("s", 35) },
-				unlocked() { return player[this.layer].pseudoUpgs.includes(Number(this.id)) },
-				effect() { return upgradeEffect("s", 35).sqrt() },
-				effectDisplay() { return format(upgradeEffect("s", 33))+"x" },
+				cost() { return new Decimal(1158) },
+				unlocked() { return player.tptr_i.buyables[12].gte(5) },
+				effect() { return upgradeEffect("tptr_s", 35).sqrt() },
+				effectDisplay() { return format(upgradeEffect("tptr_s", 33))+"x" },
 				formula: "sqrt(x)",
 				style: {"font-size": "8px"},
-			},*/
+			},
 			34: {
 				title: "Energetic Reduction",
 				description: "The Space Buildings' cost bases are reduced based on your Space Energy.",
@@ -2608,7 +2602,9 @@ addLayer("tptr_q", {
 			let eff = player.tptr_q.energy.plus(1).pow(2);
 			if (hasUpgrade("tptr_q", 23)) eff = eff.pow(3);
 			eff = eff.times(tmp.tptr_q.impr[23].effect)
-			if(eff.gte(new Decimal("e1800000")))eff = Decimal.pow(10,eff.log10().mul(1800000).sqrt());
+			if (hasUpgrade("tptr_q", 15)){
+				if(eff.gte(Decimal.mul("e1800000",upgradeEffect("tptr_q", 15))))eff = Decimal.pow(10,eff.log10().mul(Decimal.mul("e1800000",upgradeEffect("tptr_q", 15)).add(10).log10()).sqrt());
+			}else if(eff.gte(new Decimal("e1800000")))eff = Decimal.pow(10,eff.log10().mul(1800000).sqrt());
 			return eff;
 		},
 		update(diff) {
@@ -2625,7 +2621,6 @@ addLayer("tptr_q", {
            let eff = this.effect();
            return "which are boosting your quirk layer base in TPTC by "+format(eff)+"x"
        },
-		//passiveGeneration() { return (hasMilestone("ba", 0)&&player.ma.current!="q")?1:0 },
 		tabFormat: [
 					"main-display",
 					"prestige-button",
@@ -2680,7 +2675,7 @@ addLayer("tptr_q", {
 			scaleSlow() {
 				let slow = new Decimal(1);
 				if (tmp.tptr_ps.impr[22].unlocked) slow = slow.times(tmp.tptr_ps.impr[22].effect);
-				//if (hasUpgrade("q", 35) && player.i.buyables[12].gte(6)) slow = slow.times(upgradeEffect("q", 35));
+				if (hasUpgrade("tptr_q", 35) && player.tptr_i.buyables[12].gte(6)) slow = slow.times(upgradeEffect("tptr_q", 35));
 				return slow;
 			},
 			baseReq() { 
@@ -2807,7 +2802,7 @@ addLayer("tptr_q", {
 					if (hasUpgrade("tptr_q", 43)) base = base.sub(.25);
 					if (hasChallenge("tptr_h", 42)) base = base.sub(.15);
 					//if (hasAchievement("a", 101)) base = base.sub(.2);
-					//if (hasUpgrade("q", 25) && player.i.buyables[12].gte(6)) base = base.root(upgradeEffect("q", 25));
+					if (hasUpgrade("tptr_q", 25) && player.tptr_i.buyables[12].gte(6)) base = base.root(upgradeEffect("tptr_q", 25));
 					//if ((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes(this.layer):false) base = base.pow(.75);
 					return base;
 				},
@@ -2895,6 +2890,14 @@ addLayer("tptr_q", {
 				},
 				effectDisplay() { return "H: "+format(tmp.tptr_q.upgrades[14].effect.h)+"x, Q: "+format(tmp.tptr_q.upgrades[14].effect.q)+"x" },
 			},
+			15: {
+				title: "Quirk Extension",
+				description: "Quirks make the Quirk Energy effect softcap start later.",
+				cost() { return new Decimal("e452e4") },
+				unlocked() { return player.tptr_i.buyables[12].gte(6) },
+				effect() { return player.tptr_q.points.plus(1) },
+				effectDisplay() { return format(tmp.tptr_q.upgrades[this.id].effect)+"x later" },
+			},
 			21: {
 				title: "Quirk City",
 				description: "Super Boosters multiply each Quirk Layer's production.",
@@ -2923,6 +2926,14 @@ addLayer("tptr_q", {
 				cost() { return new Decimal(1e125) },
 				unlocked() { return player.tm.buyables[7].gte(14) },
 			},
+			25: {
+				title: "Advanced Onion",
+				description: "Nebulaic Bricks reduce the Quirk Layer cost base.",
+				cost() { return new Decimal("e537e4") },
+				unlocked() { return player.tptr_i.buyables[12].gte(6) },
+				effect() { return player.tptr_i.nb.plus(1).log10().plus(1).pow(3) },
+				effectDisplay() { return "brought to the "+format(upgradeEffect("tptr_q", 25))+"th root" },
+			},
 			31: {
 				title: "Scale Softening",
 				description: "Post-1000 scaling for static layers in rows 2-3 starts later based on your Quirk Layers.",
@@ -2949,6 +2960,14 @@ addLayer("tptr_q", {
 				unlocked() { return player.tm.buyables[7].gte(20) },
 				effect() { return tmp.tptr_b.addToBase.plus(1).root(2.5).times(tmp.tptr_q.impr[32].effect) },
 				effectDisplay() { return format(tmp.tptr_q.upgrades[34].effect)+"x" },
+			},
+			35: {
+				title: "Millennial Abilities",
+				description: "Hyperspatial Bricks make Quirk Improvements scale slower.",
+				cost() { return new Decimal("e61e5") },
+				unlocked() { return player.tptr_i.buyables[12].gte(6) },
+				effect() { return player.tptr_i.hb.sqrt().div(100).plus(1) },
+				effectDisplay() { return format(upgradeEffect("tptr_q", 35).sub(1).times(100))+"% slower" },
 			},
 			41: {
 				title: "Quirkier",
@@ -4723,7 +4742,7 @@ addLayer("tptr_hs", {
 			if (hasUpgrade("tptr_g", 35) && player.tptr_i.buyables[12].gte(2)) mult = mult.times(upgradeEffect("tptr_g", 35));
 			if (hasUpgrade("tptr_e", 41) && player.tptr_i.buyables[12].gte(3)) mult = mult.times(upgradeEffect("tptr_e", 41));
 			if (hasUpgrade("tptr_t", 41) && player.tptr_i.buyables[12].gte(4)) mult = mult.times(2.5e3);
-			//if (hasUpgrade("s", 33) && player.i.buyables[12].gte(5)) mult = mult.times(upgradeEffect("s", 33));
+			if (hasUpgrade("tptr_s", 33) && player.tptr_i.buyables[12].gte(5)) mult = mult.times(upgradeEffect("tptr_s", 33));
 			//if (player.ma.unlocked) mult = mult.times(tmp.ma.effect);
 			//if ((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes("i"):false) mult = mult.times(Decimal.pow(10, player.i.hb));
             return mult
@@ -5181,7 +5200,7 @@ addLayer("tptr_n", {
 		if(player.tptr_i.best.gte(1))mult = mult.mul(player.tptc_l.points.add(1e10).log10().log10().pow(hasUpgrade("tptc_sp",43)?1.5:1));
 			if (hasUpgrade("tptr_hn", 45)) mult = mult.times(upgradeEffect("tptr_hn", 45));
 			if (hasUpgrade("tptr_g", 35) && player.tptr_i.buyables[12].gte(2)) mult = mult.times(upgradeEffect("tptr_g", 35));
-			//if (hasUpgrade("s", 33) && player.i.buyables[12].gte(5)) mult = mult.times(upgradeEffect("s", 33));
+			if (hasUpgrade("tptr_s", 33) && player.tptr_i.buyables[12].gte(5)) mult = mult.times(upgradeEffect("tptr_s", 33));
 			//if (hasUpgrade("q", 45) && player.i.buyables[12].gte(6)) mult = mult.times(200);
 			//if (player.ge.unlocked) mult = mult.times(tmp.ge.rotEff);
 			//if ((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes("i"):false) mult = mult.times(Decimal.pow(10, player.i.nb));

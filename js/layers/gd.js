@@ -1866,6 +1866,7 @@ addLayer("gd_g", {
     exponent(){
 		ret = new Decimal(1.25)
 		if(player.tm.buyables[8].gte(28))ret = ret.sub(0.01)
+		if(hasUpgrade("gd_t",23))ret = ret.sub(0.02)
 		return ret
 	}, // Prestige currency exponent
 	roundUpCost: true,
@@ -2121,6 +2122,41 @@ addLayer("gd_g", {
 				currencyInternalName: "unused",
 				currencyLayer: "gd_g",
                 unlocked() { return player[this.layer].best.gte(38) && hasUpgrade("tm",52); }, // The upgrade is only visible when this is true
+            },
+			43: {
+				title: "Good Will Upgrade 43",
+                description: "Good Will Upgrade 13 affects Time Flux and Lectures.",
+                cost: new Decimal(4),
+				currencyDisplayName: "unused good will",
+				currencyInternalName: "unused",
+				currencyLayer: "gd_g",
+                unlocked() { return player[this.layer].best.gte(42) && hasUpgrade("tm",52); }, // The upgrade is only visible when this is true
+            },
+			44: {
+				title: "Good Will Upgrade 44",
+                description: "Gain more Time Flux and Lectures based on Prestige Upgrade 25 in TPTC.",
+                cost: new Decimal(4),
+				currencyDisplayName: "unused good will",
+				currencyInternalName: "unused",
+				currencyLayer: "gd_g",
+				effect() {
+					return Decimal.pow(10,upgradeEffect("tptc_p",25).add(1e10).log10().pow(0.15).add(1));
+				},
+                effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
+                unlocked() { return player[this.layer].best.gte(46) && hasUpgrade("tm",52); }, // The upgrade is only visible when this is true
+            },
+			45: {
+				title: "Good Will Upgrade 45",
+                description: "Gain more Time Flux and Lectures based on hours of work.",
+                cost: new Decimal(4),
+				currencyDisplayName: "unused good will",
+				currencyInternalName: "unused",
+				currencyLayer: "gd_g",
+				effect() {
+					return player.modpoints[6].add(10).log10().pow(3);
+				},
+                effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
+                unlocked() { return player[this.layer].best.gte(50) && hasUpgrade("tm",52); }, // The upgrade is only visible when this is true
             },
 
 		},
@@ -2627,6 +2663,8 @@ addLayer("gd_t", {
 		if(hasUpgrade("gd_t", 15))mult = mult.mul(upgradeEffect("gd_t",15));
 		if(hasUpgrade("gd_t", 22))mult = mult.mul(upgradeEffect("gd_t",22));
 		if(hasUpgrade("gd_u",45) && hasUpgrade("gd_g",41))mult = mult.mul(upgradeEffect("gd_u",45));
+		if(hasUpgrade("gd_g",44))mult = mult.mul(upgradeEffect("gd_g",44));
+		if(hasUpgrade("gd_g",45))mult = mult.mul(upgradeEffect("gd_g",45));
 		return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -2879,6 +2917,7 @@ addLayer("gd_t", {
 	passiveGeneration(){
 		let ret=0;
 		if(player.gd_d.best.gte(9))ret=ret+1;
+		if(hasUpgrade("gd_g",13) && hasUpgrade("gd_g",43))ret=ret+upgradeEffect("gd_g",13);
 		return ret;
 	},
     upgrades: {
@@ -2940,6 +2979,13 @@ addLayer("gd_t", {
                 effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
 
         },
+        23: {
+            title: "Time Flux Upgrade 23",
+            cost: new Decimal(1e152),
+            description() { return "Good Will is cheaper." },
+            unlocked() { return hasUpgrade("gd_r", 45) },
+
+        },
 
 }
 });
@@ -2995,6 +3041,8 @@ addLayer("gd_l", {
 		if(hasUpgrade("gd_t", 13))mult = mult.mul(upgradeEffect("gd_t",13));
 		if(hasUpgrade("gd_t", 22))mult = mult.mul(upgradeEffect("gd_t",22));
 		if(hasUpgrade("gd_u",45) && hasUpgrade("gd_g",41))mult = mult.mul(upgradeEffect("gd_u",45));
+		if(hasUpgrade("gd_g",44))mult = mult.mul(upgradeEffect("gd_g",44));
+		if(hasUpgrade("gd_g",45))mult = mult.mul(upgradeEffect("gd_g",45));
 
         return mult
     },
@@ -3256,6 +3304,7 @@ addLayer("gd_l", {
 	passiveGeneration(){
 		let ret=0;
 		if(player.gd_d.best.gte(9))ret=ret+1;
+		if(hasUpgrade("gd_g",13) && hasUpgrade("gd_g",43))ret=ret+upgradeEffect("gd_g",13);
 		return ret;
 	},
 })

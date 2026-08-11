@@ -3636,6 +3636,7 @@ addLayer("incrementy_pi", {
                 if(player.tm.buyables[5].gte(42))amt = amt.add(2);
                 if(hasUpgrade("incrementy_pi",33))amt = amt.add(2);
                 if(hasUpgrade("incrementy_o",14))amt = amt.add(2);
+                if(hasUpgrade("incrementy_o",31))amt = amt.add(2);
                 if(hasMilestone("incrementy_o",6))amt = amt.add(2);
                 return amt
         },
@@ -4476,6 +4477,12 @@ addLayer("incrementy_o", {
                         description: "Unlock 4th Origin Buyable",
                         cost: new Decimal(1e10),
                         unlocked(){return player.tm.buyables[5].gte(47)}
+                },
+                31: {
+                        title: "Origin Upgrade 31",
+                        description: "Max Pion Effect +2",
+                        cost: new Decimal(1e11),
+                        unlocked(){return player.tm.buyables[5].gte(48)}
                 },/*
                 13: {
                         title: "Grothendieck",

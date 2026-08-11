@@ -60,6 +60,7 @@ addLayer("dynas_c", {
 					if(hasUpgrade("dynas_c",21))ret=ret.mul(upgradeEffect("dynas_c",21));
 					if(hasUpgrade("dynas_c",31))ret=ret.mul(upgradeEffect("dynas_c",31));
 					if(hasUpgrade("dynas_sp",11))ret=ret.mul(upgradeEffect("dynas_sp",11));
+					if(hasUpgrade("dynas_wi",11))ret=ret.mul(upgradeEffect("dynas_wi",11));
 					ret=ret.mul(tmp.dynas_w.effect);
 		ret=ret.mul(tmp.dynas_m.effect);
 		ret=ret.mul(tmp.dynas_sp.effect);
@@ -69,8 +70,8 @@ addLayer("dynas_c", {
 					ret = ret.mul(buyableEffect("dynas_b",12));
 					ret = ret.mul(buyableEffect("dynas_b",13));
 					ret = ret.mul(buyableEffect("dynas_bd",12));
-		if (player.dynas_b.banking & 1) ret = ret.pow(0.5)
-	if (player.dynas_b.banking & 2) ret = ret.root(3)
+		if ((player.dynas_b.banking & 1) || inChallenge("dynas_t",31)) ret = ret.pow(0.5)
+	if ((player.dynas_b.banking & 2) || inChallenge("dynas_t",31)) ret = ret.root(3)
 	if (player.dynas_b.banking & 4) ret = ret.pow(0.1)
 	if (player.dynas_b.banking & 8) ret = player.dynas_c.points.pow(0.1).add(10)
 	if (player.dynas_b.banking & 16) ret = ret.pow(Decimal.pow(player.dynas_b.bankTime, 2).add(1).recip())  
@@ -91,6 +92,7 @@ addLayer("dynas_c", {
 					if(hasUpgrade("dynas_w",12))ret=ret.pow(upgradeEffect("dynas_w",12));
 					if(hasUpgrade("dynas_c",13))ret=ret.mul(upgradeEffect("dynas_c",13));
 					if(hasUpgrade("dynas_c",21))ret=ret.mul(upgradeEffect("dynas_c",21));
+					if(hasUpgrade("dynas_wi",11))ret=ret.mul(upgradeEffect("dynas_wi",11));
 					ret=ret.mul(tmp.dynas_wf.effect2[0]);
 					ret = ret.mul(buyableEffect("dynas_bd",12));
                     return ret;
@@ -105,11 +107,12 @@ addLayer("dynas_c", {
                 cost: new Decimal(1),
                 unlocked() { return true; }, // The upgrade is only visible when this is true
 				effect() {
-					if (player.dynas_b.banking & 2)return new Decimal(1);
+					if ((player.dynas_b.banking & 2) || inChallenge("dynas_t",31))return new Decimal(1);
                     let base=1.1;
-                    let ret = Decimal.pow(base,Decimal.log10(player.points.add(1)).pow(hasUpgrade("dynas_c",44)?0.24:hasUpgrade("dynas_c",43)?0.235:hasUpgrade("dynas_w",15)?0.225:hasUpgrade("dynas_w",13)?0.2:hasUpgrade("dynas_c",35)?0.175:hasUpgrade("dynas_c",32)?0.15:hasUpgrade("dynas_c",24)?0.125:0.1));
+                    let ret = Decimal.pow(base,Decimal.log10(player.points.add(1)).pow(hasUpgrade("dynas_c",45)?0.25:hasUpgrade("dynas_c",44)?0.24:hasUpgrade("dynas_c",43)?0.235:hasUpgrade("dynas_w",15)?0.225:hasUpgrade("dynas_w",13)?0.2:hasUpgrade("dynas_c",35)?0.175:hasUpgrade("dynas_c",32)?0.15:hasUpgrade("dynas_c",24)?0.125:0.1));
 					if(hasUpgrade("dynas_c",14))ret=ret.mul(upgradeEffect("dynas_c",14));
 					if(hasUpgrade("dynas_c",21))ret=ret.mul(upgradeEffect("dynas_c",21));
+					if(hasUpgrade("dynas_wi",11))ret=ret.mul(upgradeEffect("dynas_wi",11));
 					ret=ret.mul(tmp.dynas_wf.effect2[0]);
 					ret = ret.mul(buyableEffect("dynas_bd",12));
                     return ret;
@@ -124,10 +127,11 @@ addLayer("dynas_c", {
                 cost: new Decimal(5),
                 unlocked() { return true; }, // The upgrade is only visible when this is true
 				effect() {
-					if (player.dynas_b.banking & 2)return new Decimal(1);
+					if ((player.dynas_b.banking & 2) || inChallenge("dynas_t",31))return new Decimal(1);
                     let base=1.5;
                     let ret = Decimal.pow(base,Decimal.log10(player.modpoints[9].add(1)).pow(0.9));
 					ret = ret.mul(buyableEffect("dynas_bd",12));
+					if(hasUpgrade("dynas_wi",11))ret=ret.mul(upgradeEffect("dynas_wi",11));
                     return ret;
                 },
                 effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
@@ -140,7 +144,7 @@ addLayer("dynas_c", {
                 cost: new Decimal(10),
                 unlocked() { return true; }, // The upgrade is only visible when this is true
 				effect() {
-					if (player.dynas_b.banking & 2)return new Decimal(1);
+					if ((player.dynas_b.banking & 2) || inChallenge("dynas_t",31))return new Decimal(1);
 					let ret=player.modpoints[9];
 					if(ret.gte('1e1000'))ret = ret.pow(0.5).mul('1e500');
 					if(hasUpgrade("dynas_c",41))ret=ret.add(1).pow(3.5e8);
@@ -159,7 +163,7 @@ addLayer("dynas_c", {
                 cost: new Decimal(20),
                 unlocked() { return true; }, // The upgrade is only visible when this is true
 				effect() {
-					if (player.dynas_b.banking & 2)return new Decimal(1);
+					if ((player.dynas_b.banking & 2) || inChallenge("dynas_t",31))return new Decimal(1);
                     let base=1.5;
 					if(hasUpgrade("dynas_c",33))base+=0.1;
                     let ret = Decimal.pow(base,Decimal.log10(player.modpoints[9].add(1)).pow(0.9));
@@ -181,7 +185,7 @@ addLayer("dynas_c", {
                 cost: new Decimal(100),
                 unlocked() { return true; }, // The upgrade is only visible when this is true
 				effect() {
-					if (player.dynas_b.banking & 2)return new Decimal(1);
+					if ((player.dynas_b.banking & 2) || inChallenge("dynas_t",31))return new Decimal(1);
                     let base=1.2;
                     let ret = Decimal.pow(base,Decimal.log10(player.dynas_c.points.add(1)).pow(0.9));
 					if(hasUpgrade("dynas_c",23))ret=ret.mul(upgradeEffect("dynas_c",23));
@@ -199,7 +203,7 @@ addLayer("dynas_c", {
                 cost: new Decimal(1000),
                 unlocked() { return true; }, // The upgrade is only visible when this is true
 				effect() {
-					if (player.dynas_b.banking & 2)return new Decimal(1);
+					if ((player.dynas_b.banking & 2) || inChallenge("dynas_t",31))return new Decimal(1);
                     let base=1.1;
                     let ret = Decimal.pow(base,Decimal.log10(player.dynas_c.points.add(1)).pow(0.9));
 					ret=ret.mul(tmp.dynas_wf.effect2[0]);
@@ -232,7 +236,7 @@ addLayer("dynas_c", {
                 cost: new Decimal(1e7),
                 unlocked() { return hasMilestone("dynas_w",0); }, // The upgrade is only visible when this is true
 				effect() {
-					if (player.dynas_b.banking & 2)return new Decimal(1);
+					if ((player.dynas_b.banking & 2) || inChallenge("dynas_t",31))return new Decimal(1);
 					let ret=player.dynas_w.best.pow(1/3).div(2).add(1);
 					if(hasUpgrade("dynas_w",11))ret=ret.pow(upgradeEffect("dynas_w",11));
                     return ret;
@@ -303,6 +307,14 @@ addLayer("dynas_c", {
                 cost: new Decimal('e5e3'),
                 unlocked() { return player.tm.buyables[9].gte(10); }, // The upgrade is only visible when this is true
 			},
+			45: {
+				title: "Coin Upgrade 45",
+                description() {
+					return "Coin Upgrade 13 is better."
+				},
+                cost: new Decimal('ee4'),
+                unlocked() { return player.tm.buyables[9].gte(10); }, // The upgrade is only visible when this is true
+			},
 		},
 		update(diff){
 			if(hasUpgrade("dynas_c",11))player.modpoints[9]=player.modpoints[9].add(upgradeEffect("dynas_c",11).mul(diff));
@@ -370,7 +382,7 @@ addLayer("dynas_wf", {
 		let wde = wd.add(1).pow(0.1).pow(wue).pow(tmp.dynas_wf.buyables[22].effect)
 		if(hasMilestone("dynas_t",2))wde = wde.mul(5);
 		else if(hasUpgrade("dynas_wf",21))wde = wde.mul(wue.pow(3).add(1));
-		if (player.dynas_b.banking & 1) wde = wde.pow(0.5)
+		if ((player.dynas_b.banking & 1) || inChallenge("dynas_t",31)) wde = wde.pow(0.5)
 		return [wde,wue]
 	},
 	effectDescription() {
@@ -808,7 +820,7 @@ addLayer("dynas_w", {
 		let eff = Decimal.pow(player.dynas_w.points.add(1), 2)
 		if(hasMilestone("dynas_w",3))eff = eff.pow(3)
 		if(hasMilestone("dynas_w",4))eff = eff.pow(3)
-		if (player.dynas_b.banking & 1) eff = eff.pow(0.5)
+		if ((player.dynas_b.banking & 1) || inChallenge("dynas_t",31)) eff = eff.pow(0.5)
 
 		return eff
 	},
@@ -980,7 +992,7 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 	effect() {
 		if(inChallenge("dynas_t",21) || inChallenge("dynas_t",22))return new Decimal(1);
 		var eff = Decimal.pow(16, player.dynas_b.points)
-		if (player.dynas_b.banking & 1) eff = eff.pow(0.5)
+		if ((player.dynas_b.banking & 1) || inChallenge("dynas_t",31)) eff = eff.pow(0.5)
 		return eff
 	},
 	effectDescription() {
@@ -1207,6 +1219,7 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 			},
 			display() {
 				let data = tmp[this.layer].buyables[this.id]
+				if(hasMilestone("dynas_m",4))return  "You have " + format(player[this.layer].buyables[this.id], 0) + " banked work, which are boosting all previous bankings' buffs by ×" + format(data.effect) + ".\nThis banking can only gained passively.";
 				return data.canAfford
 					? "You have " + format(player[this.layer].buyables[this.id], 0) + " banked work, which are which are boosting all previous bankings' buffs by ×" + format(data.effect) + ".\n\n\
 						Banking is currently " + (player.dynas_b.banking == 15 ? "enabled.\n\
@@ -1215,7 +1228,7 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 					: (player.dynas_b.banking > 0 ? "Please disable the current active banking before you can activate another one." : "You need to build at least 19 banks before you can use this function.")
 			},
 			unlocked() { return hasMilestone("dynas_t", 0) },
-			canAfford() { return (player[this.layer].best.gte(19) /*|| player.b.buyables[33].gt(0)*/) && (player[this.layer].banking == 0 || player[this.layer].banking == 15) },
+			canAfford() { return (player[this.layer].best.gte(19) /*|| player.b.buyables[33].gt(0)*/) && (player[this.layer].banking == 0 || player[this.layer].banking == 15) && !hasMilestone("dynas_m",4) },
 			buy() {
 				if (player.dynas_b.banking == 15) player[this.layer].buyables[23] = player[this.layer].buyables[23].max(player.dynas_wf.workDone)
 				player.dynas_b.banking = player.dynas_b.banking == 15 ? 0 : 15
@@ -1273,10 +1286,11 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 			},	
 			display() { 	
 				let data = tmp[this.layer].buyables[this.id]	
+				if(hasMilestone("dynas_m",4))return  "You have " + format(player[this.layer].buyables[this.id], 0) + " banked generation, which are boosting previous bankings' generation speed by ×" + format(data.effect) + ".\nThis banking can only gained passively.";	
 				return  "You have " + format(player[this.layer].buyables[this.id], 0) + " banked generation, which are boosting previous bankings' generation speed by ×" + format(data.effect) + ".\nThis banking is set to your banks when clicked.";	
 			},	
 			unlocked() { return player.dynas_t.challenges[21]>=2 && hasMilestone("dynas_m", 3); }, 	
-			canAfford() { return player[this.layer].buyables[33].lt(player.dynas_b.points) },	
+			canAfford() { return player[this.layer].buyables[33].lt(player.dynas_b.points) && !hasMilestone("dynas_m",4)},	
 			buy() { 
 				player[this.layer].buyables[33] = player[this.layer].buyables[33].max(player.dynas_b.points)
 				player.dynas_wf.workDone = new Decimal(0)
@@ -1287,17 +1301,7 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 	},
 	update(diff) {
 		if (player.dynas_b.banking == 0) player.dynas_b.bankTime = new Decimal(0)
-		else player.dynas_b.bankTime = Decimal.add(player.dynas_b.bankTime, diff) /*
-		if (player.b.banking & 16) {
-			if (new Decimal(1e10).lt(tmp.pointGen)) {
-				let delta = new Decimal(1)
-				player.b.speed = player.b.speed.add(delta.mul(diff))
-			}
-			player.points = player.points.mul(Decimal.pow(0.00001, diff))
-		} else {
-			player.b.speed = new Decimal(0)
-		}*/
-		
+		else player.dynas_b.bankTime = Decimal.add(player.dynas_b.bankTime, diff)		
 		if (hasMilestone("dynas_m", 2)) {
 			let curr = 11;
 			for (var a = 1; a <= 6 + player.dynas_t.challenges[21]; a++) {
@@ -1305,11 +1309,15 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 				let realMult = new Decimal(10);
 				if((player.dynas_t.challenges[21]>=2 || hasMilestone("dynas_m", 3)) && a <= 7) realMult = realMult.mul(buyableEffect("dynas_b",32));
 				if((player.dynas_t.challenges[21]>=2 && hasMilestone("dynas_m", 3)) && a <= 8) realMult = realMult.mul(buyableEffect("dynas_b",33));
-				//if (player.sp.buyables[28].gt(0)) realMult = realMult.mul(tmp.buyables.sp[28].effect)
+				if(hasMilestone("dynas_m",4))realMult = realMult.mul(player.dynas_m.points);
+				if (hasUpgrade("dynas_sp",22)) realMult = realMult.mul(upgradeEffect("dynas_sp",22))
 				//if (tmp.buyables.wi[12]) realMult = realMult.mul(tmp.buyables.wi[12].effect.pow(Math.pow(0.7, a-1)))
 				
 				player.dynas_b.buyables[curr] = player.dynas_b.buyables[curr].add(Decimal.mul(new Decimal(player.dynas_b.buyables[layer] || 0).add(1), diff).mul(realMult))
 				curr = layer
+			}
+			if(hasMilestone("dynas_m",4)){
+				player.dynas_b.buyables[31+player.dynas_t.challenges[21]] = player.dynas_b.buyables[31+player.dynas_t.challenges[21]].add(player.dynas_b.points.mul(diff).mul(player.dynas_m.points).mul(hasUpgrade("dynas_sp",22)?upgradeEffect("dynas_sp",22):1));
 			}
 		}
 		if(hasMilestone("dynas_m",3))player.dynas_b.buyables[32]=player.dynas_b.buyables[32].max(100);
@@ -1392,7 +1400,7 @@ addLayer("dynas_m", {
 		return new Decimal(1)
 	},
 		doReset(l){
-			if(l=="dynas_c" || l=="dynas_wf"  || l=="dynas_b" || l=="dynas_sp" || l=="dynas_w" || l=="dynas_m" || l=="dynas_bd" || l=="dynas_t" || l=="dynas_so" || !l.startsWith("dynas_")){return;}
+			if(l=="dynas_c" || l=="dynas_wf"  || l=="dynas_b" || l=="dynas_sp" || l=="dynas_w" || l=="dynas_m" || l=="dynas_bd" || l=="dynas_t" || l=="dynas_so" || l=="dynas_wi" || !l.startsWith("dynas_")){return;}
 			layerDataReset("dynas_m",["upgrades","milestones","challenges"]);
 			return;
 		},
@@ -1417,333 +1425,22 @@ addLayer("dynas_m", {
 			done() { return player[this.layer].best.gte(12) },
 			effectDescription: () => "Gain 100% of SP gain per second. SP requirement is reduced. Unlock a new banking."
 		},
-	},
-	/*
-	buyables: {
-		respec() { 
-			player.m.allocated = 0
-			player.m.landsAllocated = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-			resetBuyables(this.layer)
-			doReset(this.layer, true)
+		4: {
+			requirementDescription: () => "13 Managers",
+			done() { return player[this.layer].best.gte(13) },
+			effectDescription: () => "Banks generate last banking, and multiply all banking generation by managers. Work banking can only be gained passively now."
 		},
-		respecText:() => "Respec Land & Jobs Allocation",
-		rows: 1,
-		cols: 10,
-		11: {
-			title: () => "Farmlands",
-			cost(x) {
-				return Decimal.add(8, Decimal.pow(1.2, x)).ceil()
-			},
-			effect(x) {
-				return Decimal.pow(x.add(1), 12 * Math.E)
-			},
-			display() { // Everything else displayed in the buyable button after the title
-				let data = tmp.buyables[this.layer][this.id]
-				return "You have " + format(player[this.layer].buyables[this.id], 0) + " farmlands, which are boosting point generation by ×" + format(data.effect) + "." + "\nAllocation cost: " + formatWhole(data.cost) + " grasslands tiles and 1 managing power"
-			},
-			unl() { return true },
-			canAfford() { return (!player.m.landsUndoMode && Decimal.gte(player.m.landsAvailable[1] - player.m.landsAllocated[1], tmp.buyables.m[11].cost) && player.m.points.mul(2).sub(player.m.allocated).gte(1)) || (player.m.landsUndoMode && player.m.buyables[11].gte(1)) },
-			buy() {
-				cost = tmp.buyables[this.layer][this.id].cost.toNumber()
-				player.m.landsAllocated[1] += cost;
-				player.m.allocated++;
-				player.m.buyables[11] = player.m.buyables[11].add(1)
-			},
-			style() {
-				return {
-					"height": "200px",
-				}
-			}
+		5: {
+			requirementDescription: () => "14 Managers",
+			done() { return player[this.layer].best.gte(14) },
+			effectDescription: () => "Managers boost Dynas Magic gain."
 		},
-		12: {
-			title: () => "Sheep Farm",
-			cost(x) {
-				return Decimal.add(5, Decimal.pow(1.2, x)).ceil()
-			},
-			effect(x) {
-				return Decimal.pow(x.add(1), 15 * Math.E)
-			},
-			display() { // Everything else displayed in the buyable button after the title
-				let data = tmp.buyables[this.layer][this.id]
-				return "You have " + format(player[this.layer].buyables[this.id], 0) + " sheep farms, which are boosting point generation by ×" + format(data.effect) + "." + "\nAllocation cost: " + formatWhole(data.cost) + " tundra tiles and 1 managing power"
-			},
-			unl() { return true },
-			canAfford() { return (!player.m.landsUndoMode && Decimal.gte(player.m.landsAvailable[5] - player.m.landsAllocated[5], tmp.buyables.m[12].cost) && player.m.points.mul(2).sub(player.m.allocated).gte(1)) || (player.m.landsUndoMode && player.m.buyables[12].gte(1)) },
-			buy() {
-				cost = tmp.buyables[this.layer][this.id].cost.toNumber()
-				player.m.landsAllocated[5] += cost;
-				player.m.allocated++;
-				player.m.buyables[12] = player.m.buyables[12].add(1)
-			},
-			style() {
-				return {
-					"height": "200px",
-				}
-			}
-		},
-		13: {
-			title: () => "Mine",
-			cost(x) {
-				return Decimal.add(3, Decimal.pow(1.2, x)).ceil()
-			},
-			effect(x) {
-				return Decimal.pow(x.add(1), 20 * Math.E)
-			},
-			display() { // Everything else displayed in the buyable button after the title
-				let data = tmp.buyables[this.layer][this.id]
-				return "You have " + format(player[this.layer].buyables[this.id], 0) + " mines, which are boosting point generation by ×" + format(data.effect) + "." + "\nAllocation cost: " + formatWhole(data.cost) + " mountain tiles and 1 managing power"
-			},
-			unl() { return true },
-			canAfford() { return (!player.m.landsUndoMode && Decimal.gte(player.m.landsAvailable[2] - player.m.landsAllocated[2], tmp.buyables.m[13].cost) && player.m.points.mul(2).sub(player.m.allocated).gte(1)) || (player.m.landsUndoMode && player.m.buyables[13].gte(1)) },
-			buy() {
-				cost = tmp.buyables[this.layer][this.id].cost.toNumber()
-				player.m.landsAllocated[2] += cost;
-				player.m.allocated++;
-				player.m.buyables[13] = player.m.buyables[13].add(1)
-			},
-			style() {
-				return {
-					"height": "200px",
-				}
-			}
-		},
-		14: {
-			title: () => "Large Mine",
-			cost(x) {
-				return Decimal.add(1, Decimal.pow(1.2, x)).ceil()
-			},
-			effect(x) {
-				return Decimal.pow(x.add(1), 30 * Math.E)
-			},
-			display() { // Everything else displayed in the buyable button after the title
-				let data = tmp.buyables[this.layer][this.id]
-				return "You have " + format(player[this.layer].buyables[this.id], 0) + " large mines, which are boosting point generation by ×" + format(data.effect) + "." + "\nAllocation cost: " + formatWhole(data.cost) + " tall mountain tiles and 1 managing power"
-			},
-			unl() { return true },
-			canAfford() { return (!player.m.landsUndoMode && Decimal.gte(player.m.landsAvailable[3] - player.m.landsAllocated[3], tmp.buyables.m[14].cost) && player.m.points.mul(2).sub(player.m.allocated).gte(1)) || (player.m.landsUndoMode && player.m.buyables[14].gte(1)) },
-			buy() {
-				cost = tmp.buyables[this.layer][this.id].cost.toNumber()
-				player.m.landsAllocated[3] += cost;
-				player.m.allocated++;
-				player.m.buyables[14] = player.m.buyables[14].add(1)
-			},
-			style() {
-				return {
-					"height": "200px",
-				}
-			}
-		},
-		15: {
-			title: () => "Wood Workshop",
-			cost(x) {
-				return Decimal.add(5, Decimal.pow(1.2, x)).ceil()
-			},
-			effect(x) {
-				return Decimal.pow(x.add(1), 16 * Math.E)
-			},
-			display() { // Everything else displayed in the buyable button after the title
-				let data = tmp.buyables[this.layer][this.id]
-				return "You have " + format(player[this.layer].buyables[this.id], 0) + " wood workshops, which are boosting point generation by ×" + format(data.effect) + "." + "\nAllocation cost: " + formatWhole(data.cost) + " forest tiles and 1 managing power"
-			},
-			unl() { return true },
-			canAfford() { return (!player.m.landsUndoMode && Decimal.gte(player.m.landsAvailable[6] - player.m.landsAllocated[6], tmp.buyables.m[15].cost) && player.m.points.mul(2).sub(player.m.allocated).gte(1)) || (player.m.landsUndoMode && player.m.buyables[15].gte(1)) },
-			buy() {
-				cost = tmp.buyables[this.layer][this.id].cost.toNumber()
-				player.m.landsAllocated[6] += cost;
-				player.m.allocated++;
-				player.m.buyables[15] = player.m.buyables[15].add(1)
-			},
-			style() {
-				return {
-					"height": "200px",
-				}
-			}
-		},
-		16: {
-			title: () => "Large Wood Workshop",
-			cost(x) {
-				return Decimal.add(5, Decimal.pow(1.2, x)).ceil()
-			},
-			effect(x) {
-				return Decimal.pow(x.add(1), 18 * Math.E)
-			},
-			display() { // Everything else displayed in the buyable button after the title
-				let data = tmp.buyables[this.layer][this.id]
-				return "You have " + format(player[this.layer].buyables[this.id], 0) + " large wood workshops, which are boosting point generation by ×" + format(data.effect) + "." + "\nAllocation cost: " + formatWhole(data.cost) + " rainforest tiles and 1 managing power"
-			},
-			unl() { return true },
-			canAfford() { return (!player.m.landsUndoMode && Decimal.gte(player.m.landsAvailable[8] - player.m.landsAllocated[8], tmp.buyables.m[16].cost) && player.m.points.mul(2).sub(player.m.allocated).gte(1)) || (player.m.landsUndoMode && player.m.buyables[16].gte(1)) },
-			buy() {
-				cost = tmp.buyables[this.layer][this.id].cost.toNumber()
-				player.m.landsAllocated[8] += cost;
-				player.m.allocated++;
-				player.m.buyables[16] = player.m.buyables[16].add(1)
-			},
-			style() {
-				return {
-					"height": "200px",
-				}
-			}
-		},
-		17: {
-			title: () => "Savanna Transportation",
-			cost(x) {
-				return Decimal.add(5, Decimal.pow(1.2, x)).ceil()
-			},
-			effect(x) {
-				return Decimal.pow(x.add(1), 15 * Math.E)
-			},
-			display() { // Everything else displayed in the buyable button after the title
-				let data = tmp.buyables[this.layer][this.id]
-				return "You have " + format(player[this.layer].buyables[this.id], 0) + " savanna transportations, which are boosting point generation by ×" + format(data.effect) + "." + "\nAllocation cost: " + formatWhole(data.cost) + " savanna tiles and 1 managing power"
-			},
-			unl() { return true },
-			canAfford() { return (!player.m.landsUndoMode && Decimal.gte(player.m.landsAvailable[7] - player.m.landsAllocated[7], tmp.buyables.m[17].cost) && player.m.points.mul(2).sub(player.m.allocated).gte(1)) || (player.m.landsUndoMode && player.m.buyables[17].gte(1)) },
-			buy() {
-				cost = tmp.buyables[this.layer][this.id].cost.toNumber()
-				player.m.landsAllocated[7] += cost;
-				player.m.allocated++;
-				player.m.buyables[17] = player.m.buyables[17].add(1)
-			},
-			style() {
-				return {
-					"height": "200px",
-				}
-			}
-		},
-		18: {
-			title: () => "Desert Transportation",
-			cost(x) {
-				return Decimal.add(5, Decimal.pow(1.2, x)).ceil()
-			},
-			effect(x) {
-				return Decimal.pow(x.add(1), 18 * Math.E)
-			},
-			display() { // Everything else displayed in the buyable button after the title
-				let data = tmp.buyables[this.layer][this.id]
-				return "You have " + format(player[this.layer].buyables[this.id], 0) + " desert transportations, which are boosting point generation by ×" + format(data.effect) + "." + "\nAllocation cost: " + formatWhole(data.cost) + " desert tiles and 1 managing power"
-			},
-			unl() { return true },
-			canAfford() { return (!player.m.landsUndoMode && Decimal.gte(player.m.landsAvailable[4] - player.m.landsAllocated[4], tmp.buyables.m[18].cost) && player.m.points.mul(2).sub(player.m.allocated).gte(1)) || (player.m.landsUndoMode && player.m.buyables[18].gte(1)) },
-			buy() {
-				cost = tmp.buyables[this.layer][this.id].cost.toNumber()
-				player.m.landsAllocated[4] += cost;
-				player.m.allocated++;
-				player.m.buyables[18] = player.m.buyables[18].add(1)
-			},
-			style() {
-				return {
-					"height": "200px",
-				}
-			}
-		},
-		19: {
-			title: () => "Fish Farm",
-			cost(x) {
-				return Decimal.add(1, Decimal.pow(1.2, x)).ceil()
-			},
-			effect(x) {
-				return Decimal.pow(x.add(1), 100 * Math.E)
-			},
-			display() { // Everything else displayed in the buyable button after the title
-				let data = tmp.buyables[this.layer][this.id]
-				return "You have " + format(player[this.layer].buyables[this.id], 0) + " fish farms, which are boosting point generation by ×" + format(data.effect) + "." + "\nAllocation cost: " + formatWhole(data.cost) + " waters tiles and 1 managing power"
-			},
-			unl() { return true },
-			canAfford() { return (!player.m.landsUndoMode && Decimal.gte(player.m.landsAvailable[0] - player.m.landsAllocated[0], tmp.buyables.m[19].cost) && player.m.points.mul(2).sub(player.m.allocated).gte(1)) || (player.m.landsUndoMode && player.m.buyables[19].gte(1)) },
-			buy() {
-				cost = tmp.buyables[this.layer][this.id].cost.toNumber()
-				player.m.landsAllocated[0] += cost;
-				player.m.allocated++;
-				player.m.buyables[19] = player.m.buyables[19].add(1)
-			},
-			style() {
-				return {
-					"height": "200px",
-				}
-			}
-		},
-		20: {
-			title: () => "Ice Farm",
-			cost(x) {
-				return Decimal.add(1, Decimal.pow(1.2, x)).ceil()
-			},
-			effect(x) {
-				return Decimal.pow(x.add(1), 250 * Math.E)
-			},
-			display() { // Everything else displayed in the buyable button after the title
-				let data = tmp.buyables[this.layer][this.id]
-				return "You have " + format(player[this.layer].buyables[this.id], 0) + " ice farms, which are boosting point generation by ×" + format(data.effect) + "." + "\nAllocation cost: " + formatWhole(data.cost) + " iced waters tiles and 1 managing power"
-			},
-			unl() { return true },
-			canAfford() { return (!player.m.landsUndoMode && Decimal.gte(player.m.landsAvailable[9] - player.m.landsAllocated[9], tmp.buyables.m[20].cost) && player.m.points.mul(2).sub(player.m.allocated).gte(1)) || (player.m.landsUndoMode && player.m.buyables[20].gte(1)) },
-			buy() {
-				cost = tmp.buyables[this.layer][this.id].cost.toNumber()
-				player.m.landsAllocated[9] += cost;
-				player.m.allocated++;
-				player.m.buyables[20] = player.m.buyables[20].add(1)
-			},
-			style() {
-				return {
-					"height": "200px",
-				}
-			}
-		},
-	},
-*/
-	
+	},	
 	microtabs: {
 		stuff: {
 			milestones: { title: () => "Milestones",  content: [
 				"milestones"
-			]},/*
-			lands: { title: () => "Land & Jobs Management", unl: () => hasMilestone("m", 8), content: [
-				["display-text",
-					function () { return "You have allocated " + format(player.m.allocated, 0) + " / " + format(player.m.points.mul(2), 0) + ` managing power.<h5>Each manager gives 2 managing power.<br/>Total land multiplier to point generation: ×` + format(tmp.landMul) }],
-				["blank", "5px"],
-				"respec-button",
-				["blank", "5px"],
-				["display-text",
-					function () { return "<h3>[<span style='color:#7FFF00'>;;;</span>] Grasslands</h3><h5>" + formatWhole(player.m.landsAllocated[1]) + " / " + formatWhole(player.m.landsAvailable[1]) + " allocated</h5>" + "<br/><p style='color:transparent; font-size:0.001px'>" + format(player.time) + "</p>" }],
-				["row", [["buyable", 11]]],
-				["blank", "5px"],
-				["display-text",
-					function () { return "<h3>[<span style='color:#FFFFFF'>:::</span>] Tundra</h3><h5>" + formatWhole(player.m.landsAllocated[5]) + " / " + formatWhole(player.m.landsAvailable[5]) + " allocated</h5>" + "<br/><p style='color:transparent; font-size:0.001px'>" + format(player.time) + "</p>" }],
-				["row", [["buyable", 12]]],
-				["blank", "5px"],
-				["display-text",
-					function () { return "<h3>[<span style='color:#7FFF00'>^^^</span>] Mountains</h3><h5>" + formatWhole(player.m.landsAllocated[2]) + " / " + formatWhole(player.m.landsAvailable[2]) + " allocated</h5>" + "<br/><p style='color:transparent; font-size:0.001px'>" + format(player.time) + "</p>" }],
-				["row", [["buyable", 13]]],
-				["blank", "5px"],
-				["display-text",
-					function () { return "<h3>[<span style='color:#FFFFFF'>AAA</span>] Tall Mountains</h3><h5>" + formatWhole(player.m.landsAllocated[3]) + " / " + formatWhole(player.m.landsAvailable[3]) + " allocated</h5>" + "<br/><p style='color:transparent; font-size:0.001px'>" + format(player.time) + "</p>" }],
-				["row", [["buyable", 14]]],
-				["blank", "5px"],
-				["display-text",
-					function () { return "<h3>[<span style='color:#00FF00'>TTT</span>] Forest</h3><h5>" + formatWhole(player.m.landsAllocated[6]) + " / " + formatWhole(player.m.landsAvailable[6]) + " allocated</h5>" + "<br/><p style='color:transparent; font-size:0.001px'>" + format(player.time) + "</p>" }],
-				["row", [["buyable", 15]]],
-				["blank", "5px"],
-				["display-text",
-					function () { return "<h3>[<span style='color:#007F00'>♠♠♠</span>] Rainforest</h3><h5>" + formatWhole(player.m.landsAllocated[8]) + " / " + formatWhole(player.m.landsAvailable[8]) + " allocated</h5>" + "<br/><p style='color:transparent; font-size:0.001px'>" + format(player.time) + "</p>" }],
-				["row", [["buyable", 16]]],
-				["blank", "5px"],
-				["display-text",
-					function () { return "<h3>[<span style='color:#FFFF7F'>,,,</span>] Savanna</h3><h5>" + formatWhole(player.m.landsAllocated[7]) + " / " + formatWhole(player.m.landsAvailable[7]) + " allocated</h5>" + "<br/><p style='color:transparent; font-size:0.001px'>" + format(player.time) + "</p>" }],
-				["row", [["buyable", 17]]],
-				["blank", "5px"],
-				["display-text",
-					function () { return "<h3>[<span style='color:#FFFF7F'>...</span>] Desert</h3><h5>" + formatWhole(player.m.landsAllocated[4]) + " / " + formatWhole(player.m.landsAvailable[4]) + " allocated</h5>" + "<br/><p style='color:transparent; font-size:0.001px'>" + format(player.time) + "</p>" }],
-				["row", [["buyable", 18]]],
-				["blank", "5px"],
-				["display-text",
-					function () { return "<h3>[<span style='color:#0000FF'>~~~</span>] Waters</h3><h5>" + formatWhole(player.m.landsAllocated[0]) + " / " + formatWhole(player.m.landsAvailable[0]) + " allocated</h5>" + "<br/><p style='color:transparent; font-size:0.001px'>" + format(player.time) + "</p>" }],
-				["row", [["buyable", 19]]],
-				["blank", "5px"],
-				["display-text",
-					function () { return "<h3>[<span style='color:#7F7FFF'>~~~</span>] Iced Waters</h3><h5>" + formatWhole(player.m.landsAllocated[9]) + " / " + formatWhole(player.m.landsAvailable[9]) + " allocated</h5>" + "<br/><p style='color:transparent; font-size:0.001px'>" + format(player.time) + "</p>" }],
-				["row", [["buyable", 20]]],
-				["blank", "5px"],
-			]},*/
+			]},
 		}
 	},
 	tabFormat:
@@ -1778,7 +1475,7 @@ addLayer("dynas_bd", {
 	layerShown() { return player.tm.buyables[9].gte(10) && player.tm.currentTree==9; },
 
 		doReset(l){
-			if(l=="dynas_c" || l=="dynas_wf"  || l=="dynas_b" || l=="dynas_sp" || l=="dynas_w" || l=="dynas_m" || l=="dynas_bd" || l=="dynas_t" || l=="dynas_so" || !l.startsWith("dynas_")){return;}
+			if(l=="dynas_c" || l=="dynas_wf"  || l=="dynas_b" || l=="dynas_sp" || l=="dynas_w" || l=="dynas_m" || l=="dynas_bd" || l=="dynas_t" || l=="dynas_so" || l=="dynas_wi" || !l.startsWith("dynas_")){return;}
 			layerDataReset("dynas_bd",["upgrades","milestones","challenges"]);
 			return;
 		},
@@ -2113,7 +1810,8 @@ addLayer("dynas_sp", {
 	},
 	gainMult(){	
 		if(inChallenge("dynas_t",22))return new Decimal(0);
-		return new Decimal(1);
+		let ret=new Decimal(1);
+		return ret
 	},
 
 	type: "normal",
@@ -2147,7 +1845,7 @@ addLayer("dynas_sp", {
 				],
 	buyables: {
 		rows: 1,
-		cols: 2,
+		cols: 3,
 		11: {
 			title: () => "Convert spiritual power into castable magic fountain",
 			cost(x) {
@@ -2156,7 +1854,12 @@ addLayer("dynas_sp", {
 				return cost.floor()
 			},
 			effect(x) { 
-				return x.pow(2)
+				let ret=x.pow(2);
+				if(hasUpgrade("dynas_sp",21))ret = ret.mul(upgradeEffect("dynas_sp",21));
+				if(player.dynas_t.challenges[31]>=2)ret = ret.mul(player.dynas_bd.buyables[21].add(1));
+				if(hasMilestone("dynas_t",7))ret = ret.mul(player.dynas_t.points.max(1));
+				if(hasMilestone("dynas_m",5))ret = ret.mul(player.dynas_m.points.add(1));
+				return ret;
 			},
 			display() { // Everything else displayed in the buyable button after the title
 				let data = tmp[this.layer].buyables[this.id]
@@ -2164,7 +1867,7 @@ addLayer("dynas_sp", {
 				Cost: " + format(data.cost) + " spiritual power\n\
 				Generates " + format(data.effect) + " magic every second."
 			},
-			unl() { return true },
+			unlocked() { return true },
 			canAfford() {
 				return player.dynas_sp.points.gte(tmp[this.layer].buyables[this.id].cost)
 			},
@@ -2194,7 +1897,37 @@ addLayer("dynas_sp", {
 				Cost: " + format(data.cost) + " spiritual power\n\
 				Increase the effective magic of the first three spells by ×" + format(data.effect) + "."
 			},
-			unl() { return hasMilestone("dynas_t",2) },
+			unlocked() { return hasMilestone("dynas_t",2) },
+			canAfford() {
+				return player.dynas_sp.points.gte(tmp[this.layer].buyables[this.id].cost)
+			},
+			buy() {
+				cost = tmp[this.layer].buyables[this.id].cost
+				player.dynas_sp.points = player.dynas_sp.points.sub(cost)
+				player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
+			},
+			style() {
+				return {
+					"height": "200px"
+				}
+			}
+		},
+		13: {
+			title: () => "Use spiritual power to enchant advanced spells",
+			cost(x) {
+				let cost = Decimal.pow(1e17, Decimal.pow(1.35, x))
+				return cost.floor()
+			},
+			effect(x) { 
+				return x.add(1).pow(2)
+			},
+			display() { // Everything else displayed in the buyable button after the title
+				let data = tmp[this.layer].buyables[this.id]
+				return "Level " + player[this.layer].buyables[this.id] + "\n\
+				Cost: " + format(data.cost) + " spiritual power\n\
+				Increase the effective magic of the second three spells by ×" + format(data.effect) + "."
+			},
+			unlocked() { return hasChallenge("dynas_t",31); },
 			canAfford() {
 				return player.dynas_sp.points.gte(tmp[this.layer].buyables[this.id].cost)
 			},
@@ -2211,7 +1944,7 @@ addLayer("dynas_sp", {
 		},
 	},
 		upgrades: {
-            rows: 1,
+            rows: 2,
             cols: 5,
 			11: {
 				title: "Dynas Spell 11",
@@ -2260,7 +1993,7 @@ addLayer("dynas_sp", {
                 cost: new Decimal(1e8),
                 unlocked() { return true; }, // The upgrade is only visible when this is true
 				effect() {
-					let ret = player.dynas_sp.magic.add(1).log10().mul(player.dynas_bd.buyables[13]).add(1);
+					let ret = player.dynas_sp.magic.mul(buyableEffect("dynas_sp",13)).add(1).log10().mul(player.dynas_bd.buyables[13]).add(1);
                     return ret;
                 },
 			},
@@ -2272,7 +2005,43 @@ addLayer("dynas_sp", {
                 cost: new Decimal(1e9),
                 unlocked() { return true; }, // The upgrade is only visible when this is true
 				effect() {
+					let ret = player.dynas_sp.magic.mul(buyableEffect("dynas_sp",13)).add(1).log10().mul(player.dynas_bd.buyables[13]).add(1);
+                    return ret;
+                },
+			},
+			21: {
+				title: "Dynas Spell 21",
+                description() {
+					return "Dynas Magic gain is boosted by spiritual power (x"+format(this.effect())+")";
+				},
+                cost: new Decimal(1e100),
+                unlocked() { return player.tm.buyables[9].gte(17); }, // The upgrade is only visible when this is true
+				effect() {
+					let ret = player.dynas_sp.magic.mul(buyableEffect("dynas_sp",13)).add(1).log10().mul(player.dynas_sp.points.add(1).log10()).mul(player.dynas_bd.buyables[13]).sqrt().add(1);
+                    return ret;
+                },
+			},
+			22: {
+				title: "Dynas Spell 22",
+                description() {
+					return "Banking generation is boosted by x"+format(this.effect());
+				},
+                cost: new Decimal(1e125),
+                unlocked() { return player.tm.buyables[9].gte(18); }, // The upgrade is only visible when this is true
+				effect() {
 					let ret = player.dynas_sp.magic.add(1).log10().mul(player.dynas_bd.buyables[13]).add(1);
+                    return ret;
+                },
+			},
+			23: {
+				title: "Dynas Spell 23",
+                description() {
+					return "Soldier DPS is boosted by x"+format(this.effect());
+				},
+                cost: new Decimal(1e150),
+                unlocked() { return player.tm.buyables[9].gte(18); }, // The upgrade is only visible when this is true
+				effect() {
+					let ret = player.dynas_sp.magic.pow(player.dynas_bd.buyables[13].cbrt()).add(1);
                     return ret;
                 },
 			},
@@ -2327,7 +2096,7 @@ addLayer("dynas_t", {
 	},
 	
 		doReset(l){
-			if(l=="dynas_c" || l=="dynas_wf"  || l=="dynas_b" || l=="dynas_sp" || l=="dynas_w" || l=="dynas_m" || l=="dynas_bd" || l=="dynas_t" || l=="dynas_so" || !l.startsWith("dynas_")){return;}
+			if(l=="dynas_c" || l=="dynas_wf"  || l=="dynas_b" || l=="dynas_sp" || l=="dynas_w" || l=="dynas_m" || l=="dynas_bd" || l=="dynas_t" || l=="dynas_so" || l=="dynas_wi" || !l.startsWith("dynas_")){return;}
 			layerDataReset("dynas_t",["upgrades","milestones","challenges"]);
 			return;
 		},
@@ -2361,6 +2130,21 @@ addLayer("dynas_t", {
 			requirementDescription: () => "5 Territories",
 			done() { return player[this.layer].best.gte(5) },
 			effectDescription: () => "Obstacles can be completed another time."
+		},
+		6: {
+			requirementDescription: () => "6 Territories",
+			done() { return player[this.layer].best.gte(6) },
+			effectDescription: () => "Unlock an obstacle."
+		},
+		7: {
+			requirementDescription: () => "7 Territories",
+			done() { return player[this.layer].best.gte(7) },
+			effectDescription: () => "Territories boost dynas magic."
+		},
+		8: {
+			requirementDescription: () => "8 Territories",
+			done() { return player[this.layer].best.gte(8) },
+			effectDescription: () => "Soldier requirement is lowered based on your territories."
 		},
 	},
 			challenges: {
@@ -2461,8 +2245,30 @@ addLayer("dynas_t", {
 			completionLimit(){
 				return hasMilestone("dynas_t",5) ? 2 : 1
 			}
-
-
+        },
+        31: {
+            name:() => "Unspendable Coins",
+			challengeDescription(){
+				return "“From Square One” and “Time Banking”'s debuff are applied at once.<br>Completions: "+player.dynas_t.challenges[31]+"/"+this.completionLimit();
+			},
+			rewardDescription(){
+				if(player.dynas_t.challenges[21]>=2)return "Unlock a new spiritual power rebuyable upgrade, roads boost dynas magic.";
+				return "Unlock a new spiritual power rebuyable upgrade."
+			},
+			countsAs: [12, 21, 22],
+			goal:() => new Decimal([2**128,"1e42","e1000000"][player.dynas_t.challenges[31]]),
+			currencyDisplayName: "dynas points",
+                        currencyLayer: "modpoints",
+                        currencyInternalName: "9",
+			unlocked(){
+                                return hasMilestone("dynas_t",6)
+                        },
+			completionLimit(){
+				return hasMilestone("dynas_t",5) ? 2 : 1
+			},
+			onEnter(){
+				updateTemp();updateTemp();updateTemp();updateTemp();updateTemp();
+			}
         },
 },
 
@@ -2491,7 +2297,10 @@ addLayer("dynas_so", {
 	baseAmount() { return player.dynas_c.points },
 	branches: [["dynas_w", 1], ["dynas_c", 2]],
 
-	requires: () => new Decimal("1e7500"),
+	requires(){
+		if(player.dynas_t.points.gte(8))return new Decimal("1e7500").pow(Decimal.pow(0.99, player.dynas_t.points));
+		return new Decimal("1e7500")
+	},
 
 	type: "static",
 	base: "1e30",
@@ -2506,7 +2315,9 @@ addLayer("dynas_so", {
 	},
 
 	gainMult() {
-		return new Decimal(1)
+		let ret=new Decimal(1)
+		if(hasMilestone("dynas_so",5))ret = ret.div(player.dynas_so.totalDmg.add(1).pow(2));
+		return ret;
 	},
 	gainExp() {
 		return new Decimal(1)
@@ -2517,14 +2328,17 @@ addLayer("dynas_so", {
 		11: {
 			title: () => "Strength",
 			cost(x) {
+				if(hasMilestone("dynas_so",6))return Decimal.pow(1e30, x)
 				if (x.gte(100)) x = x.pow(2).div(100)
 				if (x.gte(50)) x = x.pow(2).div(50)
 				if (x.gte(20)) x = x.pow(2).div(20)
 				if (x.gte(10)) x = x.pow(2).div(10)
-				let cost = Decimal.mul("e7510", Decimal.pow(1e30, x))
+				let cost = Decimal.mul(hasMilestone("dynas_so",4)?"e6500":"e7510", Decimal.pow(1e30, x))
 				return cost.floor()
 			},
 			effect(x) { 
+				if(hasMilestone("dynas_so",8))return x.add(1).mul(player.dynas_bd.buyables[23].max(5));
+				if(hasMilestone("dynas_so",7))return x.add(1).mul(5);
 				return x.add(5)
 			},
 			display() { // Everything else displayed in the buyable button after the title
@@ -2551,14 +2365,17 @@ addLayer("dynas_so", {
 		12: {
 			title: () => "Endurance",
 			cost(x) {
+				if(hasMilestone("dynas_so",6))return Decimal.pow(1e50, x)
 				if (x.gte(100)) x = x.pow(2).div(100)
 				if (x.gte(50)) x = x.pow(2).div(50)
 				if (x.gte(20)) x = x.pow(2).div(20)
 				if (x.gte(10)) x = x.pow(2).div(10)
-				let cost = Decimal.mul("e7550", Decimal.pow(1e50, x))
+				let cost = Decimal.mul(hasMilestone("dynas_so",4)?"e7000":"e7550", Decimal.pow(1e50, x))
 				return cost.floor()
 			},
 			effect(x) { 
+				if(hasMilestone("dynas_so",8))return x.add(1).mul(player.dynas_bd.buyables[23].max(5));
+				if(hasMilestone("dynas_so",7))return x.add(1).mul(5);
 				return x.add(5)
 			},
 			display() { // Everything else displayed in the buyable button after the title
@@ -2587,14 +2404,17 @@ addLayer("dynas_so", {
 		13: {
 			title: () => "Dexterity",
 			cost(x) {
+				if(hasMilestone("dynas_so",6))return Decimal.pow(1e80, x)
 				if (x.gte(100)) x = x.pow(2).div(100)
 				if (x.gte(50)) x = x.pow(2).div(50)
 				if (x.gte(20)) x = x.pow(2).div(20)
 				if (x.gte(10)) x = x.pow(2).div(10)
-				let cost = Decimal.mul("e7600", Decimal.pow(1e80, x))
+				let cost = Decimal.mul(hasMilestone("dynas_so",4)?"e7500":"e7600", Decimal.pow(1e80, x))
 				return cost.floor()
 			},
 			effect(x) { 
+				if(hasMilestone("dynas_so",8))return x.add(1).mul(player.dynas_bd.buyables[23].max(5));
+				if(hasMilestone("dynas_so",7))return x.add(1).mul(5);
 				return x.add(5)
 			},
 			display() { // Everything else displayed in the buyable button after the title
@@ -2640,6 +2460,8 @@ addLayer("dynas_so", {
 	soldierDPS(){
 		let dps= player.dynas_so.points.pow(hasMilestone("dynas_so",2) ? 4 : 3.2).mul(buyableEffect("dynas_so",11)).mul(buyableEffect("dynas_so",12).pow(0.5)).mul(buyableEffect("dynas_so",13));
 		if(hasMilestone("dynas_so",1))dps = dps.mul(player.dynas_bd.buyables[23].add(1));
+		if(hasMilestone("dynas_so",3))dps = dps.mul(player.points.add(10).log10().div(3e15).pow(200).mul(10).add(1));
+		if(hasUpgrade("dynas_sp",23))dps = dps.mul(upgradeEffect("dynas_sp",23));
 		return dps;
 	},
 	tabFormat:{"Main Tab":
@@ -2678,7 +2500,8 @@ addLayer("dynas_so", {
 			"milestones"]},
 	"The Guardian":{"content":["main-display",["display-text",function () { return "Damage Per Second: " + formatWhole(tmp.dynas_so.soldierDPS) }],
 		["display-text",function () { return "Your soldiers dealt " + formatWhole(player.dynas_so.totalDmg) + " damage to the guardian." }],
-		["display-text",function () { return "Boosting military rating effect by " + formatWhole(player.dynas_so.totalDmg.add(1)) + "x" }]
+		["display-text",function () { return "Boosting military rating effect by " + formatWhole(player.dynas_so.totalDmg.add(1)) + "x" }],
+		["display-text",function () { if(hasMilestone("dynas_so",5))return "Dividing soldier price by " + formatWhole(player.dynas_so.totalDmg.add(1).pow(2));return ""; }]
 ],"unlocked":function(){return hasMilestone("dynas_so",0)}}
 },
 /*
@@ -2687,7 +2510,7 @@ addLayer("dynas_so", {
 	],*/
 
 		doReset(l){
-			if(l=="dynas_c" || l=="dynas_wf"  || l=="dynas_b" || l=="dynas_sp" || l=="dynas_w" || l=="dynas_m" || l=="dynas_bd" || l=="dynas_t" || l=="dynas_so" || !l.startsWith("dynas_")){return;}
+			if(l=="dynas_c" || l=="dynas_wf"  || l=="dynas_b" || l=="dynas_sp" || l=="dynas_w" || l=="dynas_m" || l=="dynas_bd" || l=="dynas_t" || l=="dynas_so" || l=="dynas_wi" || !l.startsWith("dynas_")){return;}
 			layerDataReset("dynas_so",["upgrades","milestones","challenges"]);
 			return;
 		},
@@ -2707,8 +2530,138 @@ addLayer("dynas_so", {
 			done() { return player[this.layer].best.gte(30) },
 			effectDescription: () => "Soldiers boost DPS at an increased rate."
 		},
+		3: {
+			requirementDescription: () => "40 Soldiers",
+			done() { return player[this.layer].best.gte(40) },
+			effectDescription: () => "Points boost DPS."
+		},
+		4: {
+			requirementDescription: () => "50 Soldiers",
+			done() { return player[this.layer].best.gte(50) },
+			effectDescription: () => "Soldier Attributes are cheaper."
+		},
+		5: {
+			requirementDescription: () => "60 Soldiers",
+			done() { return player[this.layer].best.gte(60) },
+			effectDescription: () => "Soldier didn't reset anything. Auto-recruit soldiers. The guardian also provide a second effect."
+		},
+		6: {
+			requirementDescription: () => "100 Soldiers",
+			done() { return player[this.layer].best.gte(100) },
+			effectDescription: () => "Soldier Attributes are cheaper, and autobuy them."
+		},
+		7: {
+			requirementDescription: () => "150 Soldiers",
+			done() { return player[this.layer].best.gte(150) },
+			effectDescription: () => "Soldier Attributes are better."
+		},
+		8: {
+			requirementDescription: () => "300 Soldiers",
+			done() { return player[this.layer].best.gte(300) },
+			effectDescription: () => "Military Bases boost Soldier Attributes."
+		},
 	},
 	update(diff){
 		player.dynas_so.totalDmg = player.dynas_so.totalDmg.add(tmp.dynas_so.soldierDPS.mul(diff)).min(Number.MAX_VALUE);
+		if(hasMilestone("dynas_so",6)){
+			let t = player.dynas_c.points.add(10).log10();
+			player.dynas_so.buyables[11] = player.dynas_so.buyables[11].max(t.div(30).add(1).floor());
+			player.dynas_so.buyables[12] = player.dynas_so.buyables[12].max(t.div(50).add(1).floor());
+			player.dynas_so.buyables[13] = player.dynas_so.buyables[13].max(t.div(80).add(1).floor());
+		}
 	},
+resetsNothing: () => hasMilestone("dynas_so",5),
+autoPrestige: () => hasMilestone("dynas_so",5),
 })
+
+
+addLayer("dynas_wi", {
+	startData() {
+		return {
+			unlocked: false,
+			points: new Decimal(0),
+			best: new Decimal(0),
+			total: new Decimal(0),
+			knowledge: new Decimal(0),
+		}
+	},
+
+	layerShown() { return player.tm.buyables[9].gte(18) && player.tm.currentTree==9;},
+
+	color: () => "#0077ff",
+	name: "wisdom",
+	resource: "wisdom",
+	row: 3,
+	symbol: "WI",
+
+	baseResource: "spiritual power",
+	baseAmount() { return player.dynas_sp.points },
+	branches: [["dynas_w", 3], ["dynas_sp", 3]],
+
+
+	requires: () => {
+		let req = new Decimal("1e100")
+		return req
+	},
+
+	type: "static",
+	base: () => 1e10,
+	exponent: () => 3,
+	canBuyMax: () => true,
+
+
+	effect() {
+		var ret = Decimal.pow(2, Decimal.pow(player.dynas_wi.points, 1.05)).sub(1)
+		return ret
+	},
+	
+	effectDescription() {
+		return "which are generating " + format(tmp.dynas_wi.effect) + " knowledge per second"
+	},
+	
+	
+	gainMult() {
+		return new Decimal(1)
+	},
+	gainExp() {
+		return new Decimal(1)
+	},
+	
+	update(diff) {
+		player.dynas_wi.knowledge = Decimal.add(player.dynas_wi.knowledge, tmp.dynas_wi.effect.mul(diff))
+	},
+	
+
+	tabFormat:
+		["main-display",
+			"prestige-button",
+			"resource-display",
+			["display-text",
+				function () { return "You have " + format(player.dynas_wi.knowledge, 0) + " knowledge." }],
+			"upgrades"
+		],
+		doReset(l){
+			if(l=="dynas_c" || l=="dynas_wf"  || l=="dynas_b" || l=="dynas_sp" || l=="dynas_w" || l=="dynas_m" || l=="dynas_bd" || l=="dynas_t" || l=="dynas_so" || l=="dynas_wi" || !l.startsWith("dynas_")){return;}
+			layerDataReset("dynas_wi",["upgrades","milestones","challenges"]);
+			return;
+		},
+		upgrades: {
+            rows: 2,
+            cols: 5,
+			11: {
+                description() {
+					return "Knowledge boost first 4 coin upgrades."
+				},
+                cost: new Decimal(1),
+		currencyDisplayName: "knowledge",
+		currencyInternalName: "knowledge",
+		currencyLayer: "dynas_wi",
+                unlocked() { return true; }, // The upgrade is only visible when this is true
+				effect() {
+					let ret = player.dynas_wi.knowledge.add(1).pow(2);
+                    return ret;
+                },
+	}
+},
+})
+

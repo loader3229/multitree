@@ -554,6 +554,7 @@ addLayer("tptc_g", {
 		if(hasUpgrade("tptc_e",12))base = base.mul(tmp.tptc_e.buyables[11].effect[0]);else base = base.add(tmp.tptc_e.buyables[11].effect[0]);
 		base = base.mul(tmp.tptr_g.effect[1]);
 		if(hasUpgrade("tptc_g",14))base = base.mul(upgradeEffect("tptc_g",14));
+		if(hasUpgrade("tptc_sb",23))base = base.mul(tmp.tptc_sb.effect.pow(0.1));
 		ret = Decimal.pow(base,ret).mul(ret);
 		
 		let sc=player.tptc_g.points.div(1e7);
@@ -739,7 +740,8 @@ addLayer("tptc_t", {
 			if(hasUpgrade("tm",61)){
 				let time = Math.min(player.timePlayed+d,86400*10);
 				
-				if(player.tm.buyables[8].gte(30))power+=(Math.pow(time,0.625)/1000);
+				if(hasUpgrade("tptc_t",23))power+=(Math.pow(time,0.64)/1000);
+				else if(player.tm.buyables[8].gte(30))power+=(Math.pow(time,0.625)/1000);
 				else if(player.milestone_m.points.gte(72))power+=(Math.pow(time,0.6)/1000);
 				else power+=(Math.pow(time,0.55)/1000);
 			}
@@ -878,6 +880,12 @@ addLayer("tptc_t", {
 				title: "Time Upgrade 22",
                 description: "Time Upgrade 15 is better.",
                 cost: new Decimal(1225e4),
+                unlocked() { return hasUpgrade("tm",35); }, // The upgrade is only visible when this is true
+            },
+			23: {
+				title: "Time Upgrade 23",
+                description: "Time Upgrade 15 is better.",
+                cost: new Decimal(292e5),
                 unlocked() { return hasUpgrade("tm",35); }, // The upgrade is only visible when this is true
             },
 	 }
@@ -1580,6 +1588,12 @@ addLayer("tptc_s", {
                 },
                 effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
             },
+			23: {
+				title: "Space Upgrade 23",
+                description: "Hyper Building 9 and 10 are better.",
+                cost: new Decimal(27500000),
+                unlocked() { return hasUpgrade("tptc_sp",45); }, // The upgrade is only visible when this is true
+            },
 
 	 }
 });
@@ -1693,6 +1707,13 @@ addLayer("tptc_sb", {
                 cost: new Decimal(90),
                 unlocked() { return hasUpgrade("tm",56); }, // The upgrade is only visible when this is true
             },
+			23: {
+				title: "Super-Booster Upgrade 23",
+                description: "Super-Benerator power also multiply generator base at 10% power.",
+                cost: new Decimal(93),
+                unlocked() { return hasUpgrade("tm",56); }, // The upgrade is only visible when this is true
+            },
+
 	 }
 });
 
@@ -3283,6 +3304,7 @@ addLayer("tptc_l", {
 					let x=player[this.layer].buyables[this.id].mul(player.tptc_l.power.add(1).log10().add(1));
 					let ret=Decimal.pow(1.25,x.pow(0.4));
 					if(player.tptc_ge.challenges[11])ret=ret.pow(tmp.tptc_ge.challenges[11].rewardEffect);
+					ret = ret.min("e8e7");
 					return ret;
 				},
                 unlocked() { return player.tptc_mb.buyables[12].gte(3) }, 
@@ -3639,7 +3661,7 @@ addLayer("tptc_hs", {
 					if(inChallenge("tptc_ge",32))return new Decimal(1);
 					let x=player[this.layer].buyables[this.id];
 					if(player.tptc_ge.challenges[32])x=x.mul(tmp.tptc_ge.challenges[32].rewardEffect);
-					return x.mul(0.01).add(1);
+					return x.mul(hasUpgrade("tptc_s",23)?0.02:0.01).add(1);
 				},
                 buy() { 
                     cost = tmp[this.layer].buyables[this.id].cost
@@ -3664,7 +3686,7 @@ addLayer("tptc_hs", {
 					if(inChallenge("tptc_ge",32))return new Decimal(1);
 					let x=player[this.layer].buyables[this.id];
 					if(player.tptc_ge.challenges[32])x=x.mul(tmp.tptc_ge.challenges[32].rewardEffect);
-					return x.mul(0.01).add(1);
+					return x.mul(hasUpgrade("tptc_s",23)?0.02:0.01).add(1);
 				},
                 buy() { 
                     cost = tmp[this.layer].buyables[this.id].cost

@@ -267,6 +267,7 @@ addLayer("gd_u", {
                     let ret=Decimal.log10(player.gd_e.points.add(10)).pow(0.03);
 					if(hasUpgrade("gd_e",21))ret = ret.pow(2);
 					if(hasUpgrade("gd_e",31))ret = ret.pow(10);
+					if(hasUpgrade("gd_g",51))ret = ret.pow(5/3);
 					return ret;
 				},
                 effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
@@ -1946,7 +1947,7 @@ addLayer("gd_g", {
             },
 		},
 		upgrades: {
-            rows: 4,
+            rows: 5,
             cols: 5,
 			11: {
 				title: "Good Will Upgrade 11",
@@ -2157,6 +2158,15 @@ addLayer("gd_g", {
 				},
                 effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
                 unlocked() { return player[this.layer].best.gte(50) && hasUpgrade("tm",52); }, // The upgrade is only visible when this is true
+            },
+			51: {
+				title: "Good Will Upgrade 51",
+                description: "Experience Upgrade 11 boost Time Flux and Lectures, and is better.",
+                cost: new Decimal(5),
+				currencyDisplayName: "unused good will",
+				currencyInternalName: "unused",
+				currencyLayer: "gd_g",
+                unlocked() { return player[this.layer].best.gte(55); }, // The upgrade is only visible when this is true
             },
 
 		},
@@ -2640,6 +2650,7 @@ addLayer("gd_t", {
 		if(player.gd_d.best.gte(9))ret = ret.sub(20);
 		if(hasUpgrade("gd_r", 35))ret = ret.sub(70);
 		if(hasUpgrade("gd_e", 35))ret = ret.sub(50);
+		if(hasUpgrade("gd_t", 24))ret = ret.sub(30);
 		return ret
     },
     resource: "time flux", // Name of prestige currency
@@ -2665,6 +2676,7 @@ addLayer("gd_t", {
 		if(hasUpgrade("gd_u",45) && hasUpgrade("gd_g",41))mult = mult.mul(upgradeEffect("gd_u",45));
 		if(hasUpgrade("gd_g",44))mult = mult.mul(upgradeEffect("gd_g",44));
 		if(hasUpgrade("gd_g",45))mult = mult.mul(upgradeEffect("gd_g",45));
+		if(hasUpgrade("gd_g",51))mult = mult.mul(upgradeEffect("gd_u",44));
 		return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -2986,6 +2998,13 @@ addLayer("gd_t", {
             unlocked() { return hasUpgrade("gd_r", 45) },
 
         },
+        24: {
+            title: "Time Flux Upgrade 24",
+            cost: new Decimal(1e224),
+            description() { return "Time Flux and Lectures are cheaper." },
+            unlocked() { return hasUpgrade("gd_r", 45) },
+
+        },
 
 }
 });
@@ -3022,6 +3041,7 @@ addLayer("gd_l", {
 		if(hasUpgrade("gd_c", 24))ret = ret.sub(10);
 		if(player.gd_d.best.gte(9))ret = ret.sub(20);
 		if(hasUpgrade("gd_g", 22))ret = ret.sub(30);
+		if(hasUpgrade("gd_t", 24))ret = ret.sub(30);
 		return ret
     },
     baseAmount() { return player.gd_f.points },
@@ -3043,7 +3063,7 @@ addLayer("gd_l", {
 		if(hasUpgrade("gd_u",45) && hasUpgrade("gd_g",41))mult = mult.mul(upgradeEffect("gd_u",45));
 		if(hasUpgrade("gd_g",44))mult = mult.mul(upgradeEffect("gd_g",44));
 		if(hasUpgrade("gd_g",45))mult = mult.mul(upgradeEffect("gd_g",45));
-
+		if(hasUpgrade("gd_g",51))mult = mult.mul(upgradeEffect("gd_u",44));
         return mult
     },
     gainExp() {

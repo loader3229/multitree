@@ -1176,6 +1176,7 @@ addLayer("tptr_e", {
 		effect() { 
 			let ret=player.tptr_e.points.add(1).log10().div(100).add(1);
 			if(ret.gte(100))ret = ret.sqrt().mul(10).sqrt().mul(10);
+			if(ret.gte(1000))ret = ret.cbrt().mul(100).cbrt().mul(100);
 			return ret;
 		},
     row: 2, // Row the layer is in on the tree (0 is the first row)
@@ -2331,6 +2332,24 @@ addLayer("tptr_h", {
         gainExp() { // Calculate the exponent on main currency from bonuses
             return new Decimal(1)
         },
+	getResetGain() {
+		if (tmp[this.layer].baseAmount.lt(tmp[this.layer].requires)) return new Decimal(0)
+		let gain = tmp[this.layer].baseAmount.div(tmp[this.layer].requires).pow(tmp[this.layer].exponent).times(tmp[this.layer].gainMult).pow(tmp[this.layer].gainExp)
+		
+		// softcap processing
+		
+		if (gain.gte(Decimal.pow(10,1e7))){
+			let mult2 = tmp[this.layer].gainMult;let mult3 = new Decimal(1);
+
+			let gain2 = tmp[this.layer].baseAmount.div(tmp[this.layer].requires).pow(tmp[this.layer].exponent).times(mult2).pow(tmp[this.layer].gainExp);
+			if(gain2.gte("ee7"))gain2 = gain2.mul("ee7").sqrt();
+			if(gain2.gte("ee11"))gain2 = Decimal.pow(10,gain2.log10().mul(1e11).sqrt());
+			gain2 = gain2.mul(mult3);
+			gain = Decimal.max(Decimal.pow(10,1e7),gain2);
+		}
+		
+		return gain.floor().max(0);
+	},
         row: 3, // Row the layer is in on the tree (0 is the first row)
 		doReset(l){
 			if(l=="tptr_p" || l=="tptr_b" || l=="tptr_g" || l=="tptr_t" || l=="tptr_e" || l=="tptr_s" || l=="tptr_sb" || l=="tptr_sg" || l=="tptr_o" || l=="tptr_h" || l=="tptr_q" || l=="tptr_ss" || !l.startsWith("tptr_")){return;}
@@ -2574,6 +2593,24 @@ addLayer("tptr_q", {
         gainExp() { // Calculate the exponent on main currency from bonuses
             return new Decimal(1)
         },
+	getResetGain() {
+		if (tmp[this.layer].baseAmount.lt(tmp[this.layer].requires)) return new Decimal(0)
+		let gain = tmp[this.layer].baseAmount.div(tmp[this.layer].requires).pow(tmp[this.layer].exponent).times(tmp[this.layer].gainMult).pow(tmp[this.layer].gainExp)
+		
+		// softcap processing
+		
+		if (gain.gte(Decimal.pow(10,1e7))){
+			let mult2 = tmp[this.layer].gainMult;let mult3 = new Decimal(1);
+
+			let gain2 = tmp[this.layer].baseAmount.div(tmp[this.layer].requires).pow(tmp[this.layer].exponent).times(mult2).pow(tmp[this.layer].gainExp);
+			if(gain2.gte("ee7"))gain2 = gain2.mul("ee7").sqrt();
+			if(gain2.gte("ee11"))gain2 = Decimal.pow(10,gain2.log10().mul(1e11).sqrt());
+			gain2 = gain2.mul(mult3);
+			gain = Decimal.max(Decimal.pow(10,1e7),gain2);
+		}
+		
+		return gain.floor().max(0);
+	},
         row: 3, // Row the layer is in on the tree (0 is the first row)
         layerShown(){return player.tm.currentTree==7 && hasUpgrade("tm",47)},
 		doReset(l){
@@ -2615,6 +2652,7 @@ addLayer("tptr_q", {
 		},
 	effect() {
 		let ret = player.tptr_q.points.add(1);
+		if(ret.gte("e86e5"))ret = ret.pow(0.1).mul("e774e4");
 		return ret;
 	},
 	effectDescription() { // Optional text to describe the effects
@@ -3453,6 +3491,11 @@ addLayer("tptr_ss", {
 			if(player.tptr_ss.best.gte(10)&&layers.tptr_s.buyables[13].unlocked())layers.tptr_s.buyables[13].buyMax();
 			if(player.tptr_ss.best.gte(10)&&layers.tptr_s.buyables[14].unlocked())layers.tptr_s.buyables[14].buyMax();
 			if(player.tptr_ss.best.gte(10)&&layers.tptr_s.buyables[15].unlocked())layers.tptr_s.buyables[15].buyMax();
+			if(player.tptr_ma.best.gte(1)&&layers.tptr_s.buyables[16].unlocked())layers.tptr_s.buyables[16].buyMax();
+			if(player.tptr_ma.best.gte(1)&&layers.tptr_s.buyables[17].unlocked())layers.tptr_s.buyables[17].buyMax();
+			if(player.tptr_ma.best.gte(1)&&layers.tptr_s.buyables[18].unlocked())layers.tptr_s.buyables[18].buyMax();
+			if(player.tptr_ma.best.gte(1)&&layers.tptr_s.buyables[19].unlocked())layers.tptr_s.buyables[19].buyMax();
+			if(player.tptr_ma.best.gte(1)&&layers.tptr_s.buyables[20].unlocked())layers.tptr_s.buyables[20].buyMax();
 			if (player.tptr_ss.unlocked) player.tptr_ss.subspace = player.tptr_ss.subspace.plus(tmp.tptr_ss.effect[0].times(diff));
 		},
         row: 3, // Row the layer is in on the tree (0 is the first row)
@@ -4445,6 +4488,7 @@ addLayer("tptr_hn", {
             mult = new Decimal(1)
 	if (player.tm.buyables[7].gte(38)) mult = mult.times(buyableEffect("tptr_o", 22));
 			if (hasUpgrade("tptr_s", 35) && player.tptr_i.buyables[12].gte(5)) mult = mult.times(upgradeEffect("tptr_s", 35));
+	if (player.tptr_ma.unlocked) mult = mult.times(tmp.tptr_ma.effect);
             return mult
         },
 		canBuyMax() { return false },
@@ -4743,7 +4787,7 @@ addLayer("tptr_hs", {
 			if (hasUpgrade("tptr_e", 41) && player.tptr_i.buyables[12].gte(3)) mult = mult.times(upgradeEffect("tptr_e", 41));
 			if (hasUpgrade("tptr_t", 41) && player.tptr_i.buyables[12].gte(4)) mult = mult.times(2.5e3);
 			if (hasUpgrade("tptr_s", 33) && player.tptr_i.buyables[12].gte(5)) mult = mult.times(upgradeEffect("tptr_s", 33));
-			//if (player.ma.unlocked) mult = mult.times(tmp.ma.effect);
+	if (player.tptr_ma.unlocked) mult = mult.times(tmp.tptr_ma.effect);
 			//if ((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes("i"):false) mult = mult.times(Decimal.pow(10, player.i.hb));
             return mult
         },
@@ -4804,8 +4848,8 @@ return player.tptr_sg.points.sub(21).max(0).plus(1).sqrt().div(tmp.tptr_hs.build
 			if (hasUpgrade("tptr_hn", 54)) pow = pow.times(upgradeEffect("tptr_hn", 54));
 			if (player.tm.buyables[7].gte(42)) pow = pow.plus(buyableEffect("tptr_o", 33));
 			if (player.tptr_i.buyables[11].gte(5)) pow = pow.plus(buyableEffect("tptr_s", 20)).sub(1);
+			if (player.tptr_ma.unlocked) pow = pow.plus(tmp.tptr_ma.effect.max(1).log10().div(40));
 			/*
-			if (player.ma.unlocked) pow = pow.plus(tmp.ma.effect.max(1).log10().div(40));
 			if (hasAchievement("a", 113)) pow = pow.plus(.1);
 			if ((Array.isArray(tmp.ma.mastered))?tmp.ma.mastered.includes(this.layer):false) pow = pow.plus(player.hs.buyables[11].div(1000))
 			if (player.c.unlocked && tmp.c) pow = pow.plus(tmp.c.eff1);*/
@@ -5352,15 +5396,16 @@ addLayer("tptr_i", {
         gainExp() { // Calculate the exponent on main currency from bonuses
             return new Decimal(1)
         },
-		canBuyMax() { return false },
+		canBuyMax() { return hasMilestone("tptr_ma",0) },
         row: 5, // Row the layer is in on the tree (0 is the first row)
-		resetsNothing() { return false },
+		resetsNothing() { return hasMilestone("tptr_ma",0) },
+		autoPrestige() { return hasMilestone("tptr_ma",0) },
 
         layerShown(){return player.tm.currentTree==7 && hasUpgrade("tm",49) },
         doReset(l){ 
 			if(l=="tptr_p" || l=="tptr_b" || l=="tptr_g" || l=="tptr_t" || l=="tptr_e" || l=="tptr_s" || l=="tptr_sb" || l=="tptr_sg" || l=="tptr_o" || l=="tptr_h" || l=="tptr_q" || l=="tptr_ss" || l=="tptr_m" || l=="tptr_ba" || l=="tptr_ps" || l=="tptr_hn" || l=="tptr_n" || l=="tptr_hs" || l=="tptr_i" || !l.startsWith("tptr_")){return;}
 			var b=new Decimal(player.tptr_i.best);
-			layerDataReset("tptr_i",["upgrades","milestones"]);
+			layerDataReset("tptr_i",["upgrades","buyables","milestones"]);
 			player.tptr_i.best=b;
         },
         branches: ["tptr_ss"],
@@ -5581,4 +5626,69 @@ addLayer("tptr_i", {
 		},
 
 });
+
+
+addLayer("tptr_ma", {
+		name: "tptr_ma", // This is optional, only used in a few places, If absent it just uses the layer id.
+        symbol: "MA", // This appears on the layer's node. Default is the id with the first letter capitalized
+        position: 2, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+        startData() { return {
+            unlocked: false,
+			points: new Decimal(0),
+			best: new Decimal(0),
+        }},
+        color: "#ff9f7f",
+        requires() { return new Decimal(100) }, // Can be a function that takes requirement increases into account
+        resource: "mastery", // Name of prestige currency
+        baseResource: "phantom souls", // Name of resource prestige is based on
+        baseAmount() {return player.tptr_ps.points}, // Get the current amount of baseResource
+		roundUpCost: true,
+        type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+        exponent: new Decimal(1.1), // Prestige currency exponent
+		base: new Decimal(1.05),
+		effectBase() {
+			return new Decimal(1e20);
+		},
+		effect() {
+			return Decimal.pow(tmp.tptr_ma.effectBase, player.tptr_ma.points);
+		},
+
+		effectDescription() {
+			return "which multiplies Honour & Hyperspace Energy gain by "+format(tmp.tptr_ma.effect)+", and adds "+format(tmp.tptr_ma.effect.max(1).log10().times(2.5))+"% to Hyper Building Power"
+		},
+        gainMult() { // Calculate the multiplier for main currency from bonuses
+            return new Decimal(1)
+
+        },
+        gainExp() { // Calculate the exponent on main currency from bonuses
+            return new Decimal(1)
+        },
+		canBuyMax() { return false },
+        row: 6, // Row the layer is in on the tree (0 is the first row)
+
+		resetsNothing() { return false },
+
+        layerShown(){return player.tm.currentTree==7 && hasUpgrade("tm",59) },
+        branches: ["tptr_hn", "tptr_hs", ["tptr_ps", 2]],
+		nodeStyle() {return {
+			"background": "radial-gradient(circle, rgba(255,100,100,1) 0%, rgba(255,159,127,1) 50%)" ,
+			"background-size": "200%" ,
+			"background-position": "center" ,
+        }},
+doReset(l){ 
+			if(l=="tptr_p" || l=="tptr_b" || l=="tptr_g" || l=="tptr_t" || l=="tptr_e" || l=="tptr_s" || l=="tptr_sb" || l=="tptr_sg" || l=="tptr_o" || l=="tptr_h" || l=="tptr_q" || l=="tptr_ss" || l=="tptr_m" || l=="tptr_ba" || l=="tptr_ps" || l=="tptr_hn" || l=="tptr_n" || l=="tptr_hs" || l=="tptr_i" || l=="tptr_ma" || l=="tptr_ge" || l=="tptr_mc" || !l.startsWith("tptr_")){return;}
+			var b=new Decimal(player.tptr_i.best);
+			layerDataReset("tptr_i",["upgrades","milestones"]);
+			player.tptr_i.best=b;
+        },
+		milestones: {
+			0: {
+				requirementDescription: "1 Mastery",
+				done() { return player.tptr_ma.best.gte(1) },
+				effectDescription: "Imperium bricks resets nothing. Autobuy imperium bricks. Keep Imperium buildings. Autobuy space buildings 6-10.",
+			},
+		},
+
+});
+
 

@@ -355,6 +355,28 @@
                 buyMax() {}, // You'll have to handle this yourself if you want
                 style: {'height':'100px','width':'150px'},
             },
+            10: {
+                title: "Upgrade", // Optional, displayed at the top in a larger font
+                cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
+					x=new Decimal(x);
+					return Decimal.dInf
+                },
+                display() { // Everything else displayed in the buyable button after the title
+                    let data = tmp[this.layer].buyables[this.id]
+                    return "Level: "+formatWhole(player[this.layer].buyables[this.id])+"<br>Cost: "+format(data.cost)+" points";
+                },
+                unlocked() { return player[this.layer].points.gte(this.id) }, 
+                canAfford() {
+                    return player.points.gte(tmp[this.layer].buyables[this.id].cost)
+				},
+                buy() { 
+                    cost = tmp[this.layer].buyables[this.id].cost
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
+                    player.points = player.points.sub(cost)
+				},
+                buyMax() {}, // You'll have to handle this yourself if you want
+                style: {'height':'100px','width':'150px'},
+            },
 	},
 	clickables: {
             0: {
@@ -377,6 +399,7 @@
                 cost_q(x=player[this.layer].q_upg) { // cost for buying xth buyable, can be an object if there are multiple currencies
 					x=new Decimal(x);
 					if(x.gte(100))return Decimal.pow(10,x.pow(8));
+					if(x.gte(93))return Decimal.pow(10,x.add(1).pow(2).mul(9e11));
 					if(x.gte(16))return Decimal.pow(10,x.pow(2).mul(9e11));
 					return Decimal.pow(10,x.mul(4.05e12).add(1.5e14));
                 },
@@ -483,6 +506,16 @@
                 style: {'height':'100px','width':'150px'},
             },
             9: {
+                title: "Switch to this tree",
+                display: "",
+                unlocked() { return player[this.layer].points.gte(this.id) && hasUpgrade("tptc_sp",13)}, 
+				canClick(){return player[this.layer].points.gte(this.id) && hasUpgrade("tptc_sp",13)},
+				onClick(){
+					player[this.layer].currentTree=this.id;
+				},
+                style: {'height':'100px','width':'150px'},
+            },
+            10: {
                 title: "Switch to this tree",
                 display: "",
                 unlocked() { return player[this.layer].points.gte(this.id) && hasUpgrade("tptc_sp",13)}, 
@@ -1208,4 +1241,80 @@
 
 	}
 });
+
+
+
+addLayer("mt_tptc_p", {
+    name: "mt_tptc_p", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "P", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: true,
+		points: new Decimal(0),
+    }},
+    color: "#00bfbf",
+    requires(){
+		return new Decimal("e9e15");
+	},
+    resource: "prestige points", // Name of prestige currency
+    baseResource: "points", // Name of resource prestige is based on
+    baseAmount() {return player.points}, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 1e-15, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    row: 0, // Row the layer is in on the tree (0 is the first row)
+    layerShown(){return player.tm.currentTree==10},
+		upgrades: {
+            rows: 6,
+            cols: 5,
+			11: {
+				title: "Prestige Upgrade 11",
+                description(){
+					return "Point generation is doubled.";
+				},
+                cost: new Decimal(1),
+                unlocked() { return true; }, // The upgrade is only visible when this is true
+				effect() { // Calculate bonuses from the upgrade. Can return a single value or an object with multiple values
+					let ret=Decimal.pow(2,player.tm.buyables[10].pow(1.5));
+					return ret;
+                },
+                effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
+            },
+			12: {
+				title: "Prestige Upgrade 12",
+                description: "Point generation is faster based on your Prestige Point amount.",
+                cost: new Decimal(1),
+                unlocked() { return true; },
+				effect() { // Calculate bonuses from the upgrade. Can return a single value or an object with multiple values
+                    let base=3;
+                    let exp = 0.9;
+                    let ret = Decimal.pow(base,Decimal.log10(player.mt_tptc_p.points.mul(2).add(3)).pow(exp));
+                    return ret;
+                },
+                effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
+            },
+			13: {
+				title: "Prestige Upgrade 13",
+                description: "???",
+                cost: new Decimal(2),
+                unlocked() { return true; },
+            }, 
+},
+		doReset(l){
+			if(l=="mt_tptc_p" || !l.startsWith("mt_tptc_")){return;}
+			layerDataReset("mt_tptc_p",["upgrades","milestones","challenges"]);
+			return;
+		},
+	 hotkeys: [
+           {key: "p", description: "P: Prestige reset",
+			onPress(){if (player.tm.currentTree==10 && canReset(this.layer)) doReset(this.layer)}, unlocked(){return player.tm.currentTree==10}}
+     ],
+});
+
 

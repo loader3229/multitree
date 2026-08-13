@@ -73,7 +73,7 @@ addLayer("dynas_c", {
 		if ((player.dynas_b.banking & 1) || inChallenge("dynas_t",31)) ret = ret.pow(0.5)
 	if ((player.dynas_b.banking & 2) || inChallenge("dynas_t",31)) ret = ret.root(3)
 	if (player.dynas_b.banking & 4) ret = ret.pow(0.1)
-	if (player.dynas_b.banking & 8) ret = player.dynas_c.points.pow(0.1).add(10)
+	if (player.dynas_b.banking & 8) ret = player.dynas_c.points.pow(0.1).add(10).min(1e200)
 	if (player.dynas_b.banking & 16) ret = ret.pow(Decimal.pow(player.dynas_b.bankTime, 2).add(1).recip())  
 		if (inChallenge("dynas_t", 11)) ret = ret.pow(0.5)
                     return ret;
@@ -1191,7 +1191,7 @@ autoPrestige: () => hasMilestone("dynas_w",5),
 					? "You have " + format(player[this.layer].buyables[this.id]) + " banked metapoints, which are boosting all previous bankings' buffs by ×" + format(data.effect) + ".\n\n\
 						Banking is currently " + (player.dynas_b.banking == 8 ? "enabled.\n\
 						Click here to disable banking and gain " + format(Decimal.sub(upgradeEffect("dynas_c",11), player.dynas_b.buyables[22]).max(0), 0) + " banked metapoints." : "disabled.\n\
-						Click here to enable banking, which will override the point generation speed and make it stronger based on your current coin count ((coins^0.1)). You also bank point generated per second on this one.")
+						Click here to enable banking, which will override the point generation speed and make it stronger based on your current coin count ((coins^0.1), hardcap is 1e200). You also bank point generated per second on this one.")
 					: (player.dynas_b.banking > 0 ? "Please disable the current active banking before you can activate another one." : "You need to build at least 15 banks before you can use this function.")
 			},
 			unlocked() { return hasMilestone("dynas_m", 1) },

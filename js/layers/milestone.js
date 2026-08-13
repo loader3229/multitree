@@ -1351,6 +1351,7 @@ addLayer("milestone_m", {
 			if(hasUpgrade("milestone_pb",15))base+=0.003;
 			if(hasUpgrade("milestone_hp",15))base+=0.003;
 			if(player.milestone_pm.best.gte(12))base+=0.004;
+			if(hasUpgrade("milestone_hp",23))base+=0.01;
 			let ret = Decimal.pow(base,Decimal.log10(player.points.add(1e10)).pow(power).add(1));
 			return ret;
 		}
@@ -1400,6 +1401,7 @@ addLayer("milestone_m", {
 		return Decimal.pow(b,m);
 	},
 	milestone4EffectExponent(){
+		if(player.milestone_pm.best.gte(13))return 0.65;
 		if(player.milestone_pm.best.gte(9))return 0.6;
 		if(player.tm.buyables[8].gte(28))return 0.58;
 		if(player.tm.buyables[8].gte(27))return 0.57;
@@ -2331,6 +2333,23 @@ addLayer("milestone_pm", {
 			},
 
         },
+		{
+			requirementDescription: "13th Power Milestone",
+            unlocked() {return player[this.layer].best.gte(12)},
+            done() {return player[this.layer].best.gte(13)}, // Used to determine when to give the milestone
+            effectDescription: function(){
+				let ret="4th MT-Milestone's effect is better.";
+                return ret;
+			},
+			style() {
+				/*if(player.tm.buyables[8].gte(2)&&player[this.layer].best.gte(1)){
+					return {backgroundColor: "#cccc00"};
+				}*/
+				return {};
+			},
+
+        },
+
 
 
 
@@ -2475,6 +2494,13 @@ branches: ["milestone_sp"],
             },
             effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
         },
+		23: {
+			title: "Hyper-Prestige Upgrade 23",
+            description: "2nd Milestone is better.",
+            cost: new Decimal("1e918"),
+            unlocked() { return true}, // The upgrade is only visible when this is true
+        },
+
 
 	},
 	passiveGeneration(){

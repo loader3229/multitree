@@ -1254,7 +1254,7 @@ addLayer("mt_tptc_p", {
     }},
     color: "#00bfbf",
     requires(){
-		return new Decimal("e9e15");
+		return Decimal.pow(10,Decimal.pow(2,53));
 	},
     resource: "prestige points", // Name of prestige currency
     baseResource: "points", // Name of resource prestige is based on

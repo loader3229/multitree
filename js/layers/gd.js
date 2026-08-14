@@ -45,6 +45,7 @@ addLayer("gd_u", {
 		if(player.milestone_m.best.gte(29))mult = mult.mul(tmp.milestone_m.milestone29Effect);
 		mult = mult.mul(tmp.gd_a.buyables[22].effect);
 		if(hasUpgrade("gd_t",11))mult = mult.mul(upgradeEffect("gd_t",11));
+		if(hasUpgrade("gd_t",25))mult = mult.mul(upgradeEffect("gd_t",25));
 		return mult;
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -2650,7 +2651,7 @@ addLayer("gd_t", {
 		if(player.gd_d.best.gte(9))ret = ret.sub(20);
 		if(hasUpgrade("gd_r", 35))ret = ret.sub(70);
 		if(hasUpgrade("gd_e", 35))ret = ret.sub(50);
-		if(hasUpgrade("gd_t", 24))ret = ret.sub(30);
+		if(hasUpgrade("gd_t", 24))ret = ret.sub(35);
 		return ret
     },
     resource: "time flux", // Name of prestige currency
@@ -3005,6 +3006,19 @@ addLayer("gd_t", {
             unlocked() { return hasUpgrade("gd_r", 45) },
 
         },
+        25: {
+            title: "Time Flux Upgrade 25",
+            cost: new Decimal(1e240),
+            description() { return "Refactors boost Updates." },
+            unlocked() { return hasUpgrade("gd_r", 45) },
+		effect() {
+                    let ret=player.gd_r.points.max(1).pow(10);
+					return ret;
+				},
+                effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
+
+
+        },
 
 }
 });
@@ -3041,7 +3055,7 @@ addLayer("gd_l", {
 		if(hasUpgrade("gd_c", 24))ret = ret.sub(10);
 		if(player.gd_d.best.gte(9))ret = ret.sub(20);
 		if(hasUpgrade("gd_g", 22))ret = ret.sub(30);
-		if(hasUpgrade("gd_t", 24))ret = ret.sub(30);
+		if(hasUpgrade("gd_t", 24))ret = ret.sub(35);
 		return ret
     },
     baseAmount() { return player.gd_f.points },

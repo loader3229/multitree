@@ -1811,6 +1811,7 @@ addLayer("dynas_sp", {
 	gainMult(){	
 		if(inChallenge("dynas_t",22))return new Decimal(0);
 		let ret=new Decimal(1);
+		if(hasUpgrade("dynas_sp",24))ret = ret.mul(upgradeEffect("dynas_sp",24));
 		return ret
 	},
 
@@ -1859,6 +1860,7 @@ addLayer("dynas_sp", {
 				if(player.dynas_t.challenges[31]>=2)ret = ret.mul(player.dynas_bd.buyables[21].add(1));
 				if(hasMilestone("dynas_t",7))ret = ret.mul(player.dynas_t.points.max(1));
 				if(hasMilestone("dynas_m",5))ret = ret.mul(player.dynas_m.points.add(1));
+				if(hasUpgrade("dynas_wi",12))ret = ret.mul(upgradeEffect("dynas_wi",12));
 				return ret;
 			},
 			display() { // Everything else displayed in the buyable button after the title
@@ -2042,6 +2044,30 @@ addLayer("dynas_sp", {
                 unlocked() { return player.tm.buyables[9].gte(18); }, // The upgrade is only visible when this is true
 				effect() {
 					let ret = player.dynas_sp.magic.pow(player.dynas_bd.buyables[13].cbrt()).add(1);
+                    return ret;
+                },
+			},
+			24: {
+				title: "Dynas Spell 24",
+                description() {
+					return "Spiritual power gain is boosted by x"+format(this.effect());
+				},
+                cost: new Decimal(1e175),
+                unlocked() { return player.tm.buyables[9].gte(18); }, // The upgrade is only visible when this is true
+				effect() {
+					let ret = player.dynas_sp.magic.pow(player.dynas_bd.buyables[13].cbrt()).add(1);
+                    return ret;
+                },
+			},
+			25: {
+				title: "Dynas Spell 25",
+                description() {
+					return "Knowledge generation is boosted by x"+format(this.effect());
+				},
+                cost: new Decimal(1e200),
+                unlocked() { return player.tm.buyables[9].gte(18); }, // The upgrade is only visible when this is true
+				effect() {
+					let ret = player.dynas_sp.magic.add(1).log10().mul(player.dynas_bd.buyables[13]).add(1);
                     return ret;
                 },
 			},
@@ -2612,6 +2638,7 @@ addLayer("dynas_wi", {
 
 	effect() {
 		var ret = Decimal.pow(2, Decimal.pow(player.dynas_wi.points, 1.05)).sub(1)
+		if(hasUpgrade("dynas_sp",25))ret = ret.mul(upgradeEffect("dynas_sp",25));
 		return ret
 	},
 	
@@ -2661,7 +2688,21 @@ addLayer("dynas_wi", {
 					let ret = player.dynas_wi.knowledge.add(1).pow(2);
                     return ret;
                 },
-	}
+	},
+			12: {
+                description() {
+					return "Knowledge boost dynas magic gain."
+				},
+                cost: new Decimal(10000),
+		currencyDisplayName: "knowledge",
+		currencyInternalName: "knowledge",
+		currencyLayer: "dynas_wi",
+                unlocked() { return true; }, // The upgrade is only visible when this is true
+				effect() {
+					let ret = player.dynas_wi.knowledge.add(10).log10();
+                    return ret;
+                },
+	},
 },
 })
 

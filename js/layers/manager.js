@@ -232,7 +232,7 @@
 					if(x.lt(0.5))return new Decimal(0);
 					if(x.lt(10.5))return Decimal.pow(10,x.pow(2).mul(1e4).add(1e5));
 					if(x.lt(30.5))return Decimal.pow(10,x.pow(6));
-					if(x.lt(47.5))return Decimal.pow(10,x.pow(x.div(5)));
+					if(x.lt(48.5))return Decimal.pow(10,x.pow(x.div(5)));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -285,7 +285,7 @@
 					if(x.lt(31.5))return Decimal.pow(10,x.pow(x.div(4)).mul(300));
 					if(x.lt(34.5))return Decimal.pow(10,x.pow(6).mul(168600));
 					if(x.lt(41.5))return Decimal.pow(10,x.pow(7).mul(10000));
-					if(x.lt(42.5))return Decimal.pow(10,x.pow(9).mul(18));
+					if(x.lt(43.5))return Decimal.pow(10,x.pow(x.div(4.3)));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -336,7 +336,7 @@
 					if(x.lt(0.5))return new Decimal(0);
 					if(x.lt(7.5))return Decimal.pow(10,x.add(1).pow(2).mul(1e11).add(2e12));
 					if(x.lt(9.5))return Decimal.pow(10,x.add(1).pow(2).mul(2e11));
-					if(x.lt(17.5))return Decimal.pow(10,x.pow(x.div(5)).mul(3e11));
+					if(x.lt(18.5))return Decimal.pow(10,x.pow(x.div(5)).mul(3e11));
 					return Decimal.dInf
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -1260,14 +1260,18 @@ addLayer("mt_tptc_p", {
     baseResource: "points", // Name of resource prestige is based on
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 1e-15, // Prestige currency exponent
-    gainMult() { // Calculate the multiplier for main currency from bonuses
-        mult = new Decimal(1)
-        return mult
-    },
-    gainExp() { // Calculate the exponent on main currency from bonuses
-        return new Decimal(1)
-    },
+    getResetGain(){
+		let p=player.points.max("e9e15");
+		p=p.log10().log(2).sub(53).pow(2);
+		return Decimal.pow(10,p).floor();
+	},
+    getNextAt(){
+		let p=layers.mt_tptc_p.getResetGain().add(1);
+		p = p.log10().root(2).add(53);
+		p = Decimal.pow(2,p);
+		p = Decimal.pow(10,p);
+		return p;
+	},
     row: 0, // Row the layer is in on the tree (0 is the first row)
     layerShown(){return player.tm.currentTree==10},
 		upgrades: {

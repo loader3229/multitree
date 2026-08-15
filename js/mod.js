@@ -17,6 +17,9 @@ let VERSION = {
 }
 
 let changelog = `
+	<h3>v2.0</h3><br>
+	- Added a new tree (The Multitree)<br>
+	- Endgame: e9.007e15 points<br>
 	<h3>v1.8.7</h3><br>
 	- Endgame: e3e15 points<br>
 	<h3>v1.8.6</h3><br>

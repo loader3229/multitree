@@ -59,7 +59,7 @@ addLayer("tptc_p", {
 				effect() { // Calculate bonuses from the upgrade. Can return a single value or an object with multiple values
                     let base=3;
                     if(hasUpgrade("tptc_p",61))base += 4;
-                    if(hasUpgrade("tptc_p",62))base += 3;
+                    if(hasUpgrade("tptc_p",64))base += 3;
                     let exp = 0.9;
                     if(hasUpgrade("tptc_sp",33))exp += 0.01;
                     let ret = Decimal.pow(base,Decimal.log10(player.tptc_p.points.mul(2).add(3)).pow(exp));

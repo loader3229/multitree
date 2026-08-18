@@ -1262,7 +1262,9 @@ addLayer("mt_tptc_p", {
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     getResetGain(){
 		let p=player.points.max("e9e15");
-		p=p.log10().log(2).sub(53).pow(2);
+		p=p.log10().log(2).sub(53);
+		if(p.lt(0))return new Decimal(0);
+		p=p.pow(2);
 		return Decimal.pow(10,p).floor();
 	},
     getNextAt(){
